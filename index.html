@@ -1,1 +1,1444 @@
 
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>PointsBet · Reform Scenario Planner</title>
+<meta name="description" content="Scenario-driven planning tool for the Gambling Reform Bill 2026 across the PointsBet FY27 partner portfolio."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --pb-red:#EE1A42; --pb-red-deep:#C40E33; --pb-black:#0E0E0F; --pb-ink:#16171A;
+  --pb-paper:#F7F9FB; --pb-panel:#FFFFFF; --pb-line:#E2E8F0; --pb-line2:#CBD5E1;
+  --pb-muted:#64748B; --pb-faint:#94A3B8;
+  --st-exposed:#ED1B42; --st-rework:#E8821E; --st-watch:#C9A227;
+  --st-protected:#1F9D57; --st-strong:#1F9D57; --st-safe:#7C7E84;
+  --shadow:none; --shadow-sm:none;
+  --hair:1px solid var(--pb-line);
+  --ff: "IBM Plex Sans",Calibri,Helvetica,sans-serif;
+  --fdisplay: "Poppins","IBM Plex Sans",Calibri,sans-serif;
+  --fui: "IBM Plex Sans",Calibri,Helvetica,sans-serif;
+  --fmono: "IBM Plex Mono",ui-monospace,SFMono-Regular,monospace;
+  --r: 5px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--pb-paper);color:var(--pb-ink);font-family:var(--ff);
+  -webkit-font-smoothing:antialiased;font-size:15px;line-height:1.45}
+button,input,select,textarea{font:inherit;color:inherit}
+select{appearance:none;-webkit-appearance:none;-moz-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239B9CA2' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 9px center;background-size:13px;padding-right:26px!important;cursor:pointer}
+button{cursor:pointer;border:0;background:none}
+h1,h2,h3,h4{margin:0;font-family:var(--fdisplay);font-weight:700;letter-spacing:0}
+.num,.legcount b,.tierpill,.prio,.vt span,.ro .num{font-feature-settings:"tnum" 1;font-variant-numeric:tabular-nums}
+a{color:var(--pb-red)}
+.wrap{max-width:1280px;margin:0 auto;padding:0 20px 80px}
+
+/* ===== Command bar ===== */
+.bar{background:var(--pb-black);color:#fff;
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  padding:14px 22px;position:sticky;top:0;z-index:40;box-shadow:var(--shadow)}
+.bar .brand{display:flex;align-items:baseline;gap:12px}
+.bar .mark{font-family:var(--fdisplay);font-weight:800;font-size:22px;letter-spacing:.01em;text-transform:uppercase}
+.bar .mark span{color:var(--pb-red)}
+.bar .sub{font-family:var(--fui);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#A7A8AC;font-weight:600}
+.bar .right{display:flex;align-items:center;gap:10px;font-size:12px}
+.bar .clock{color:#A7A8AC;letter-spacing:.04em}
+.scopeToggle{display:flex;align-items:center;gap:8px;font-size:12px;color:#C9CACE;cursor:pointer;user-select:none}
+.swtrack{width:34px;height:19px;border-radius:20px;background:#38393D;position:relative;flex-shrink:0;transition:.15s}
+.swtrack.on{background:var(--pb-red)}
+.swknob{position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:#fff;transition:.15s}
+.swtrack.on .swknob{left:17px}
+.syncstat{font-size:11.5px;font-weight:700;letter-spacing:.03em;padding:5px 10px;border-radius:20px;background:rgba(255,255,255,.06)}
+.syncstat.synced{color:#3FDD8C}
+.syncstat.saving,.syncstat.loading{color:#E9C84E}
+.syncstat.offline{color:#9B9CA2}
+.syncstat.error{color:#FF6E89}
+.syncstat:empty{display:none}
+.ghostbtn{border:1px solid #38393D;color:#E7E7E9;border-radius:7px;padding:7px 11px;
+  font-size:12px;font-weight:600;display:inline-flex;gap:6px;align-items:center}
+.ghostbtn:hover{border-color:var(--pb-red);color:#fff}
+
+/* ===== Workflow nav ===== */
+.flow{max-width:1280px;margin:0 auto;padding:14px 20px 0;display:flex;gap:8px;flex-wrap:wrap}
+.step{flex:1;min-width:150px;background:var(--pb-panel);border:1px solid var(--pb-line);
+  border-radius:6px;padding:11px 14px;display:flex;gap:11px;align-items:center;text-align:left;
+  transition:.15s;position:relative}
+.step:hover{border-color:var(--pb-line2)}
+.step.on{border-color:var(--pb-black);box-shadow:var(--shadow-sm)}
+.step.on:before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:4px;
+  background:var(--pb-red);border-radius:0 3px 3px 0}
+.step .n{font-family:var(--fmono);font-size:12px;font-weight:700;color:var(--pb-faint);
+  width:22px;height:22px;border:1.5px solid var(--pb-line2);border-radius:50%;
+  display:grid;place-items:center;flex:none}
+.step.on .n{background:var(--pb-red);color:#fff;border-color:var(--pb-red)}
+.step .lab{display:block;font-weight:700;font-size:13.5px;line-height:1.15}
+.step .hint{display:block;font-size:11px;color:var(--pb-muted);margin-top:1px}
+
+/* ===== Headline strip (exec summary) ===== */
+.headline{background:var(--pb-black);border:none;
+  padding:14px 18px;margin-bottom:16px}
+.hl-main{font-size:15px;font-weight:600;color:#fff;line-height:1.5}
+.hl-main b{color:#FF7A93;font-family:var(--fmono);font-weight:600;font-size:17px;letter-spacing:-.02em}
+.hl-sub{font-size:12.5px;color:#B8B9BC;margin-top:6px;line-height:1.5;max-width:78ch}
+
+/* ===== Section frame ===== */
+.view{padding-top:22px}
+.vh{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:16px}
+.eyebrow{font-family:var(--fui);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--pb-red);font-weight:700}
+.vh h2{font-size:38px;margin-top:4px;text-transform:uppercase;letter-spacing:.01em;line-height:.95;font-weight:800}
+.vh p{margin:8px 0 0;color:var(--pb-muted);font-size:14px;max-width:64ch;line-height:1.5}
+
+/* ===== Scenario builder (hero) ===== */
+.slate{background:var(--pb-black);color:#fff;border-radius:7px;padding:22px 22px 8px;
+  box-shadow:var(--shadow)}
+.slate .shead{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.slate .shead .t .e{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--pb-red);font-weight:700}
+.slate .shead .t h3{font-family:var(--fdisplay);font-weight:800;font-size:24px;margin-top:5px;text-transform:uppercase;letter-spacing:.01em;line-height:1}
+.slate .shead .t p{margin:5px 0 0;color:#A7A8AC;font-size:13px;max-width:54ch}
+.legcount{font-family:var(--fmono);font-size:12px;color:#A7A8AC;text-align:right;white-space:nowrap}
+.legcount b{font-family:var(--fdisplay);font-weight:800;color:#fff;font-size:34px;display:block;line-height:.9}
+.legs{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin:18px 0 4px}
+@media(max-width:760px){.legs{grid-template-columns:1fr}}
+.leg{display:flex;flex-direction:column;gap:10px;background:#1A1B1E;border:1px solid #2A2B2F;
+  border-radius:10px;padding:12px 13px;text-align:left;transition:.14s}
+.leg:hover{border-color:#3A3B40}
+.leg.on{background:#232325;border-color:var(--pb-red)}
+.leg .sw{width:38px;height:22px;border-radius:20px;background:#3A3B40;position:relative;flex:none;
+  transition:.16s;margin-top:1px}
+.leg .sw:after{content:"";position:absolute;width:17px;height:17px;border-radius:50%;background:#fff;
+  top:2.5px;left:2.5px;transition:.16s}
+.leg.on .sw{background:var(--pb-red)}
+.leg.on .sw:after{left:18.5px}
+.leg .meta{display:flex;flex-direction:column;gap:1px}
+.leg .meta .lt{font-weight:700;font-size:13.5px;color:#fff}
+.leg .meta .ld{font-size:11.5px;color:#9A9B9F;margin-top:2px;line-height:1.35}
+.leg .tag{font-size:10px;font-family:var(--fmono);color:#7C7E84;letter-spacing:.04em;margin-top:4px}
+
+.seg{display:flex;gap:4px;background:#000;border:1px solid #2A2B2F;border-radius:9px;padding:3px}
+.segb{flex:1;padding:6px 4px;border-radius:7px;font-size:11.5px;font-weight:700;color:#8C8D92;letter-spacing:.01em;transition:.12s}
+.segb:hover{color:#fff}
+.segb.on{color:#fff}
+.segb.on.high{background:var(--pb-red)}
+.segb.on.med{background:#E8821E}
+.segb.on.low{background:#B7951F}
+.segb.on.off{background:#3A3B40;color:#C9CACE}
+.slate .foot{display:flex;gap:8px;flex-wrap:wrap;padding:14px 0 16px;border-top:1px solid #242528;margin-top:14px}
+.chipbtn{border:1px solid #38393D;color:#C9CACE;border-radius:20px;padding:5px 12px;font-size:11.5px;font-weight:600}
+.chipbtn:hover{border-color:var(--pb-red);color:#fff}
+
+/* ===== Live readout strip ===== */
+.readout{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:14px}
+@media(max-width:760px){.readout{grid-template-columns:repeat(2,1fr)}}
+.ro{background:var(--pb-panel);border:1px solid var(--pb-line);border-radius:6px;padding:13px 15px}
+.ro .num{font-family:var(--fdisplay);font-size:40px;font-weight:800;line-height:.9;letter-spacing:.01em}
+.ro .lab{font-size:11.5px;color:var(--pb-muted);margin-top:5px;font-weight:600}
+.ro.exposed{border-left:3px solid var(--st-exposed)} .ro.exposed .num{color:var(--st-exposed)}
+.ro.rework{border-left:3px solid var(--st-rework)} .ro.rework .num{color:var(--st-rework)}
+.ro.watch{border-left:3px solid var(--st-watch)} .ro.watch .num{color:var(--st-watch)}
+.ro.protected{border-left:3px solid var(--st-protected)} .ro.protected .num{color:var(--st-protected)}
+.ro.safe{border-left:3px solid var(--st-safe)} .ro.safe .num{color:var(--st-safe)}
+
+/* ===== Asset grid ===== */
+.filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
+.fbtn{border:1px solid var(--pb-line2);background:var(--pb-panel);border-radius:20px;
+  padding:6px 13px;font-size:12.5px;font-weight:600;color:var(--pb-muted)}
+.fbtn.on{background:var(--pb-black);color:#fff;border-color:var(--pb-black)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:13px}
+.card{background:var(--pb-panel);border:1px solid var(--pb-line);border-radius:6px;padding:0;
+  overflow:hidden;text-align:left;transition:.15s;display:flex;flex-direction:column}
+.card:hover{border-color:var(--pb-ink)}
+.card .stripe{height:5px}
+.card .body{padding:14px 15px 13px;flex:1;display:flex;flex-direction:column}
+.card .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.card h4{font-size:16px}
+.card .lines{font-size:11.5px;color:var(--pb-faint);margin-top:2px}
+.badge{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  padding:4px 8px;border-radius:6px;white-space:nowrap;flex:none}
+.b-exposed{background:#FDE7EB;color:var(--st-exposed)} .b-rework{background:#FCEEDD;color:#B3640F}
+.b-watch{background:#FBF4DA;color:#8A6D0B} .b-protected{background:#DFF3E7;color:#157A41}
+.b-strong{background:#DFF3E7;color:#157A41} .b-safe{background:#EDEDEC;color:var(--st-safe)}
+.card .why{font-size:12.5px;color:var(--pb-ink);margin-top:10px;line-height:1.4;flex:1}
+.card .why b{color:var(--pb-ink)}
+.card .move{font-size:12px;color:var(--pb-muted);margin-top:9px;padding-top:9px;border-top:1px solid var(--pb-line);
+  display:flex;gap:7px;align-items:flex-start}
+.card .move .ic{color:var(--pb-red);font-weight:800;flex:none}
+.card .planrow{display:flex;align-items:center;justify-content:space-between;gap:8px;
+  background:var(--pb-cream,#FAF9F7);border-top:1px solid var(--pb-line);padding:9px 15px;font-size:11.5px}
+.path-set{color:var(--st-protected);font-weight:700}
+.path-none{color:var(--pb-faint);font-weight:600}
+.openhint{font-size:11px;color:var(--pb-red);font-weight:700}
+
+/* upside flag */
+.up{display:inline-flex;gap:5px;align-items:center;font-size:11px;font-weight:700;color:var(--st-strong);
+  margin-top:8px;background:#DFF3E7;padding:3px 8px;border-radius:6px;align-self:flex-start}
+
+/* ===== Drawer (asset workspace) ===== */
+.scrim{position:fixed;inset:0;background:rgba(14,14,15,.46);z-index:60;opacity:0;pointer-events:none;transition:.18s}
+.scrim.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;height:100%;width:min(620px,94vw);background:var(--pb-paper);
+  z-index:61;transform:translateX(100%);transition:transform .22s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;border-left:1px solid var(--pb-line)}
+.drawer.on{transform:none}
+.dhead{background:var(--pb-black);color:#fff;padding:18px 22px;
+  display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
+.dhead .e{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--pb-red);font-weight:700}
+.dhead h3{font-size:22px;margin-top:5px}
+.dhead .ls{font-size:12px;color:#A7A8AC;margin-top:6px}
+.dclose{border:1px solid #38393D;color:#fff;border-radius:8px;width:34px;height:34px;font-size:18px;flex:none}
+.dclose:hover{border-color:var(--pb-red)}
+.dbody{overflow:auto;padding:20px 22px 40px;flex:1}
+.dsec{margin-bottom:22px}
+.dsec>.k{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--pb-muted);font-weight:700;margin-bottom:9px}
+.impact{background:var(--pb-panel);border:1px solid var(--pb-line);border-radius:6px;padding:14px 16px}
+.impact .st{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:14px;margin-bottom:8px}
+.dot{width:10px;height:10px;border-radius:50%;flex:none}
+.impact .reasons{margin:8px 0 0;padding-left:0;list-style:none}
+.impact .reasons li{font-size:12.5px;color:var(--pb-ink);padding:5px 0 5px 18px;position:relative;border-top:1px solid var(--pb-line)}
+.impact .reasons li:before{content:"";position:absolute;left:2px;top:11px;width:6px;height:6px;border-radius:50%;background:var(--pb-red)}
+.recbox{background:#141415;color:#fff;border-radius:6px;padding:14px 16px;border-left:4px solid var(--pb-red)}
+.recbox .k{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--pb-red);font-weight:700}
+.recbox p{margin:7px 0 0;font-size:14px;line-height:1.45}
+.proflist{display:grid;grid-template-columns:1fr 1fr;gap:2px 18px}
+.apcards{display:flex;flex-direction:column;gap:10px}
+.apcard{background:var(--chrome2);border-radius:10px;padding:14px 16px}
+.aph{font-size:13.5px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.apgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px 12px}
+.apgrid .fld.full{grid-column:1/-1}
+.apgrid .fld label{font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--pb-faint);margin-bottom:3px;display:block}
+.ap-select,.ap-input{width:100%;background-color:var(--pb-panel);color:var(--pb-ink);border-radius:6px;padding:6px 8px;font-size:12.5px;box-shadow:inset 0 0 0 1px var(--pb-line2)}
+.ap-select:focus,.ap-input:focus{box-shadow:inset 0 0 0 1.5px var(--pb-red);outline:none}
+.ap-select.yn-yes{background-color:rgba(31,157,87,.14);color:#0E5C30;font-weight:600;box-shadow:inset 0 0 0 1px rgba(21,122,65,.4)}
+.ap-select.yn-no{background-color:rgba(238,26,66,.10);color:#A8102F;font-weight:600;box-shadow:inset 0 0 0 1px rgba(238,26,66,.3)}
+@media(max-width:720px){.apgrid{grid-template-columns:1fr 1fr}}
+.proflist>div{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;padding:6px 0;border-bottom:1px solid var(--pb-line)}
+.proflist .pl{color:var(--pb-muted)}
+.proflist b{color:var(--pb-ink);text-align:right;font-weight:700}
+@media(max-width:560px){.proflist{grid-template-columns:1fr}}
+
+/* line table inside drawer */
+.ltab{width:100%;border-collapse:collapse;font-size:12.5px;background:var(--pb-panel);
+  border:1px solid var(--pb-line);border-radius:10px;overflow:hidden}
+.ltab th{text-align:left;background:#FAF9F7;color:var(--pb-muted);font-size:10.5px;letter-spacing:.06em;
+  text-transform:uppercase;padding:8px 11px;border-bottom:1px solid var(--pb-line)}
+.ltab td{padding:9px 11px;border-bottom:1px solid var(--pb-line);vertical-align:top}
+.ltab tr:last-child td{border-bottom:0}
+.tierpill{font-size:9.5px;font-weight:800;padding:2px 6px;border-radius:5px;letter-spacing:.04em}
+
+/* plan form */
+.plan{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.fld{display:flex;flex-direction:column;gap:5px}
+.fld.full{grid-column:1/-1}
+.fld label{font-size:11px;font-weight:700;color:var(--pb-muted);letter-spacing:.04em}
+.fld select,.fld input,.fld textarea{background-color:var(--pb-panel);border:1px solid var(--pb-line2);
+  border-radius:9px;padding:9px 11px;font-size:13.5px}
+.fld textarea{min-height:72px;resize:vertical;line-height:1.45}
+.fld select:focus,.fld input:focus,.fld textarea:focus{outline:2px solid var(--pb-red);outline-offset:1px;border-color:var(--pb-red)}
+.dactions{display:flex;gap:10px;margin-top:18px;align-items:center}
+.savebtn{background:var(--pb-red);color:#fff;border-radius:9px;padding:11px 20px;font-weight:700;font-size:14px}
+.savebtn:hover{background:var(--pb-red-deep)}
+.clrbtn{color:var(--pb-muted);font-size:13px;font-weight:600}
+.clrbtn:hover{color:var(--st-exposed)}
+.saved{font-size:12.5px;color:var(--st-protected);font-weight:700;opacity:0;transition:.2s}
+.saved.on{opacity:1}
+
+/* ===== Summary ===== */
+.sumgrid{display:grid;grid-template-columns:1.4fr 1fr;gap:16px}
+@media(max-width:860px){.sumgrid{grid-template-columns:1fr}}
+.panel{background:var(--pb-panel);border:1px solid var(--pb-line);border-radius:6px;padding:18px 20px;box-shadow:var(--shadow-sm)}
+.panel>.k{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--pb-muted);font-weight:700;margin-bottom:13px}
+.scchips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:6px}
+.scchip{font-size:11.5px;font-weight:600;padding:5px 11px;border-radius:20px;border:1px solid var(--pb-line2);color:var(--pb-muted)}
+.scchip.on{background:var(--pb-black);color:#fff;border-color:var(--pb-black)}
+.scchip.up{background:#DFF3E7;color:#157A41;border-color:#9ED9B5}
+.statusbar{display:flex;height:30px;border-radius:8px;overflow:hidden;margin:4px 0 14px;border:1px solid var(--pb-line)}
+.statusbar span{display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;min-width:28px}
+.plist{list-style:none;margin:0;padding:0}
+.plist li{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-top:1px solid var(--pb-line)}
+.plist li:first-child{border-top:0}
+.plist .pa{font-weight:700;font-size:14px;min-width:130px}
+.plist .pd{font-size:12.5px;color:var(--pb-muted);flex:1}
+.plist .pmeta{display:block;font-size:11.5px;color:var(--pb-muted);margin-top:4px;font-style:italic}
+.statustag{font-size:10px;font-weight:800;padding:3px 8px;border-radius:5px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+.s-notstarted{background:#EDEDEC;color:#7C7E84}
+.s-inprogress{background:#FCEEDD;color:#B3640F}
+.s-locked{background:#DFF3E7;color:#157A41}
+.empty{padding:26px 16px;text-align:center;color:var(--pb-faint);font-size:13px}
+.empty b{color:var(--pb-ink);display:block;margin-bottom:5px;font-size:14px}
+.outstanding li .pa{color:var(--st-exposed)}
+.jumpbtn{font-size:11px;color:var(--pb-red);font-weight:700;border:1px solid var(--pb-line2);
+  border-radius:7px;padding:5px 10px;white-space:nowrap}
+.jumpbtn:hover{border-color:var(--pb-red)}
+
+/* ===== Actions table ===== */
+.atab{width:100%;border-collapse:collapse;background:var(--pb-panel);border:1px solid var(--pb-line);
+  border-radius:6px;overflow:hidden;font-size:13px}
+.atab th{background:var(--pb-black);color:#fff;text-align:left;font-size:11px;letter-spacing:.06em;
+  text-transform:uppercase;padding:11px 14px;font-weight:600}
+.atab td{padding:11px 14px;border-bottom:1px solid var(--pb-line);vertical-align:top}
+.atab tr:last-child td{border-bottom:0}
+.atab tr:hover td{background:#FAF9F7}
+.prio{font-family:var(--fmono);font-weight:700}
+.p1{color:var(--st-exposed)} .p2{color:var(--st-rework)} .p3{color:var(--pb-muted)}
+
+/* Notes */
+.note-prov{width:100%;border-collapse:collapse;font-size:12.5px;background:var(--pb-panel);
+  border:1px solid var(--pb-line);border-radius:6px;overflow:hidden}
+.note-prov th{background:#FAF9F7;text-align:left;padding:9px 13px;font-size:10.5px;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--pb-muted);border-bottom:1px solid var(--pb-line)}
+.note-prov td{padding:9px 13px;border-bottom:1px solid var(--pb-line);vertical-align:top}
+.note-prov code{font-family:var(--fmono);font-weight:700;color:var(--pb-red);font-size:12px}
+.callout{background:#FAF9F7;border:1px solid var(--pb-line);border-left:4px solid var(--pb-red);
+  border-radius:10px;padding:13px 16px;font-size:13px;color:var(--pb-ink);margin-bottom:14px}
+.disc{margin-top:30px;font-size:11.5px;color:var(--pb-faint);text-align:center;line-height:1.5}
+.hide{display:none!important}
+
+/* ===== Paths view ===== */
+.atabs{display:flex;flex-direction:column;gap:14px;margin-bottom:16px}
+.atabgroup-h{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--pb-faint);font-weight:700;margin-bottom:6px}
+.atabgroup-row{display:flex;gap:7px;flex-wrap:wrap}
+.atab-btn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--pb-line2);background:var(--pb-panel);
+  border-radius:20px;padding:6px 13px;font-size:12.5px;font-weight:600;color:var(--pb-muted)}
+.atab-btn:hover{border-color:var(--pb-line2);color:var(--pb-ink)}
+.atab-btn.on{background:var(--pb-black);color:#fff;border-color:var(--pb-black)}
+.atab-btn .adot{width:8px;height:8px;border-radius:50%;flex:none}
+.pathwrap{display:grid;grid-template-columns:1.25fr 1fr;gap:16px}
+@media(max-width:900px){.pathwrap{grid-template-columns:1fr}}
+.pathmain{display:flex;flex-direction:column;gap:14px}
+.dest{background:var(--pb-panel);border:1px solid var(--pb-line);border-radius:6px;padding:16px 18px;box-shadow:var(--shadow-sm)}
+.dest .k{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--pb-muted);font-weight:700;margin-bottom:10px}
+.dest .destrow{display:flex;align-items:center;gap:10px}
+.dest .destrow strong{font-size:20px;letter-spacing:-.01em}
+.destbadge{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 8px;border-radius:6px;margin-left:auto}
+.dest .destmove{margin:11px 0 0;font-size:13px;color:var(--pb-muted);line-height:1.45;padding-top:11px;border-top:1px solid var(--pb-line)}
+.diagram{background:var(--pb-panel);border:1px solid var(--pb-line);border-radius:6px;padding:14px 16px;box-shadow:var(--shadow-sm)}
+.pathside .psec{background:var(--pb-panel);border:1px solid var(--pb-line);border-radius:6px;padding:16px 18px;box-shadow:var(--shadow-sm)}
+.pathside .k{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--pb-muted);font-weight:700;margin-bottom:12px}
+.ruling{display:flex;gap:11px;padding:11px 0;border-top:1px solid var(--pb-line)}
+.ruling:first-of-type{border-top:0}
+.ruling.inactive{opacity:.5}
+.ruling .rdot{width:9px;height:9px;border-radius:50%;flex:none;margin-top:5px}
+.ruling .rtext{font-size:12.5px;line-height:1.4}
+.ruling .rif{font-weight:700;color:var(--pb-ink)}
+.ruling .rarrow{color:var(--pb-red);font-weight:800;margin:0 6px}
+.ruling .rthen{color:var(--pb-muted)}
+.lanes{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:16px}
+.lane{background:var(--pb-panel);border:1px solid var(--pb-line);border-left:4px solid var(--pb-line2);
+  border-radius:6px;padding:13px 15px;opacity:.62;transition:.14s}
+.lane.on{opacity:1;box-shadow:var(--shadow-sm)}
+.lane .lh{font-weight:700;font-size:13.5px;display:flex;flex-direction:column;gap:3px;margin-bottom:6px}
+.lane .lstatus{font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.lane p{margin:0;font-size:12px;color:var(--pb-muted);line-height:1.4}
+
+/* ===== Step 2 worklist + decision toggles ===== */
+.decbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  background:var(--pb-panel);border:1px solid var(--pb-line);border-radius:6px;padding:12px 16px;margin-bottom:16px;box-shadow:var(--shadow-sm)}
+.vtoggle{display:flex;gap:4px;background:var(--pb-soft);border:1px solid var(--pb-line);border-radius:10px;padding:3px}
+.vt{padding:7px 14px;border-radius:8px;font-size:13px;font-weight:700;color:var(--pb-muted);display:inline-flex;align-items:center;gap:7px}
+.vt:hover{color:var(--pb-ink)}
+.vt.on{background:var(--pb-black);color:#fff}
+.vt span{font-family:var(--fmono);font-size:11px;font-weight:700;background:rgba(0,0,0,.08);padding:1px 7px;border-radius:10px}
+.vt.on span{background:rgba(255,255,255,.18)}
+.prog{display:flex;align-items:center;gap:11px;flex:1;min-width:200px;justify-content:flex-end}
+.progbar{flex:1;max-width:260px;height:8px;background:var(--pb-line);border-radius:6px;overflow:hidden}
+.progbar span{display:block;height:100%;background:var(--pb-red);border-radius:6px;transition:width .25s}
+.progtxt{font-size:12.5px;font-weight:700;color:var(--pb-ink);white-space:nowrap}
+
+.worklist{display:flex;flex-direction:column;gap:10px}
+.wl{background:var(--pb-panel);border:1px solid var(--pb-line);border-radius:6px;padding:14px 16px;transition:.15s}
+.wl:hover{border-color:var(--pb-ink)}
+.wl.done{background:#FBFCFB;border-color:#DDEbE2}
+.wl-head{display:flex;align-items:center;gap:11px}
+.wl-dot{width:11px;height:11px;border-radius:50%;flex:none}
+.wl-id{display:flex;align-items:center;gap:9px;flex-wrap:wrap;flex:1}
+.wl-name{font-size:16px;font-weight:700;letter-spacing:-.01em}
+.wl-up{font-size:11px;font-weight:700;color:var(--st-strong)}
+.wl-lines{font-size:11.5px;color:var(--pb-faint)}
+.wl-more{font-size:12px;font-weight:700;color:var(--pb-red);border:1px solid var(--pb-line2);border-radius:7px;padding:5px 11px;white-space:nowrap}
+.wl-more:hover{border-color:var(--pb-red)}
+.wl-why{font-size:13px;color:var(--pb-muted);margin:8px 0 11px;line-height:1.4}
+.wl-decide{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.wl-declab{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--pb-faint);font-weight:700}
+.wl-verbs{display:flex;gap:6px;flex-wrap:wrap}
+.verb{position:relative;border:1.5px solid var(--pb-line2);background:var(--pb-panel);border-radius:9px;
+  padding:8px 13px;font-size:13px;font-weight:700;color:var(--pb-muted);transition:.13s}
+.verb:hover{border-color:var(--pb-ink);color:var(--pb-ink)}
+.verb.on{background:var(--pb-red);border-color:var(--pb-red);color:#fff}
+.verb.rec{border-color:var(--pb-red);color:var(--pb-red)}
+.verb.rec.on{color:#fff}
+.verb i{font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+  position:absolute;top:-7px;right:-5px;background:var(--pb-red);color:#fff;padding:1px 5px;border-radius:8px}
+.verb.on i{background:#fff;color:var(--pb-red)}
+.wl-status{font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--st-protected);
+  background:#DFF3E7;padding:4px 9px;border-radius:6px;margin-left:auto}
+@media(max-width:600px){.wl-status{margin-left:0}}
+
+/* crisp, intentional focus — keyboard only */
+.segb:focus-visible,.verb:focus-visible,.vt:focus-visible,.fbtn:focus-visible,.chipbtn:focus-visible,.atab-btn:focus-visible,.step:focus-visible,.wl-more:focus-visible,.jumpbtn:focus-visible,.savebtn:focus-visible,.ghostbtn:focus-visible,.leg:focus-within{outline:2px solid var(--pb-red);outline-offset:2px}
+.segb:focus:not(:focus-visible),.verb:focus:not(:focus-visible){outline:none}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+
+/* ============================================================
+   POINTSBET LIGHT SHELL — charcoal / white / slate + red accent
+   White page, slate-gray secondary text and hairlines, neutral
+   charcoal used deliberately for the top bar, the hero scenario
+   panel and the drawer header. Red is the one accent colour, used
+   for selection, signal and CTAs — chosen for contrast, not decor.
+   ============================================================ */
+:root{
+  --pb-bg:#F8F9FA; --chrome:#FFFFFF; --chrome2:#F2F3F4; --chrome3:#E5E6E8; --dline:#E5E6E8;
+  --dtext:#16171A; --ddim:#6B6C70; --ddim2:#96979B; --pb-soft:#F2F3F4;
+  --pb-paper:#F8F9FA; --pb-panel:#FFFFFF; --pb-line:#E5E6E8; --pb-line2:#D2D3D6;
+  --pb-ink:#16171A; --pb-muted:#6B6C70; --pb-faint:#96979B; --pb-cream:#F2F3F4;
+  --shadow:none; --shadow-sm:none;
+}
+html,body{background:
+  radial-gradient(1100px 520px at 12% -8%, rgba(217,28,66,.04), transparent 60%),
+  var(--pb-bg);color:var(--dtext)}
+
+/* page-level */
+.vh h2{color:var(--pb-ink)}
+.vh p{color:var(--ddim)}
+.disc{color:var(--ddim2)}
+
+/* command bar: the one always-navy chrome element */
+.bar{background:#0E0E0F;border-bottom:1px solid rgba(255,255,255,.08)}
+
+/* workflow nav: light pills on the white page, navy on selected */
+.step{background:var(--chrome);border-color:var(--dline)}
+.step:hover{border-color:var(--pb-line2)}
+.step.on{background:var(--chrome2);border-color:var(--pb-red)}
+.step .lab{color:var(--pb-ink)}
+.step .hint{color:var(--ddim)}
+.step .n{border-color:var(--pb-line2);color:var(--ddim)}
+.step.on .n{background:var(--pb-red);color:#fff;border-color:var(--pb-red)}
+
+/* hero slate: the one other deliberately-dark navy surface */
+.slate{background:linear-gradient(118deg,#0E0E0F 0%,#161617 55%,#1D1D1F 100%)}
+.leg{background:rgba(10,10,11,.5);border-color:rgba(255,255,255,.10)}
+.leg:hover{border-color:rgba(255,255,255,.22)}
+.seg{background:rgba(0,0,0,.45);border-color:rgba(255,255,255,.10)}
+
+/* readout tiles: light */
+.ro{background:var(--chrome);border-color:var(--dline)}
+.ro .lab{color:var(--ddim)}
+
+/* Paths asset pills: light, navy when selected */
+.atab-btn{background:var(--chrome);border-color:var(--dline);color:var(--ddim)}
+.atab-btn:hover{color:var(--pb-ink);border-color:var(--pb-line2)}
+.atab-btn.on{background:var(--pb-red);color:#fff;border-color:var(--pb-red)}
+
+/* working surfaces: white, separated by hairline + whitespace, no shadow */
+.panel,.wl,.card,.impact,.ltab,.dest,.diagram,.psec,.lane,.note-prov,.callout,.decbar{
+  background:var(--chrome);border-color:var(--dline)}
+.dbody,.drawer{background:var(--pb-paper)}
+.dhead{background:#0E0E0F}
+
+/* card / table hover states */
+.card:hover{border-color:var(--pb-line2)}
+.wl:hover{border-color:var(--pb-line2)}
+.atab tr:hover td{background:var(--chrome2)}
+.wl.done{background:#FBFCFB;border-color:#DDEBE2}
+
+.card .planrow{background:var(--pb-cream)}
+.note-prov th{background:var(--chrome2)}
+.callout{background:var(--chrome2)}
+.ltab th{background:var(--chrome2)}
+
+/* fbtn / chip / scchip / verb neutral states, light */
+.fbtn{background:var(--chrome2);color:var(--ddim)}
+.fbtn.on{background:var(--pb-black);border-color:var(--pb-black)}
+.scchip{background:var(--chrome2)}
+.scchip.on{background:var(--pb-black)}
+.vtoggle{background:var(--pb-soft)}
+.vt.on{background:var(--pb-black)}
+.verb{background:var(--chrome2)}
+.lane{border-left-color:var(--dline)}
+
+/* ===== Borders pared back: elevation + background contrast instead of outlines ===== */
+.step,.leg,.ro,.card,.panel,.wl,.impact,.dest,.diagram,.psec,.lane,.note-prov,.callout,.decbar,
+.atab,.ltab,.atab-btn,.fbtn,.scchip,.chipbtn,.jumpbtn,.wl-more,.verb,.seg,
+.fld select,.fld input,.fld textarea{border:none}
+.bar{border-bottom:1px solid rgba(255,255,255,.08)}
+.slate .foot{border-top:1px solid rgba(255,255,255,.10)}
+
+/* re-apply the borders that are actually signal, not decoration —
+   deck stat-card grammar: a thin vertical rule on the left of each figure */
+.ro{padding-left:14px}
+.ro.exposed{border-left:3px solid var(--st-exposed)}
+.ro.rework{border-left:3px solid var(--st-rework)}
+.ro.watch{border-left:3px solid var(--st-watch)}
+.ro.protected{border-left:3px solid var(--st-protected)}
+.ro.safe{border-left:3px solid var(--st-safe)}
+.readout .ro:not(.exposed):not(.rework):not(.watch):not(.protected):not(.safe){border-left:3px solid var(--pb-ink)}
+.leg.on{border:none;background:rgba(255,255,255,.10)}
+.step.on{background:var(--chrome2);border:1px solid var(--pb-red)}
+.step.on:before{display:none}
+.verb.on{border:1px solid var(--pb-red)}
+.verb.rec{border:1px solid var(--pb-red)}
+.atab-btn.on{border:1px solid var(--pb-red)}
+.fbtn.on{border:1px solid var(--pb-black)}
+.wl.done{border-left:3px solid rgba(31,157,87,.45)}
+.worklist .wl{border-left:3px solid transparent}
+
+/* buttons/pills that sit on the dark navy chrome (bar / hero footer / drawer header) */
+.chipbtn,.ghostbtn,.dclose{background:rgba(255,255,255,.08);color:#E7E7E9}
+.chipbtn:hover,.ghostbtn:hover,.dclose:hover{background:rgba(255,255,255,.16)}
+
+/* buttons/pills that sit on the light body: subtle dark-on-white fill instead of an outline */
+.jumpbtn,.wl-more{background:rgba(15,23,42,.045);color:var(--pb-red)}
+.jumpbtn:hover,.wl-more:hover{background:rgba(217,28,66,.10)}
+
+/* form fields: white fill, slate inset line, navy on focus (handled by the outline pass below) */
+.fld select,.fld input,.fld textarea{background-color:var(--pb-panel);color:var(--pb-ink);
+  box-shadow:inset 0 0 0 1px var(--pb-line2)}
+
+/* internal row dividers stay, just a faint slate line rather than a full border */
+.ltab th,.ltab td,.atab td,.note-prov td,.plist li,.ruling,.impact .reasons li,
+.card .move,.card .planrow,.dest .destmove{border-color:var(--dline)!important}
+
+/* ============================================================
+   FULL UNCURVE + BORDER-MINIMAL PASS
+   Every corner goes square. Every shadow goes flat. Borders exist
+   only where they carry real signal (status colour, table rule,
+   left-accent flag, focus ring, drawer edge) — everything else
+   is separated by background contrast and space instead.
+   ============================================================ */
+*,*::before,*::after{border-radius:0!important;box-shadow:none!important}
+
+/* toggle controls: square track + square knob instead of pill/circle */
+.swtrack{width:34px;height:18px}
+.swknob{width:14px;height:14px;top:2px;left:2px}
+.swtrack.on .swknob{left:18px}
+.leg .sw{width:36px;height:20px}
+.leg .sw:after{width:16px;height:16px;top:2px;left:2px}
+.leg.on .sw:after{left:18px}
+
+/* status dots become small square swatches, not circles */
+.dot,.wl-dot,.ruling .rdot,.atab-btn .adot{border-radius:0!important}
+
+/* step index badge: square chip instead of circle */
+.step .n{border-radius:0!important}
+
+/* callout / rec box: the left-accent stripe is the signal border — restore it explicitly */
+.callout{border-left:3px solid var(--pb-red)}
+.recbox{border-left:3px solid var(--pb-red)}
+
+/* drawer needs one real edge since it floats over the page with no shadow */
+.drawer{border-left:1px solid var(--pb-line)}
+
+/* form inputs: flat fill + hairline only, no radius, no glow */
+.fld select,.fld input,.fld textarea,.ap-select,.ap-input{border-radius:0!important}
+.fld select:focus,.fld input:focus,.fld textarea:focus{outline:1.5px solid var(--pb-red);outline-offset:0;box-shadow:none!important}
+.ap-select:focus,.ap-input:focus{outline:1.5px solid var(--pb-red);outline-offset:0;box-shadow:none!important}
+
+/* keyboard focus rings stay square and crisp, no offset glow */
+.segb:focus-visible,.verb:focus-visible,.vt:focus-visible,.fbtn:focus-visible,.chipbtn:focus-visible,
+.atab-btn:focus-visible,.step:focus-visible,.wl-more:focus-visible,.jumpbtn:focus-visible,
+.savebtn:focus-visible,.ghostbtn:focus-visible,.leg:focus-within{outline:2px solid var(--pb-red);outline-offset:1px}
+
+/* ============================================================
+   MOTION — "make room" push + soft crossfade
+   Inspired by the reference clip's core technique (not its visual
+   style): the page content doesn't just get covered by a scrim, it
+   visibly recedes — scales down slightly and dims — to make room for
+   the drawer sliding in from the side. Views crossfade+rise on switch
+   rather than popping in. No glow, no bounce, no bevels.
+   ============================================================ */
+.bar,.flow,.wrap{transition:transform .32s cubic-bezier(.22,.61,.36,1),opacity .32s cubic-bezier(.22,.61,.36,1);
+  transform-origin:50% 0%;will-change:transform,opacity}
+.wrap.receding{transform:scale(.985) translateX(-6px);opacity:.55}
+.bar.receding,.flow.receding{transform:scale(.99);opacity:.7}
+
+.drawer{transition:transform .38s cubic-bezier(.22,.61,.36,1)}
+.scrim{transition:opacity .32s cubic-bezier(.22,.61,.36,1)}
+
+@keyframes viewRise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.view{animation:viewRise .38s cubic-bezier(.22,.61,.36,1) both}
+
+@keyframes stepRise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+#flow .step{animation:stepRise .3s cubic-bezier(.22,.61,.36,1) both}
+#flow .step:nth-child(1){animation-delay:.02s} #flow .step:nth-child(2){animation-delay:.06s}
+#flow .step:nth-child(3){animation-delay:.10s} #flow .step:nth-child(4){animation-delay:.14s}
+#flow .step:nth-child(5){animation-delay:.18s} #flow .step:nth-child(6){animation-delay:.22s}
+#flow .step:nth-child(7){animation-delay:.26s}
+
+@media (prefers-reduced-motion: reduce){
+  .bar,.flow,.wrap,.drawer,.scrim,.view,#flow .step{animation:none!important;transition:none!important}
+}
+
+/* ============================================================
+   CRAFT PASS — type roles + data voice
+   Three faces, three jobs: Poppins speaks (display), Plex Sans
+   reads (body/UI), Plex Mono counts (every number, code and
+   micro-label). The mono voice is the signature — this is a
+   pricing business, so figures are set like a market board:
+   tabular, monospaced, exact. One chrome accent: the red
+   masthead rule. Nothing else decorated.
+   ============================================================ */
+body::before{content:"";position:fixed;top:0;left:0;right:0;height:2px;background:var(--pb-red);z-index:99}
+
+/* display: tighter, heavier, closer */
+.vh h2{letter-spacing:-.02em;font-family:var(--fdisplay)}
+.slate h3{font-family:var(--fdisplay);letter-spacing:-.01em}
+
+/* the data voice: everything that counts, codes or classifies is mono */
+.eyebrow{font-family:var(--fmono);font-weight:500;font-size:10.5px;letter-spacing:.24em}
+.ro .num{font-family:var(--fmono);font-weight:600;font-size:34px;letter-spacing:-.04em}
+.ro .lab{font-family:var(--fmono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:500}
+.legcount{font-family:var(--fmono)}
+.legcount b{font-family:var(--fmono);font-weight:600;letter-spacing:-.03em}
+.dsec>.k{font-family:var(--fmono);font-weight:500;font-size:10px;letter-spacing:.2em}
+.ltab th,.atab th,.note-prov th{font-family:var(--fmono);font-weight:500;font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.step .n{font-family:var(--fmono);font-weight:500}
+.progtxt{font-family:var(--fmono);font-size:11px;letter-spacing:.02em}
+.scen-k,.prov-id,.plist .pa{font-family:var(--fmono)}
+.badge,.tierpill,.decbadge,.destbadge{font-family:var(--fmono);font-weight:500;letter-spacing:.08em}
+.wl-lines,.wl-dot+span{font-variant-numeric:tabular-nums}
+.bar .sub{font-family:var(--fmono);font-weight:500;letter-spacing:.3em;font-size:10.5px;color:var(--pb-red)}
+.bar .clock,.bar .syncstat{font-family:var(--fmono);font-size:10.5px;letter-spacing:.04em}
+
+/* provision codes read as citations, not links */
+.note-prov td:first-child{font-family:var(--fmono);font-weight:500;letter-spacing:0}
+
+/* quiet hovers: surface shift only, never scale or glow */
+.card,.wl,.step,.atab-btn,.fbtn,.verb,.chipbtn,.jumpbtn,.wl-more,.savebtn,.ghostbtn{transition:background-color .14s ease,border-color .14s ease,color .14s ease}
+
+</style></head><body>
+<div class="bar"><div class="brand"><span class="mark">Points<span>Bet</span></span>
+<span class="sub">Reform Scenario Planner</span></div><div class="right">
+<label class="scopeToggle" title="Show only the seven Content/Owned Brand assets from the original partnerships matrix, everywhere in the tool">
+  <span>Content/Owned Brands Only</span>
+  <span class="swtrack on" id="coreToggle"><span class="swknob"></span></span>
+</label>
+<span class="syncstat" id="syncStatus"></span>
+<button class="ghostbtn" id="loadLatestBtn" title="Pull in changes saved by someone else">⟳ Load latest</button>
+<span class="clock" id="clock"></span></div></div>
+<div id="flow" class="flow"></div>
+<div class="wrap"><div id="main"></div></div>
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Asset workspace"><div class="dhead" id="drawerHead"></div><div class="dbody" id="drawerBody"></div></aside>
+<script>
+const PORTFOLIO=[{"asset":"Ambassadors","lines":[{"name":"Shaq","cat":"AMBASSADORS","tier":"HIGH","annual":1692000,"tags":["notable"],"prov":"62T notable-persons sponsorship ban","change":"Cannot contract a notable person to promote wagering content. No","action":"Check contract end dates vs 1 Jan 2027; renegotiate scope or wind down","isESPNexempt":false},{"name":"Jules Vallance","cat":"AMBASSADORS","tier":"HIGH","annual":282000,"tags":["notable"],"prov":"62T notable-persons sponsorship ban","change":"Cannot contract a notable person to promote wagering content. No","action":"Check contract end dates vs 1 Jan 2027; renegotiate scope or wind down","isESPNexempt":false},{"name":"Daisy Thomas","cat":"AMBASSADORS","tier":"HIGH","annual":275400,"tags":["notable"],"prov":"62T notable-persons sponsorship ban","change":"Cannot contract a notable person to promote wagering content. No","action":"Check contract end dates vs 1 Jan 2027; renegotiate scope or wind down","isESPNexempt":false},{"name":"Nic Ashman","cat":"AMBASSADORS","tier":"HIGH","annual":182000,"tags":["notable"],"prov":"62T notable-persons sponsorship ban","change":"Cannot contract a notable person to promote wagering content. No","action":"Check contract end dates vs 1 Jan 2027; renegotiate scope or wind down","isESPNexempt":false},{"name":"Arryn Siposs","cat":"AMBASSADORS","tier":"HIGH","annual":77200,"tags":["notable"],"prov":"62T notable-persons sponsorship ban","change":"Cannot contract a notable person to promote wagering content. No","action":"Check contract end dates vs 1 Jan 2027; renegotiate scope or wind down","isESPNexempt":false},{"name":"Ash Wicks","cat":"AMBASSADORS","tier":"HIGH","annual":77500,"tags":["notable"],"prov":"62T notable-persons sponsorship ban","change":"Cannot contract a notable person to promote wagering content. No","action":"Check contract end dates vs 1 Jan 2027; renegotiate scope or wind down","isESPNexempt":false},{"name":"Bernie Vince","cat":"AMBASSADORS","tier":"HIGH","annual":90200,"tags":["notable"],"prov":"62T notable-persons sponsorship ban","change":"Cannot contract a notable person to promote wagering content. No","action":"Check contract end dates vs 1 Jan 2027; renegotiate scope or wind down","isESPNexempt":false},{"name":"Aaron Woods","cat":"AMBASSADORS","tier":"HIGH","annual":112000,"tags":["notable"],"prov":"62T notable-persons sponsorship ban","change":"Cannot contract a notable person to promote wagering content. No","action":"Check contract end dates vs 1 Jan 2027; renegotiate scope or wind down","isESPNexempt":false},{"name":"Tom Mitchell","cat":"AMBASSADORS","tier":"HIGH","annual":80500,"tags":["notable"],"prov":"62T notable-persons sponsorship ban","change":"Cannot contract a notable person to promote wagering content. No","action":"Check contract end dates vs 1 Jan 2027; renegotiate scope or wind down","isESPNexempt":false},{"name":"Darcy Ballard","cat":"AMBASSADORS","tier":"HIGH","annual":64680,"tags":["notable"],"prov":"62T notable-persons ban","change":"Functions as an ambassador — notable person under 62T. Cannot contract to promote wagering content.","action":"Check contract scope and end date; renegotiate or wind down before 1 Jan 2027.","isESPNexempt":false}]},{"asset":"Social Creators","lines":[{"name":"Sea Eagles","cat":"SOCIAL MEDIA CREATORS","tier":"HIGH","annual":200000,"tags":["notable"],"prov":"62T notable-persons ban — talent cannot promote wagering content","change":"All named talent are notable persons. Cannot contract to promote wagering advertising content. No","action":"Check contract end dates vs 1 Jan 2027; renegotiate or wind down.","isESPNexempt":false},{"name":"Kick It Forward","cat":"SOCIAL MEDIA CREATORS","tier":"HIGH","annual":312492,"tags":["notable"],"prov":"62T notable-persons ban — talent cannot promote wagering content","change":"All named talent are notable persons. Cannot contract to promote wagering advertising content. No","action":"Check contract end dates vs 1 Jan 2027; renegotiate or wind down.","isESPNexempt":false},{"name":"28 Year Old Male","cat":"SOCIAL MEDIA CREATORS","tier":"HIGH","annual":210000,"tags":["notable"],"prov":"62T notable-persons ban — talent cannot promote wagering content","change":"All named talent are notable persons. Cannot contract to promote wagering advertising content. No","action":"Check contract end dates vs 1 Jan 2027; renegotiate or wind down.","isESPNexempt":false},{"name":"Chocs Chat","cat":"SOCIAL MEDIA CREATORS","tier":"HIGH","annual":129996,"tags":["notable"],"prov":"62T notable-persons ban — talent cannot promote wagering content","change":"All named talent are notable persons. Cannot contract to promote wagering advertising content. No","action":"Check contract end dates vs 1 Jan 2027; renegotiate or wind down.","isESPNexempt":false},{"name":"Sharks","cat":"SOCIAL MEDIA CREATORS","tier":"HIGH","annual":150000,"tags":["notable"],"prov":"62T notable-persons ban — talent cannot promote wagering content","change":"All named talent are notable persons. Cannot contract to promote wagering advertising content. No","action":"Check contract end dates vs 1 Jan 2027; renegotiate or wind down.","isESPNexempt":false},{"name":"Ball Magnets (NBA)","cat":"SOCIAL MEDIA CREATORS","tier":"HIGH","annual":60000,"tags":["notable"],"prov":"62T notable-persons ban — talent cannot promote wagering content","change":"All named talent are notable persons. Cannot contract to promote wagering advertising content. No","action":"Check contract end dates vs 1 Jan 2027; renegotiate or wind down.","isESPNexempt":false},{"name":"Liam Stapleton","cat":"SOCIAL MEDIA CREATORS","tier":"HIGH","annual":50000,"tags":["notable"],"prov":"62T notable-persons ban — talent cannot promote wagering content","change":"All named talent are notable persons. Cannot contract to promote wagering advertising content. No","action":"Check contract end dates vs 1 Jan 2027; renegotiate or wind down.","isESPNexempt":false},{"name":"LA Rams","cat":"SOCIAL MEDIA CREATORS","tier":"HIGH","annual":300000,"tags":["notable"],"prov":"62T notable-persons ban — talent cannot promote wagering content","change":"All named talent are notable persons. Cannot contract to promote wagering advertising content. No","action":"Check contract end dates vs 1 Jan 2027; renegotiate or wind down.","isESPNexempt":false}]},{"asset":"Ausmerican Aces","lines":[{"name":"Ausmerican Aces","cat":"AMBASSADORS","tier":"HIGH","annual":560004,"tags":["notable"],"prov":"62T notable-persons ban — all talent are notable persons","change":"All Ausmerican Aces talent are notable persons under 62T. Cannot contract them to promote wagering content. No","action":"Check contract end dates vs 1 Jan 2027; renegotiate scope or wind down","isESPNexempt":false}]},{"asset":"Fanatics TV","lines":[{"name":"Fanatics TV Kenty Blitz","cat":"SOCIAL MEDIA CREATORS","tier":"HIGH","annual":450000,"tags":["notable"],"prov":"62T notable-persons ban — talent cannot promote wagering content","change":"All named talent are notable persons. Cannot contract to promote wagering advertising content. No","action":"Check contract end dates vs 1 Jan 2027; renegotiate or wind down.","isESPNexempt":false},{"name":"Fanatics TV World Cup","cat":"SOCIAL MEDIA CREATORS","tier":"HIGH","annual":90000,"tags":["notable"],"prov":"62T notable-persons ban — talent cannot promote wagering content","change":"All named talent are notable persons. Cannot contract to promote wagering advertising content. No","action":"Check contract end dates vs 1 Jan 2027; renegotiate or wind down.","isESPNexempt":false}]},{"asset":"100k Sports","lines":[{"name":"100k Sports","cat":"SOCIAL MEDIA CREATORS","tier":"HIGH","annual":167496,"tags":["notable"],"prov":"62T notable-persons ban — talent cannot promote wagering content","change":"All named talent are notable persons. Cannot contract to promote wagering advertising content. No","action":"Check contract end dates vs 1 Jan 2027; renegotiate or wind down.","isESPNexempt":false},{"name":"Luke Morgan (100k Sports)","cat":"AMBASSADORS","tier":"HIGH","annual":180000,"tags":["notable"],"prov":"62T notable-persons ban","change":"Functions as an ambassador / notable person (part of 100k Sports). Cannot contract to promote wagering content.","action":"Check contract scope and end date; renegotiate or wind down before 1 Jan 2027.","isESPNexempt":false}]},{"asset":"Fox Footy Linear","lines":[{"name":"Fox Footy Integration","cat":"TV","tier":"MED-HIGH","annual":1279450,"tags":["broadcast","commentator","notable"],"prov":"62T notable-persons ban; 62V reps as commentators; 62K/62L live-sport ban","change":"Talent-led integrations caught by 62T (notable persons) and 62V (reps as commentators at venue). Unlike TVCs, integrations cannot simply be re-scheduled.","action":"Audit all integration formats for talent involvement; restructure or wind down talent-led elements before 1 Jan 2027.","isESPNexempt":false},{"name":"Footy Furnace — Jam TV","cat":"TV","tier":"MEDIUM","annual":350000,"tags":["broadcast","odds"],"prov":"62K/62L live-sport ban; 62M 3-per-hr cap; 62U odds ban","change":"Daytime live-sport and odds restrictions apply, but TVC placements are largely deliverable — schedule compliant slots (overnight or non-live-sport windows). Some ambiguity around integration elements.","action":"Re-plan spots to overnight/non-live-sport windows; strip odds from creative. Review any integration components separately.","isESPNexempt":false},{"name":"Fox Footy TVCs","cat":"TV","tier":"LOW","annual":1397700,"tags":["broadcast","odds"],"prov":"62K/62M/62U — daytime live-sport/odds restrictions apply; 3-per-hour cap the main squeeze","change":"TVC placements are deliverable — schedule compliant (overnight or non-live-sport windows). Content can be re-cut to strip odds.","action":"Confirm scheduling is outside 6am–8:30pm live-sport windows; strip odds from creative; watch the 3-per-hour cap on remaining slots.","isESPNexempt":false}]},{"asset":"Fox Footy.com","lines":[{"name":"Fox Footy Streaming","cat":"DIGITAL PARTNERS","tier":"MEDIUM","annual":1400000,"tags":["online_gating"],"prov":"62P/62Q online-content gating — not currently gated","change":"No age gating in place today. Wagering ads need 'reasonable steps': age assurance, registered-account access, opt-out.","action":"Confirm platform gating; exclude restricted users; 62R bars gov-ID/Digital-ID checks.","isESPNexempt":false},{"name":"Fox Footy.com","cat":"DIGITAL PARTNERS","tier":"MEDIUM","annual":500000,"tags":["online_gating"],"prov":"62P/62Q online-content gating — not currently gated","change":"No age gating in place today. Wagering ads need 'reasonable steps': age assurance, registered-account access, opt-out.","action":"Confirm platform gating; exclude restricted users; 62R bars gov-ID/Digital-ID checks.","isESPNexempt":false},{"name":"Fox Footy Social","cat":"DIGITAL PARTNERS","tier":"MEDIUM","annual":460000,"tags":["online_gating"],"prov":"62P/62Q online-content gating — not currently gated","change":"No age gating in place today. Wagering ads need 'reasonable steps': age assurance, registered-account access, opt-out.","action":"Confirm platform gating; exclude restricted users; 62R bars gov-ID/Digital-ID checks.","isESPNexempt":false}]},{"asset":"Paid Social","lines":[{"name":"Meta","cat":"SOCIAL","tier":"MED-HIGH","annual":2843076,"tags":["online_gating"],"prov":"62P/62Q online-content gating (high volume)","change":"Platform must gate restricted users; ads only to verified 18+ registered accounts w/ opt-out.","action":"Confirm platform gating solutions early; large $ at risk if platforms can't gate.","isESPNexempt":false},{"name":"TikTok","cat":"SOCIAL","tier":"MED-HIGH","annual":1050935,"tags":["online_gating"],"prov":"62P/62Q online-content gating (high volume)","change":"Platform must gate restricted users; ads only to verified 18+ registered accounts w/ opt-out.","action":"Confirm platform gating solutions early; large $ at risk if platforms can't gate.","isESPNexempt":false},{"name":"Snap","cat":"SOCIAL","tier":"MED-HIGH","annual":326164,"tags":["online_gating"],"prov":"62P/62Q online-content gating (high volume)","change":"Platform must gate restricted users; ads only to verified 18+ registered accounts w/ opt-out.","action":"Confirm platform gating solutions early; large $ at risk if platforms can't gate.","isESPNexempt":false},{"name":"Reddit","cat":"SOCIAL","tier":"MED-HIGH","annual":294826,"tags":["online_gating"],"prov":"62P/62Q online-content gating (high volume)","change":"Platform must gate restricted users; ads only to verified 18+ registered accounts w/ opt-out.","action":"Confirm platform gating solutions early; large $ at risk if platforms can't gate.","isESPNexempt":false}]},{"asset":"Agencies","lines":[{"name":"Rolln Media","cat":"AGENCIES","tier":"MED-HIGH","annual":360000,"tags":["content_quality","notable","production"],"prov":"62T / 62W — production agency for wagering creative content","change":"Rolln produce PointsBet content featuring talent and promotional material. If underlying creative is prohibited, the production spend is at risk regardless of agency status.","action":"Review all active production briefs; identify and quarantine non-compliant creative pipeline before 1 Jan 2027.","isESPNexempt":false},{"name":"Kinesso","cat":"AGENCIES","tier":"LOW","annual":707004,"tags":["service"],"prov":"Service provider — no ad placement","change":"Limited direct restriction.","action":"Confirm no in-kind wagering placements bundled in.","isESPNexempt":false},{"name":"Shannon - Hybrid Media","cat":"AGENCIES","tier":"LOW","annual":195000,"tags":["service"],"prov":"Service provider — no ad placement","change":"Limited direct restriction.","action":"Confirm no in-kind wagering placements bundled in.","isESPNexempt":false},{"name":"Orchestra","cat":"AGENCIES","tier":"LOW","annual":144000,"tags":["service"],"prov":"Service provider — no ad placement","change":"Limited direct restriction.","action":"Confirm no in-kind wagering placements bundled in.","isESPNexempt":false},{"name":"Enque","cat":"AGENCIES","tier":"LOW","annual":50000,"tags":["service"],"prov":"Service provider — no ad placement","change":"Limited direct restriction.","action":"Confirm no in-kind wagering placements bundled in.","isESPNexempt":false},{"name":"Kantar","cat":"AGENCIES","tier":"N/A","annual":125004,"tags":["internal","sem"],"prov":"Brand research — not advertising","change":"No restriction.","action":"None (separately under review vs Tracksuit/YouGov).","isESPNexempt":false}]},{"asset":"Production","lines":[{"name":"FoxFooty Production","cat":"TV PRODUCTION","tier":"MED-HIGH","annual":50000,"tags":["commentator","notable","production"],"prov":"62T / 62V — production involves talent prohibited under new rules","change":"Fox Footy production work uses talent (notable persons) in wagering content. If 62T prohibits the end output, the production cost is effectively stranded.","action":"Audit production schedule for talent involvement; restructure briefs or pause production pending legal clarity.","isESPNexempt":false}]},{"asset":"ESPN.com","lines":[{"name":"ESPN","cat":"DIGITAL PARTNERS","tier":"MEDIUM","annual":2250000,"tags":["online_gating"],"prov":"62P/62Q online-content gating — not currently gated","change":"No age gating in place today. Wagering ads need 'reasonable steps': age assurance, registered-account access, opt-out.","action":"Confirm platform gating; exclude restricted users; 62R bars gov-ID/Digital-ID checks.","isESPNexempt":false},{"name":"ESPN Footytips","cat":"DIGITAL PARTNERS","tier":"MEDIUM","annual":979938,"tags":["online_gating"],"prov":"62P/62Q online-content gating — not currently gated","change":"No age gating in place today. Wagering ads need 'reasonable steps': age assurance, registered-account access, opt-out.","action":"Confirm platform gating; exclude restricted users; 62R bars gov-ID/Digital-ID checks.","isESPNexempt":false}]},{"asset":"ESPN Linear","lines":[{"name":"ESPN Production","cat":"TV PRODUCTION","tier":"LOW","annual":40000,"tags":["production"],"prov":"Production cost — risk attaches to placement","change":"No direct restriction on producing content.","action":"Ensure finished content complies wherever it runs.","isESPNexempt":false},{"name":"ESPN(American Sports)","cat":"TV","tier":"TBC","annual":1876923,"tags":["broadcast","odds"],"prov":"62K/62L live-sport ban; 62M 3-per-hr cap; 62U odds ban","change":"Small-audience exemption currently applies but is at risk of disappearing under the new bill — TBC whether it survives. If it lapses: same daytime/live-sport/odds restrictions as other TV (62K/62L/62M/62U).","action":"Confirm exemption status with legal/regulator before 1 Jan 2027. Contingency plan: re-plan to overnight + strip odds from creative.","isESPNexempt":true}]},{"asset":"Search (SEM)","lines":[{"name":"Google","cat":"SEM","tier":"MEDIUM","annual":4045284,"tags":["online_gating","sem"],"prov":"62P/62Q — applicability to search to be confirmed","change":"Search ads may be caught as an 'online content service' provided to the public.","action":"Get a legal read on SEM; large spend, resolve early.","isESPNexempt":false},{"name":"Apple Search","cat":"SEM","tier":"MEDIUM","annual":1008716,"tags":["online_gating","sem"],"prov":"62P/62Q — applicability to search to be confirmed","change":"Search ads may be caught as an 'online content service' provided to the public.","action":"Get a legal read on SEM; large spend, resolve early.","isESPNexempt":false}]},{"asset":"Programmatic","lines":[{"name":"BVOD","cat":"PROGRAMMATIC","tier":"MEDIUM","annual":861987,"tags":["online_gating"],"prov":"62P/62Q online-content gating","change":"Programmatic display/video on online services needs the gating steps.","action":"Confirm exchange/SSP gating; exclude restricted users.","isESPNexempt":false},{"name":"Display - Performance","cat":"PROGRAMMATIC","tier":"MEDIUM","annual":525731,"tags":["online_gating"],"prov":"62P/62Q online-content gating","change":"Programmatic display/video on online services needs the gating steps.","action":"Confirm exchange/SSP gating; exclude restricted users.","isESPNexempt":false},{"name":"SF Video","cat":"PROGRAMMATIC","tier":"MEDIUM","annual":439880,"tags":["online_gating"],"prov":"62P/62Q online-content gating","change":"Programmatic display/video on online services needs the gating steps.","action":"Confirm exchange/SSP gating; exclude restricted users.","isESPNexempt":false},{"name":"Display - Broadcast","cat":"PROGRAMMATIC","tier":"MEDIUM","annual":360868,"tags":["online_gating"],"prov":"62P/62Q online-content gating","change":"Programmatic display/video on online services needs the gating steps.","action":"Confirm exchange/SSP gating; exclude restricted users.","isESPNexempt":false},{"name":"QMS - DOOH","cat":"PROGRAMMATIC","tier":"LOW","annual":300000,"tags":["dooh"],"prov":"Not a cited provision — precaution only, in case panels sit near a venue perimeter (62S)","change":"No provision in the exposure draft covers DOOH generally; only signage at/around a sporting venue is caught.","action":"One-off: confirm panel locations aren't at or around a sporting venue perimeter. Not scenario-dependent.","isESPNexempt":false}]},{"asset":"Fox League","lines":[{"name":"Fox League.com","cat":"DIGITAL PARTNERS","tier":"MEDIUM","annual":500000,"tags":["online_gating"],"prov":"62P/62Q online-content gating","change":"Wagering ads need 'reasonable steps': age assurance, registered-account access, opt-out.","action":"Confirm platform gating; exclude restricted users; 62R bars gov-ID/Digital-ID checks.","isESPNexempt":false},{"name":"Fox League Social","cat":"DIGITAL PARTNERS","tier":"MEDIUM","annual":500000,"tags":["online_gating"],"prov":"62P/62Q online-content gating","change":"Wagering ads need 'reasonable steps': age assurance, registered-account access, opt-out.","action":"Confirm platform gating; exclude restricted users; 62R bars gov-ID/Digital-ID checks.","isESPNexempt":false}]},{"asset":"SEN","lines":[{"name":"SEN AFL Nation","cat":"RADIO","tier":"MEDIUM","annual":225125,"tags":["notable","odds"],"prov":"62T notable-persons ban (talent-reliant format); 62U odds ban on radio","change":"Format is talent-reliant — key presenters are notable persons under 62T. Losing talent would require significant format rebuild. Confirmed no school-hours activity. Odds ban on radio applies but manageable.","action":"Assess whether format can continue without prohibited talent or restructure around compliant presenters. Strip odds from copy.","isESPNexempt":false},{"name":"SEN League (Sat Kickoff 2026)","cat":"RADIO","tier":"MEDIUM","annual":105000,"tags":["notable","odds"],"prov":"62T notable-persons ban (talent-reliant format); 62U odds ban on radio","change":"Format is talent-reliant — key presenters are notable persons under 62T. Losing talent would require significant format rebuild. Confirmed no school-hours activity. Odds ban on radio applies but manageable.","action":"Assess whether format can continue without prohibited talent or restructure around compliant presenters. Strip odds from copy.","isESPNexempt":false}]},{"asset":"Triple M","lines":[{"name":"Triple M - Sydney Breakfast","cat":"RADIO","tier":"MEDIUM","annual":182700,"tags":["notable","odds"],"prov":"62T notable-persons ban (Aaron Woods); 62U odds ban on radio","change":"Format leans on Aaron Woods as talent — a notable person under 62T. Confirmed no school-hours activity. Odds ban on radio applies but manageable. Losing Woods would require significant format rebuild.","action":"Assess whether format can continue without Woods or restructure around compliant presenter. Strip odds from copy.","isESPNexempt":false},{"name":"Triple M - Brisbane Breakfast/Cricket","cat":"RADIO","tier":"LOW","annual":20000,"tags":["odds","radio_school"],"prov":"62N school-hours ban; 62U odds ban on radio","change":"Confirmed: no PointsBet radio activity runs in 8–9am or 3–4pm school windows. Odds ban on broadcast radio applies but manageable.","action":"No scheduling change needed. Review radio copy for odds references and re-cut if needed.","isESPNexempt":false}]},{"asset":"FoxCatcher","lines":[{"name":"YouTube","cat":"FOXCATCHER","tier":"MEDIUM","annual":50000,"tags":["notable","online_gating"],"prov":"62T notable-persons ban (Jules Vallance, Nic Ashman); 62P/62Q online-content gating","change":"Key talent (Jules Vallance and Nic Ashman) are notable persons caught by 62T — their removal would severely undermine the content. YouTube itself should gate fine once configured; the bigger watch item is organic content across social channels, which isn't as easily gated.","action":"Set the Celebrities tier once follower counts are confirmed; audit talent involvement; gate the YouTube channel; separately review organic social content for the same talent exposure.","isESPNexempt":false},{"name":"Foxcatcher - Racing","cat":"FOXCATCHER","tier":"MEDIUM","annual":64286,"tags":["notable","racing_safe"],"prov":"62T notable-persons ban (talent); racing content itself is safe harbour","change":"Racing content is carved out from sporting event and odds restrictions, but talent presenting/hosting the show are notable persons under 62T. Losing talent would require significant rebuild.","action":"Audit talent involvement; assess whether racing content can be restructured around compliant presenters. Racing inventory itself remains regulation-proof.","isESPNexempt":false}]},{"asset":"Nine Radio","lines":[{"name":"Nine Radio Network","cat":"RADIO","tier":"MEDIUM","annual":95000,"tags":["notable","odds"],"prov":"62T notable-persons ban (talent-reliant format); 62U odds ban on radio","change":"Format is talent-reliant — key presenters are notable persons under 62T. Losing talent would require significant format rebuild. Confirmed no school-hours activity. Odds ban on radio applies but manageable.","action":"Assess whether format can continue without prohibited talent or restructure around compliant presenters. Strip odds from copy.","isESPNexempt":false}]},{"asset":"Digital Partners","lines":[{"name":"FotMob","cat":"DIGITAL PARTNERS","tier":"MEDIUM","annual":17500,"tags":["online_gating"],"prov":"62P/62Q online-content gating","change":"Wagering ads need 'reasonable steps': age assurance, registered-account access, opt-out.","action":"Confirm platform gating; exclude restricted users; 62R bars gov-ID/Digital-ID checks.","isESPNexempt":false}]},{"asset":"Brand Production","lines":[{"name":"Brand Campaign Production","cat":"BRAND CAMPAIGN PRODUCTION","tier":"LOW","annual":1052828,"tags":["production"],"prov":"Production cost — risk attaches to end output","change":"Jersey Legends not being used next year. Retained as Brand Campaign Production budget. Risk depends on nature of creative produced.","action":"Review production scope; ensure no notable persons or prohibited content in deliverables.","isESPNexempt":false}]},{"asset":"Ad Tech","lines":[{"name":"FlashTalking","cat":"ADTECH / MARTECH","tier":"LOW","annual":168780,"tags":["adtech"],"prov":"Infrastructure / ad-tech — no ad content","change":"Tooling, not advertising.","action":"None.","isESPNexempt":false},{"name":"SA360","cat":"ADTECH / MARTECH","tier":"LOW","annual":83347,"tags":["adtech"],"prov":"Infrastructure / ad-tech — no ad content","change":"Tooling, not advertising.","action":"None.","isESPNexempt":false},{"name":"Peach IMD","cat":"ADTECH / MARTECH","tier":"LOW","annual":60000,"tags":["adtech"],"prov":"Infrastructure / ad-tech — no ad content","change":"Tooling, not advertising.","action":"None.","isESPNexempt":false},{"name":"CAD via Hybrid Media","cat":"ADTECH / MARTECH","tier":"LOW","annual":60000,"tags":["adtech"],"prov":"Infrastructure / ad-tech — no ad content","change":"Tooling, not advertising.","action":"None.","isESPNexempt":false},{"name":"Adverity","cat":"ADTECH / MARTECH","tier":"LOW","annual":36000,"tags":["adtech"],"prov":"Infrastructure / ad-tech — no ad content","change":"Tooling, not advertising.","action":"None.","isESPNexempt":false},{"name":"Nifty Images","cat":"ADTECH / MARTECH","tier":"LOW","annual":22800,"tags":["adtech"],"prov":"Infrastructure / ad-tech — no ad content","change":"Tooling, not advertising.","action":"None.","isESPNexempt":false},{"name":"SMS","cat":"ADTECH / MARTECH","tier":"LOW","annual":21000,"tags":["crm"],"prov":"Direct marketing to registered customers (not restricted users)","change":"SMS to existing 18+ account holders sits outside the online-gating regime.","action":"Confirm opt-out / BetStop suppression is clean.","isESPNexempt":false}]},{"asset":"StatMate","lines":[{"name":"Meta","cat":"STATMATE","tier":"LOW","annual":120000,"tags":["not_wagering"],"prov":"Not a wagering product — Part 7C does not apply","change":"StatMate is a statistics/form product, not a licensed interactive wagering service. Wagering advertising restrictions under Part 7C do not apply.","action":"No action required. Confirm product classification with legal if promoted alongside wagering content.","isESPNexempt":false},{"name":"Google","cat":"STATMATE","tier":"LOW","annual":120000,"tags":["not_wagering"],"prov":"Not a wagering product — Part 7C does not apply","change":"StatMate is a statistics/form product, not a licensed interactive wagering service. Wagering advertising restrictions under Part 7C do not apply.","action":"No action required. Confirm product classification with legal if promoted alongside wagering content.","isESPNexempt":false},{"name":"Programmatic Performance","cat":"STATMATE","tier":"LOW","annual":114069,"tags":["not_wagering"],"prov":"Not a wagering product — Part 7C does not apply","change":"StatMate is a statistics/form product, not a licensed interactive wagering service. Wagering advertising restrictions under Part 7C do not apply.","action":"No action required. Confirm product classification with legal if promoted alongside wagering content.","isESPNexempt":false},{"name":"StatMate Merchandise","cat":"STATMATE","tier":"LOW","annual":10000,"tags":["not_wagering"],"prov":"Not a wagering product — Part 7C does not apply","change":"StatMate is a statistics/form product, not a licensed interactive wagering service. Wagering advertising restrictions under Part 7C do not apply.","action":"No action required. Confirm product classification with legal if promoted alongside wagering content.","isESPNexempt":false}]},{"asset":"OOH & Events","lines":[{"name":"Tailgate Fest","cat":"EVENTS","tier":"LOW","annual":35000,"tags":["own_premises","venue"],"prov":"62D(5) own-premises exception — not at live sporting venue","change":"Confirmed: activation is not at a live sporting venue. 62D(5) exempts content displayed on a provider's own premises not used in conjunction with a live sporting event.","action":"No action required. Confirm venue remains non-sporting.","isESPNexempt":false},{"name":"QMS - DOOH","cat":"OOH","tier":"LOW","annual":180000,"tags":["dooh","venue"],"prov":"Not a cited provision — precaution only, in case panels sit near a venue perimeter (62S)","change":"No provision in the exposure draft covers DOOH generally; only signage at/around a sporting venue is caught.","action":"One-off: confirm panels aren't at or around a sporting venue perimeter. Not scenario-dependent.","isESPNexempt":false},{"name":"Gather Round","cat":"EVENTS","tier":"LOW","annual":50000,"tags":["own_premises","venue"],"prov":"62D(5) own-premises exception — not at live sporting venue","change":"Confirmed: activation is not at a live sporting venue. 62D(5) exempts content displayed on a provider's own premises not used in conjunction with a live sporting event.","action":"No action required. Confirm venue remains non-sporting.","isESPNexempt":false}]},{"asset":"Racing.com (RDC)","lines":[{"name":"RDC","cat":"TV","tier":"SAFE","annual":888999,"tags":["racing_safe"],"prov":"Racing carve-out — s10A(3), 62G(a)","change":"Nil. Racing excluded from 'sporting event' and 'odds'. Only real risk is the carve-out disappearing, which reads as unlikely given the government's own confirmation of the racing exemption.","action":"Protect/grow; compliant spend post-Jan 27. Low-priority watch item, not an active concern.","isESPNexempt":false},{"name":"Racing.com","cat":"DIGITAL PARTNERS","tier":"SAFE","annual":480122,"tags":["racing_safe"],"prov":"Racing carve-out — s10A(3), 62G(a)","change":"Nil. Racing excluded from 'sporting event' and 'odds'.","action":"Protect/grow; compliant spend post-Jan 27.","isESPNexempt":false},{"name":"Racing.com PG","cat":"PROGRAMMATIC","tier":"SAFE","annual":488012,"tags":["racing_safe"],"prov":"Racing carve-out — s10A(3), 62G(a)","change":"Nil. Racing excluded from 'sporting event' and 'odds'.","action":"Protect/grow; compliant spend post-Jan 27.","isESPNexempt":false},{"name":"GreyHound Recorder","cat":"DIGITAL PARTNERS","tier":"SAFE","annual":120000,"tags":["racing_safe"],"prov":"Racing carve-out — s10A(3), 62G(a)","change":"Nil. Racing excluded from 'sporting event' and 'odds'.","action":"Protect/grow; compliant spend post-Jan 27.","isESPNexempt":false}]},{"asset":"Internal","lines":[{"name":"Simon Legg","cat":"CONTRACTORS","tier":"N/A","annual":191503,"tags":["internal"],"prov":"Internal labour","change":"No restriction.","action":"None.","isESPNexempt":false}]}];
+/* ============ ASSET PROFILE (source: original Partnerships Matrix — the first piece of work) ============ */
+const ASSET_PROFILE={
+  "StatMate":{owned:"Yes",platform:"Yes",content:"Social",production:"Low freq / low cost",distribution:"Low reach",data:"Yes",integration:"Hot Stats integrated; SM → PB conversion still being built",team:"3",cel:"",mnotes:""},
+  "FoxCatcher":{owned:"Yes",platform:"No",content:"Social / TV",production:"High cost",distribution:"High reach / high cost",data:"No",integration:"Integrated Hot Stats / Insights",team:"1.5",cel:"",mnotes:"Great audience; YouTube should gate fine. Watch: organic content across social channels, and possible notable-person exposure via Jules Vallance and Nic Ashman (tier not yet set — add above once follower counts are confirmed). Core issue is no owned platform with saved first-party data, just subscribers."},
+  "Ausmerican Aces":{owned:"No",platform:"No",content:"Social",production:"High cost",distribution:"—",data:"No",integration:"—",team:"—",cel:"",mnotes:"Talent likely notable persons (tier not yet set). Only home is YouTube/social — no first-party data saved."},
+  "Fanatics TV":{owned:"No",platform:"No",content:"Social",production:"High cost",distribution:"—",data:"No",integration:"—",team:"—",cel:"",mnotes:"Same structural gap as Ausmerican Aces (no first-party data), but talent sits at a different notoriety level — set the tier above once confirmed; don't assume it matches Aces."},
+  "100k Sports":{owned:"No",platform:"No",content:"Social",production:"—",distribution:"—",data:"No",integration:"—",team:"—",cel:"under50k",mnotes:"No first-party data. Talent is very lightly notable."},
+  "Racing.com (RDC)":{owned:"No",platform:"Yes",content:"Digital / Social / TV",production:"—",distribution:"High reach",data:"Yes",integration:"Socials, odds, ads",team:"N/A",cel:"",mnotes:""},
+  "ESPN.com":{owned:"No",platform:"Yes",content:"Digital",production:"—",distribution:"High reach",data:"Yes",integration:"Socials, odds, ads",team:"N/A",cel:"",mnotes:"No age gating in place currently — this is the live risk, not a scenario hypothetical."}
+};
+const ASSET_PROFILE_ORDER=["StatMate","FoxCatcher","Ausmerican Aces","Fanatics TV","100k Sports","Racing.com (RDC)","ESPN.com"];
+const ASSET_PROFILE_LABEL={"StatMate":"StatMate","FoxCatcher":"FoxCatcher","Ausmerican Aces":"AusmericanAces","Fanatics TV":"Fanatics","100k Sports":"100k Sports","Racing.com (RDC)":"Racing.com","ESPN.com":"ESPN"};
+
+/* ============ SCENARIO ENGINE (4-level intensity) ============ */
+const LV={high:"High",med:"Medium",low:"Low",off:"Not at all"};
+const LVSHORT={high:"High",med:"Med",low:"Low",off:"None"};
+const LEVELS=["high","med","low","off"];
+
+const SCENARIOS=[
+ {id:"notable",kind:"risk",tag:"62T",t:"Notable-person ban",def:"high",
+  levels:{high:{s:1.0,d:"Anyone with a public profile is caught."},
+          med:{s:0.65,d:"Significant social profile caught — ~50K+ followers / recognised talent."},
+          low:{s:0.35,d:"Only major profiles caught — ~200K+, pro athletes, celebrities."},
+          off:{s:0,d:"No notable-person restriction."}}},
+ {id:"broadcast",kind:"risk",tag:"62K/L/M",t:"Live-sport broadcast limits",def:"high",
+  levels:{high:{s:1.0,d:"3-per-hour cap and full daytime live-sport ban enforced."},
+          off:{s:0,d:"Remains as is — no live-sport broadcast restriction."}}},
+ {id:"odds",kind:"risk",tag:"62U",t:"Odds in broadcast",def:"high",
+  levels:{high:{s:1.0,d:"Odds banned across all broadcast and datacast."},
+          med:{s:0.6,d:"Odds banned outside dedicated wagering programs — carve-out narrows/closes post-2030."},
+          off:{s:0,d:"Remains as is — no odds restriction in broadcast."}}},
+ {id:"onlineFails",kind:"risk",tag:"62P/Q",t:"Online gating",def:"off",up:true,
+  levels:{high:{s:1.0,d:"No gating — the platform keeps full reach, but PointsBet can't legally advertise there; that spend is exposed."},
+          med:{s:0.5,d:"Partial gating — some friction and reach loss, but compliance is borderline; real risk remains."},
+          off:{s:0,d:"Full gating (age assurance, registered account, opt-out) — PointsBet can advertise, but expect reach to drop from the added friction."}}},
+ {id:"racing",kind:"protect",tag:"s10A(3)",t:"Racing Exemption",def:"high",labels:{high:"Yes",off:"No"},
+  levels:{high:{s:1.0,d:"Carve-out holds — racing stays excluded from the 'sporting event' and 'odds' definitions."},
+          off:{s:0,d:"No carve-out — racing reverts to standard sport rules (same broadcast, odds and notable-person restrictions as any other sport)."}}},
+ {id:"sem",kind:"risk",tag:"62P/Q",t:"Search / SEM caught",def:"high",labels:{high:"Yes",off:"No"},
+  levels:{high:{s:1.0,d:"Search caught as an online content service — no government indication yet, but this is the planning assumption."},
+          off:{s:0,d:"Search not caught — would need a government carve-out or ruling to land here."}}},
+ {id:"espn",kind:"protect",tag:"62K",t:"ESPN small-audience exemption",def:"high",labels:{high:"Yes",off:"No"},
+  levels:{high:{s:1.0,d:"Exemption holds — small-audience carve-out survives the new bill."},
+          off:{s:0,d:"Exemption lapses — full broadcast rules (daytime live-sport ban, 3-per-hour cap, odds ban) apply."}}},
+ {id:"grandfather",kind:"mitigate",tag:"62T",t:"Existing contracts grandfathered",def:"off",
+  levels:{high:{s:1.0,d:"All in-term contracts run to expiry — current-year talent exposure defers to FY28."},
+          med:{s:0.6,d:"Most in-term contracts grandfathered."},
+          low:{s:0.3,d:"Limited grandfathering."},
+          off:{s:0,d:"No grandfathering — talent caught immediately."}}}
+];
+const SCMAP={}; SCENARIOS.forEach(s=>SCMAP[s.id]=s);
+// Celebrity/talent follower tiers for Asset Status — cross-referenced to the Notable-person ban's own
+// thresholds (High catches anyone; Med catches ~50K+; Low catches ~200K+ only). "catches" lists which
+// ban levels would actually catch a talent of this size, so the two stay mechanically linked, not just worded alike.
+const CEL_TIERS=[
+  {v:"none",label:"No notable talent",catches:[]},
+  {v:"under50k",label:"Talent under 50K followers — only caught if the ban runs High",catches:["high"]},
+  {v:"50to200k",label:"Talent 50K–200K followers — caught at Med or High",catches:["high","med"]},
+  {v:"200kplus",label:"Talent 200K+ followers — caught at Low, Med or High",catches:["high","med","low"]}
+];
+const CEL_CATCHES={}; CEL_TIERS.forEach(t=>CEL_CATCHES[t.v]=t.catches);
+let S={}; SCENARIOS.forEach(s=>S[s.id]=s.def);
+const strn=id=>SCMAP[id].levels[S[id]].s;
+
+const ST={
+  exposed:{rank:1,lab:"Exposed",dot:"#ED1B42",b:"b-exposed",ro:"exposed"},
+  rework:{rank:2,lab:"Restructure",dot:"#E8821E",b:"b-rework",ro:"rework"},
+  watch:{rank:3,lab:"Conditions",dot:"#C9A227",b:"b-watch",ro:"watch"},
+  protected:{rank:4,lab:"Protected",dot:"#1F9D57",b:"b-protected",ro:"protected"},
+  strong:{rank:4,lab:"Strengthens",dot:"#1F9D57",b:"b-strong",ro:"protected"},
+  safe:{rank:5,lab:"Out of scope",dot:"#7C7E84",b:"b-safe",ro:"safe"}
+};
+const fracToStatus=f=> f>=0.6?"exposed":f>=0.3?"rework":f>0?"watch":"watch";
+
+function evalLine(l,celTier){
+  const t=l.tags, cands=[];
+  if(t.includes("not_wagering")) return {key:"safe",frac:0,reasons:["Not a wagering product — Part 7C doesn't apply."]};
+  if(t.includes("adtech")||t.includes("internal")) return {key:"safe",frac:0,reasons:["Infrastructure / internal — no advertising content."]};
+  if(t.includes("service")&&t.length===1) return {key:"safe",frac:0,reasons:["Service provider — confirm no bundled wagering placements."]};
+
+  // Racing exemption
+  if(t.includes("racing_safe")){
+    const rs=strn("racing");
+    if(rs>=0.65){ const up=strn("onlineFails")<1;
+      return {key:up?"strong":"protected",frac:0,upside:up,driver:"racing",
+        reasons:[`Racing carve-out holds (${lvlWord("racing")}) — excluded from sporting-event and odds rules.`,
+                 up?"Logged-in upside: strongest compliant lane as broadcast and talent close.":""].filter(Boolean)};}
+    { const sport=Math.max(strn("broadcast"),strn("odds"),strn("notable"));
+      if(sport>0){const f=0.8*sport;cands.push({key:fracToStatus(f),frac:f,driver:"racing lost",why:"Safe harbour removed — racing reverts to standard sport rules."});}
+      else cands.push({key:"watch",frac:0.1,driver:"racing lost",why:"Safe harbour removed, but no broadcast/odds restriction active."}); }
+  }
+  // Notable persons (62T) + grandfather mitigation
+  if(t.includes("notable")||t.includes("commentator")){
+    const ns=strn("notable");
+    const celBlocked=celTier&&CEL_CATCHES[celTier]&&!CEL_CATCHES[celTier].includes(S.notable);
+    if(ns>0&&celBlocked) cands.push({key:"safe",frac:0,driver:"notable (talent tier)",why:`Talent's follower tier isn't caught at the ban's current setting (${lvlWord("notable")}) — no 62T exposure at this intensity.`});
+    else if(ns>0){ const m=strn("grandfather"); const f=1.0*ns*(1-m);
+      if(m>0){ const ff=Math.max(f,0.31);
+        cands.push({key:fracToStatus(ff),frac:ff,driver:"notable (grandfathered)",
+          why:`Talent caught by 62T (${LV[S.notable]}), but contracts grandfathered (${LV[S.grandfather]}) — exposure defers to FY28.`});
+      } else { cands.push({key:fracToStatus(f),frac:f,driver:"notable",
+          why:`Talent are notable persons under 62T (${LV[S.notable]}) — can't promote wagering content.`}); }
+    }
+  }
+  // Broadcast live sport (with ESPN exemption special case)
+  if(t.includes("broadcast")){
+    const bs=strn("broadcast");
+    if(l.isESPNexempt){ const es=strn("espn");
+      if(es>=0.65) cands.push({key:"watch",frac:0.1,driver:"espn ok",why:`ESPN small-audience exemption holds (${lvlWord("espn")}) — compliant, monitor.`});
+      else { const f=0.8*Math.max(bs,0.5); cands.push({key:fracToStatus(f),frac:f,driver:"espn lapse",
+        why:`ESPN exemption lapses (${lvlWord("espn")}) — broadcast live-sport rules apply.`}); }
+    } else if(bs>0){ const high=l.tier==="HIGH"||l.tier==="MED-HIGH"; const f=(high?0.8:0.35)*bs;
+      cands.push({key:fracToStatus(f),frac:f,driver:high?"broadcast":"broadcast tvc",
+        why: high?`Talent-led / daytime integration caught by live-sport limits (${LV[S.broadcast]}).`
+                 :`TVC placements deliverable — re-plan to compliant windows (${LV[S.broadcast]}).`}); }
+  }
+  if(t.includes("commentator")){ const bs=strn("broadcast"); if(bs>0){const f=0.7*bs;
+    cands.push({key:fracToStatus(f),frac:f,driver:"commentator",why:`Provider reps as commentators / at venue during live coverage (62V, ${LV[S.broadcast]}).`});}}
+  if(t.includes("odds")){ const os=strn("odds"); if(os>0){const f=0.2*os;
+    cands.push({key:fracToStatus(f),frac:f,driver:"odds",why:`Strip odds from broadcast creative (${LV[S.odds]}); move odds-led content to owned/online.`});}}
+  if(t.includes("radio_school")) cands.push({key:"watch",frac:0.1,driver:"radio",why:"Confirm no activity in 8–9am / 3–4pm school windows."});
+
+  // Online gating
+  if(t.includes("online_gating")){ const ofl=strn("onlineFails");
+    if(ofl>0){const f=0.8*ofl;cands.push({key:fracToStatus(f),frac:f,driver:"online fails",why:`Platform can't gate restricted users (${LV[S.onlineFails]}) — open delivery falls away.`});}
+    else cands.push({key:"watch",frac:0,driver:"online gated",upside:true,why:`Deliverable behind age assurance, registered-account access and opt-out (${LV[S.onlineFails]}) — owned/logged-in audience gains relative value as broadcast and talent lanes close.`}); }
+  if(t.includes("sem")){ const ss=strn("sem");
+    if(ss>0){const f=0.7*ss;cands.push({key:fracToStatus(f),frac:f,driver:"sem",why:`Search caught as an online content service (${lvlWord("sem")}) — large spend exposed.`});}
+    else cands.push({key:"watch",frac:0.1,driver:"sem tbc",why:"SEM applicability to be confirmed — get a legal read early."}); }
+  if(t.includes("dooh")) cands.push({key:"watch",frac:0.05,driver:"dooh",why:"Not a cited provision — physical signage is only restricted if the panel sits at or around a sporting venue perimeter (62S). One-off confirmation, not scenario-driven."});
+  if(t.includes("venue")) cands.push({key:"watch",frac:0.05,driver:"venue",why:"Confirm the panel/activation isn't at or around a sporting venue perimeter (62S) — non-venue placements aren't restricted regardless of broadcast settings."});
+  if(t.includes("own_premises")) cands.push({key:"watch",frac:0.05,driver:"premises",why:"Own-premises exception (62D(5)) — confirm venue stays non-sporting."});
+
+  if(!cands.length) return {key:"watch",frac:0,driver:null,reasons:["No active restriction under the current scenario."]};
+  let worst=cands[0].key, maxf=-1, driver=cands[0].driver, upside=false;
+  cands.forEach(c=>{ if(ST[c.key].rank<ST[worst].rank) worst=c.key; if(c.frac>maxf){maxf=c.frac;driver=c.driver;} if(c.upside) upside=true; });
+  cands.sort((a,b)=>b.frac-a.frac);
+  const reasons=[...new Set(cands.map(c=>c.why))];
+  return {key:worst,frac:maxf,driver,reasons,upside};
+}
+
+function evalAsset(a){
+  let worst=null,driver=null,upside=false,reasons=[];
+  const celTier=PLANS[a.asset]&&PLANS[a.asset].cel;
+  const perLine=a.lines.map(l=>{const e=evalLine(l,celTier);
+    if(ST[e.key].rank<(worst?ST[worst].rank:99)){worst=e.key;driver=e.driver;}
+    if(e.upside)upside=true; return {l,e};});
+  const oa=PLANS[a.asset]&&PLANS[a.asset].data;
+  const gatingDriven=a.lines.some(l=>l.tags&&l.tags.includes("online_gating"));
+  if(oa==="No"&&gatingDriven) upside=false; // confirmed no first-party audience — model can't claim a gated-channel upside it can't deliver
+  const seen=new Set();
+  perLine.filter(x=>ST[x.e.key].rank<=ST[worst].rank+1).forEach(x=>x.e.reasons.forEach(r=>{if(r&&!seen.has(r)){seen.add(r);reasons.push(r);}}));
+  return {key:worst,reasons:reasons.slice(0,4),driver,upside,perLine};
+}
+
+const MOVES={
+  "notable":"Re-scope or exit the talent deal before 1 Jan 2027. Convert to non-wagering editorial / community content, or rebuild around a compliant presenter.",
+  "notable (grandfathered)":"In-term contract — confirm grandfathering in writing and build the FY28 replacement plan now.",
+  "broadcast":"Restructure the talent-led integration. Shift value to overnight windows or owned/online surfaces.",
+  "broadcast tvc":"Re-plan spots to compliant windows (overnight / non-live-sport) and strip odds from creative.",
+  "commentator":"Remove provider representatives from live commentary and venue roles during coverage.",
+  "odds":"Strip odds from broadcast creative; relocate odds-led content to owned and online channels.",
+  "online fails":"At risk if the platform can't gate. Secure gating commitments early or reallocate to owned, logged-in surfaces.",
+  "online gated":"Confirm age assurance, registered-account delivery and a clean opt-out. Deliverable as planned.",
+  "online":"Confirm the platform can exclude restricted users before committing spend.",
+  "sem":"Get a legal read on SEM now — this is large spend. Plan a fallback if search is caught.",
+  "sem tbc":"Resolve SEM applicability early with legal; large spend hangs on the call.",
+  "dooh":"Confirm panel locations aren't at or around sporting venues; track the ACMA determination.",
+  "dooh ok":"Likely out of scope — confirm panels aren't venue-adjacent and watch the determination.",
+  "venue":"Remove venue, uniform and perimeter signage exposure (62S).",
+  "racing":"Protect and grow — strongest compliant inventory as other lanes close.",
+  "racing low":"Carve-out narrowed — confirm which racing content still qualifies.",
+  "racing lost":"Safe harbour gone — re-plan racing like general sport (windows, odds, talent).",
+  "espn ok":"Compliant under the exemption — monitor in case it lapses, keep an overnight fallback ready.",
+  "espn lapse":"Exemption no longer protects — re-plan to overnight, strip odds, keep a fallback ready.",
+  "premises":"No action — confirm the activation venue stays non-sporting.",
+  "radio":"No scheduling change if clear of school windows; review copy for odds references.",
+  "null":"Monitor — no active restriction under the current scenario set."
+};
+function moveFor(asset){ const ev=asset._ev||evalAsset(asset);
+  if(ev.key==="protected"||ev.key==="strong") return MOVES["racing"];
+  if(ev.key==="safe") return "No action required. Confirm classification if promoted alongside wagering content.";
+  return MOVES[ev.driver]||MOVES["null"]; }
+
+/* ============ PATH MODEL (if X → then Y, intensity-aware) ============ */
+function assetTags(a){ const s=new Set(); a.lines.forEach(l=>l.tags.forEach(t=>s.add(t))); return s; }
+function lvlWord(id){ const s=SCMAP[id]; return (s.labels&&s.labels[S[id]])||LV[S[id]]; }
+function getPathModel(a){
+  const ev=a._ev||evalAsset(a); const T=assetTags(a);
+  const has=t=>T.has(t);
+  const ns=strn("notable"), bs=strn("broadcast"), os=strn("odds"), ofl=strn("onlineFails"),
+        rs=strn("racing"), sem=strn("sem"),
+        gr=strn("grandfather"), es=strn("espn");
+
+  // RULINGS: one per active lever that touches this asset — the literal "if X then Y"
+  const rulings=[];
+  if(has("notable")||has("commentator")){
+    if(ns>0){ const r = gr>0 ? `Talent caught, but grandfathered (${lvlWord("grandfather")}) — exposure defers to FY28.`
+              : S.notable==="high" ? "Any talent with a profile can't promote wagering content."
+              : S.notable==="med" ? "Talent with a significant social profile (~50K+) is caught; smaller names usable."
+              : "Only marquee names (~200K+, pro athletes) caught; mid-tier talent still usable.";
+      rulings.push({if:`Notable-person ban · ${lvlWord("notable")}`, then:r, tone: ns*(1-gr)>=0.6?"risk":ns*(1-gr)>=0.3?"watch":"neutral", active:true}); }
+    else rulings.push({if:"Notable-person ban · Not at all", then:"Talent unrestricted — creator-led promotion stays open.", tone:"good", active:false});
+  }
+  if(has("broadcast")||has("commentator")){
+    if(bs>0) rulings.push({if:`Broadcast limits · ${lvlWord("broadcast")}`, then: bs>=0.65?"Live-sport and daytime integrations close — shift to overnight or owned.":"Some live-sport restriction — re-plan spots to compliant windows.", tone: bs>=0.65?"risk":"watch", active:true});
+    else rulings.push({if:"Broadcast limits · Not at all", then:"Live-sport placements run as normal.", tone:"good", active:false});
+  }
+  if(has("odds") && os>0) rulings.push({if:`Odds in broadcast · ${lvlWord("odds")}`, then:"Strip odds from broadcast creative; move odds-led content to owned/online.", tone:"watch", active:true});
+  if(has("online_gating")){
+    if(ofl>0) rulings.push({if:`Online gating · ${lvlWord("onlineFails")}`, then: S.onlineFails==="high"?"No gating — full reach, but can't legally advertise here; spend is exposed.":"Partial gating — some friction and reach loss, compliance still borderline.", tone:"risk", active:true});
+    else rulings.push({if:`Online gating · ${lvlWord("onlineFails")}`, then:"Fully gated — deliverable behind age assurance and registered accounts; expect some reach loss from the friction.", tone:"good", active:true});
+  }
+  if(has("sem")) rulings.push({if:`Search / SEM · ${lvlWord("sem")}`, then: sem>0?"Search caught as online content — large spend exposed; get a legal read.":"SEM applicability unconfirmed — resolve early with legal.", tone: sem>=0.6?"risk":"watch", active: sem>0});
+  if(has("dooh")||has("venue")) rulings.push({if:"Venue / perimeter signage · 62S", then:"Not a cited provision for this line — one-off check: confirm the panel/activation isn't at or around a sporting venue perimeter.", tone:"neutral", active:true});
+  if(has("racing_safe")){
+    rulings.push({if:`Racing Exemption · ${lvlWord("racing")}`, then: rs>0?"Racing carve-out holds — protected and a growth lane.":"Carve-out gone — racing reverts to standard sport rules.", tone: rs>0?"good":"risk", active:true});
+  }
+
+  // BRANCHES: strategic lanes that open/close
+  const ownedUp = ofl===0 && (has("online_gating")||has("racing_safe"));
+  const talentPress = ns>0 && (has("notable")||has("commentator"));
+  const broadcastPress = bs>0 && (has("broadcast")||has("commentator"));
+  const racingOpen = rs>0 && has("racing_safe");
+  const onlineOpen = has("online_gating") && ofl===0;
+  const branches=[
+    {id:"owned", title:"Owned / logged-in lane", active: ownedUp, tone: ownedUp?"good":"neutral",
+      text: ownedUp?"Lean into sign-in, opt-out and first-party capture — viable as broadcast and talent close.":"Available if the asset builds capture, permissions or a product surface."},
+    {id:"talent", title:"Talent / creator lane", active: talentPress||has("notable"), tone: talentPress?"risk":"watch",
+      text: talentPress?`Re-scope away from direct wagering promotion — move talent to editorial, utility or community roles (${lvlWord("notable")} cut-off).`:"Usable if contracts and role scopes stay controlled."},
+    {id:"broadcast", title:"Broadcast / distribution lane", active: broadcastPress, tone: broadcastPress?"watch":"neutral",
+      text: broadcastPress?"Shift to overnight / non-live windows and strip odds; confirm partner fallback formats.":"Preserve placement value with gating and measurement discipline."},
+    {id:"online", title:"Online / social lane", active: onlineOpen||ofl>0, tone: ofl>0?"risk":onlineOpen?"good":"neutral",
+      text: ofl>0?"At risk — secure platform gating commitments or reallocate.":"Deliverable behind age assurance, registered accounts and opt-out."},
+    {id:"racing", title:"Racing-safe lane", active: racingOpen, tone: racingOpen?"good":"neutral",
+      text: racingOpen?"Use racing adjacency as the safest content and promotional growth lane.":"Not a primary lane unless racing carve-out expands."}
+  ];
+  let activeBranches=branches.filter(b=>b.active); if(!activeBranches.length) activeBranches=[branches[2]];
+
+  const destination = ev.key==="strong"?"Scale as a reform winner"
+    : ev.key==="protected"?"Protect and grow"
+    : ev.key==="exposed"?"Rebuild before reform lands"
+    : ev.key==="rework"?"De-risk and restructure"
+    : ev.key==="safe"?"Maintain with legal checks":"Hold with conditions";
+  return {ev, rulings, branches, activeBranches, destination, move:moveFor(a)};
+}
+
+/* ============ STATE / PERSISTENCE (Supabase-backed, shared across everyone) ============ */
+const STORE="pb-reform-planner-v1";
+const SUPA_URL="https://snfedklqaalhwooqyzbf.supabase.co/rest/v1/";
+const SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNuZmVka2xxYWFsaHdvb3F5emJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3ODQzMTcsImV4cCI6MjA5ODM2MDMxN30.yj9di1yRZXI5h7U-woNg-oe1EqyEQeRXAVTqgooNF4Y";
+const SUPA_TABLE="reform_planner_state";
+const SUPA_HEADERS={apikey:SUPA_KEY,Authorization:"Bearer "+SUPA_KEY,"Content-Type":"application/json"};
+let PLANS={};      // assetName -> {path,owner,target,status,prio,notes, ...profile fields: owned,platform,content,production,distribution,data,integration,team,cel,mnotes}
+// Owned audience = does PB itself hold a first-party database for this asset (not just reach/followers).
+// PROFILE_FIELDS mirrors the original matrix's columns exactly, stored per-asset inside PLANS so it's
+// one editable, persisted record per asset — not a separate read-only table.
+const PROFILE_FIELDS=["owned","platform","content","production","distribution","data","integration","team","cel","mnotes"];
+const PROFILE_DEFAULT={...ASSET_PROFILE,
+  "Ambassadors":{owned:"No",data:"No"},"Social Creators":{owned:"No",data:"No"},
+  "Fox Footy Linear":{owned:"No",data:"No"},"Fox Footy.com":{owned:"No",data:"No"},"Paid Social":{owned:"No",data:"No"},
+  "Search (SEM)":{owned:"No",data:"No"},"Programmatic":{owned:"No",data:"No"},
+  "Fox League":{owned:"No",data:"No"},"Digital Partners":{owned:"No",data:"No"},"ESPN Linear":{owned:"No",data:"No"},
+  "SEN":{owned:"No",data:"No"},"Triple M":{owned:"No",data:"No"},"Nine Radio":{owned:"No",data:"No"}
+  // Production, Brand Production, OOH & Events intentionally left blank — not audience channels
+};
+function seedProfiles(){
+  // migrate saved data from the old asset name (local or cloud) to the new key
+  if(PLANS["Racing (Safe Harbour)"]){ if(!PLANS["Racing.com (RDC)"]) PLANS["Racing.com (RDC)"]=PLANS["Racing (Safe Harbour)"]; delete PLANS["Racing (Safe Harbour)"]; }
+  Object.entries(PROFILE_DEFAULT).forEach(([name,prof])=>{
+    if(!PLANS[name]) PLANS[name]={path:"— choose —",owner:"",target:"",status:"Not started",prio:"P3 — monitor",notes:""};
+    PROFILE_FIELDS.forEach(f=>{ if(!PLANS[name][f]&&prof[f]) PLANS[name][f]=prof[f]; });
+  });
+}
+try{ const raw=localStorage.getItem(STORE); if(raw){const o=JSON.parse(raw); PLANS=o.plans||{}; if(o.scenarios)SCENARIOS.forEach(s=>{if(s.id in o.scenarios)S[s.id]=o.scenarios[s.id];});} }catch(e){}
+seedProfiles();
+function setSyncStatus(state){ const el=$("#syncStatus"); if(!el) return;
+  const map={loading:"Loading…",saving:"Saving…",synced:"✓ Synced",offline:"Offline — local only",error:"⚠ Save failed, retrying"};
+  el.textContent=map[state]||""; el.className="syncstat "+state; }
+function applyCloud(o){ PLANS=o.plans||{}; if(o.scenarios)SCENARIOS.forEach(s=>{if(s.id in o.scenarios)S[s.id]=o.scenarios[s.id];});
+  seedProfiles();
+  try{ localStorage.setItem(STORE,JSON.stringify({plans:PLANS,scenarios:S})); }catch(e){} }
+async function loadFromCloud(silent){
+  try{ if(!silent) setSyncStatus("loading");
+    const res=await fetch(`${SUPA_URL}${SUPA_TABLE}?id=eq.shared&select=data`,{headers:SUPA_HEADERS});
+    if(!res.ok) throw new Error("HTTP "+res.status);
+    const rows=await res.json();
+    if(rows&&rows[0]&&rows[0].data&&Object.keys(rows[0].data).length){ applyCloud(rows[0].data); }
+    setSyncStatus("synced");
+  }catch(e){ console.error("Supabase load failed",e); setSyncStatus("offline"); }
+}
+let saveTimer=null;
+function persist(){
+  try{ localStorage.setItem(STORE,JSON.stringify({plans:PLANS,scenarios:S})); }catch(e){}
+  lastLocalEdit=Date.now();
+  setSyncStatus("saving"); clearTimeout(saveTimer); saveTimer=setTimeout(saveToCloud,600);
+}
+async function saveToCloud(){
+  try{
+    const res=await fetch(`${SUPA_URL}${SUPA_TABLE}?id=eq.shared`,{method:"PATCH",
+      headers:{...SUPA_HEADERS,Prefer:"return=minimal"},
+      body:JSON.stringify({data:{plans:PLANS,scenarios:S},updated_at:new Date().toISOString()})});
+    if(!res.ok) throw new Error("HTTP "+res.status);
+    setSyncStatus("synced");
+  }catch(e){ console.error("Supabase save failed",e); setSyncStatus("error"); }
+}
+
+const PATHS=["— choose —","Exit","Renegotiate","Restructure","Build owned","Protect","Monitor","No action"];
+const QUICK=["Exit","Renegotiate","Restructure","Build owned","Protect","Monitor"];
+const VERB_HINT={Exit:"Wind down or terminate before commencement.",Renegotiate:"Re-scope the deal — strip prohibited elements or lock compliant (gated) delivery into the terms.",Restructure:"Rework format, windows or talent roles to comply.","Build owned":"Shift value into owned, logged-in surfaces.",Protect:"Compliant — protect and grow.",Monitor:"Watch and confirm; no change needed yet."};
+function recVerb(a){const ev=a._ev||evalAsset(a);const d=ev.driver||"";
+  if(ev.key==="protected"||ev.key==="strong")return "Protect";
+  if(ev.key==="safe")return "Monitor";
+  if(d.indexOf("notable")===0)return "Renegotiate";
+  if(["broadcast","broadcast tvc","commentator","odds","espn lapse","racing lost","venue","dooh"].includes(d))return "Restructure";
+  if(["online fails","online"].includes(d)){
+    const p=PLANS[a.asset]; // partner platform → renegotiate gating into the deal; PB-owned → deepen the owned gated surface
+    return (p&&p.owned==="Yes")?"Build owned":"Renegotiate";
+  }
+  return "Monitor";}
+const STATUSES=["Not started","In progress","Locked"];
+const $=s=>document.querySelector(s); const $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+let activeView="status", activeFilter="all", openAsset=null, pathAsset=null, assetsView="needs", lastLocalEdit=0;
+
+/* ============ RENDER: workflow + shell ============ */
+function renderFlow(){
+  const steps=[["status","Asset Status",""],["scenario","Legislation Scenarios","How hard it lands"],["assets","Decisions",""],["paths","Paths","If X, then Y"],["summary","Exec Summary","The one-pager"],["actions","Actions","H2 roadmap"],["notes","Logic","Appendix"]];
+  $("#flow").innerHTML=steps.map((s,i)=>`<button class="step ${activeView===s[0]?'on':''}" data-v="${s[0]}">
+    <span class="n">${i+1}</span><span><span class="lab">${s[1]}</span><span class="hint">${s[2]}</span></span></button>`).join("");
+  $$(".step").forEach(b=>b.onclick=()=>{activeView=b.dataset.v;render();});
+}
+
+/* ============ RENDER: scenario builder (hero) ============ */
+function renderScenario(){
+  const live=SCENARIOS.filter(s=>S[s.id]!=='off').length;
+  const counts=tally();
+  const totalAssets=orderedAssets().length;
+  const needsDecision=(counts.exposed||0)+(counts.rework||0);
+  const upsideCount=orderedAssets().filter(a=>a._ev&&a._ev.upside).length;
+  const protectedCount=counts.protected||0;
+  const headline=`<div class="headline">
+    <div class="hl-main"><b>${needsDecision}</b> of ${totalAssets} assets need a decision before 1 Jan 2027 &middot; <b>${upsideCount}</b> carry gated/owned upside &middot; <b>${protectedCount}</b> already protected and growing.</div>
+    <div class="hl-sub">Racing is the strongest compliant lane today. StatMate, FoxCatcher and Ausmerican Aces gain value as talent and broadcast lanes close, because owned audiences and first-party data become the differentiator.</div>
+  </div>`;
+  const legs=SCENARIOS.map(s=>`<div class="leg ${S[s.id]!=='off'?'on':''}">
+    <div class="meta"><span class="lt">${s.t}</span>
+      <span class="ld">${s.levels[S[s.id]].d}</span>
+      <span class="tag">${s.tag}${s.up?' · upside lever':''}</span></div>
+    <div class="seg">${LEVELS.filter(lv=>lv in s.levels).map(lv=>`<button class="segb ${S[s.id]===lv?'on '+lv:''}" data-s="${s.id}" data-lv="${lv}" title="${LV[lv]}">${(s.labels&&s.labels[lv])||LVSHORT[lv]}</button>`).join('')}</div>
+  </div>`).join("");
+  const ro=[["exposed","Exposed"],["rework","Restructure"],["watch","Conditions"],["protected","Protected / strengthens"],["safe","Out of scope"]]
+    .map(([k,lab])=>`<div class="ro ${k}"><div class="num">${counts[k]||0}</div><div class="lab">${lab}</div></div>`).join("");
+  return `<div class="view">
+    <div class="vh"><div><div class="eyebrow">Step 2 · Scenario builder</div>
+      <h2>How each legislation scenario lands</h2></div></div>
+    ${headline}
+    <div class="slate">
+      <div class="shead"><div class="t"><div class="e">Active scenario</div>
+        <h3>Interactive Gambling Amendment (Gambling Reform) Bill 2026</h3>
+        <p>Exposure draft · Schedules 1–3 commence 1 Jan 2027. Set the intensity you want to plan against.</p></div>
+        <div class="legcount"><b>${live}</b>of ${SCENARIOS.length} levers active</div></div>
+      <div class="legs">${legs}</div>
+      <div class="foot">
+        <button class="chipbtn" data-preset="base">Base case</button>
+        <button class="chipbtn" data-preset="hard">Hard landing</button>
+        <button class="chipbtn" data-preset="soft">Soft landing</button>
+        <button class="chipbtn" data-preset="clear">Clear all</button>
+      </div>
+    </div>
+    <div class="readout">${ro}</div>
+  </div>`;
+}
+const PRESETS={
+  base:{notable:"high",broadcast:"high",odds:"high",onlineFails:"off",racing:"high",sem:"high",espn:"high",grandfather:"off"},
+  hard:{notable:"high",broadcast:"high",odds:"high",onlineFails:"high",racing:"off",sem:"high",espn:"off",grandfather:"off"},
+  soft:{notable:"low",broadcast:"off",odds:"med",onlineFails:"off",racing:"high",sem:"off",espn:"high",grandfather:"high"},
+  clear:{notable:"off",broadcast:"off",odds:"off",onlineFails:"off",racing:"off",sem:"off",espn:"high",grandfather:"off"}
+}
+
+/* ============ RENDER: asset grid ============ */
+function renderAssets(){
+  if(typeof assetsView==="undefined") assetsView="needs";
+  const scope=orderedAssets();
+  scope.forEach(a=>a._ev=evalAsset(a));
+  const decided=a=>{const p=PLANS[a.asset];return p&&p.path&&p.path!=="— choose —"&&p.path!=="No action";};
+  const actionable=a=>["exposed","rework"].includes(a._ev.key);
+  // counts
+  const needList=scope.filter(actionable);
+  const doneCount=needList.filter(decided).length;
+  const rank=a=>ST[a._ev.key].rank;
+  // which rows to show
+  let rows;
+  if(assetsView==="needs"){
+    rows=needList.slice().sort((x,y)=>(decided(x)-decided(y))||(rank(x)-rank(y))||(y._ev.frac||0)-(x._ev.frac||0));
+  } else {
+    rows=scope.slice().sort((x,y)=>(rank(x)-rank(y)));
+  }
+  const rowHtml=rows.map(a=>{
+    const st=ST[a._ev.key]; const plan=PLANS[a.asset]; const cur=plan&&plan.path;
+    const isDone=decided(a); const rec=recVerb(a);
+    const why=a._ev.reasons[0]||"No active restriction under the current scenario.";
+    const verbs=QUICK.map(v=>`<button class="verb ${cur===v?'on':''} ${(!isDone&&rec===v)?'rec':''}" data-verb="${v}" data-a="${esc(a.asset)}" title="${esc(VERB_HINT[v])}">${v}${(!isDone&&rec===v)?'<i>rec</i>':''}</button>`).join("");
+    return `<div class="wl ${isDone?'done':''}" style="border-left-color:${st.dot}">
+      <div class="wl-head">
+        <span class="wl-dot" style="background:${st.dot}"></span>
+        <div class="wl-id"><span class="wl-name">${esc(a.asset)}</span>
+          <span class="badge ${st.b}">${st.lab}</span>
+          ${a._ev.upside&&a._ev.key!=="strong"?'<span class="wl-up">▲ upside</span>':''}
+          <span class="wl-lines">${a.lines.length} line${a.lines.length>1?'s':''}</span></div>
+        <button class="wl-more" data-a="${esc(a.asset)}">Details →</button>
+      </div>
+      <div class="wl-why">${esc(why)}</div>
+      <div class="wl-decide">
+        <span class="wl-declab">Decision</span>
+        <div class="wl-verbs">${verbs}</div>
+        ${isDone&&plan.status?`<span class="wl-status">${esc(plan.status)}</span>`:''}
+      </div>
+    </div>`;
+  }).join("");
+  const empty = assetsView==="needs"
+    ? '<div class="empty"><b>Nothing needs a decision under this scenario.</b>Ease a lever in Step 1, or switch to All to review everything.</div>'
+    : '<div class="empty"><b>No assets.</b></div>';
+  const pct = needList.length? Math.round(doneCount/needList.length*100):0;
+  return `<div class="view">
+    <div class="vh"><div><div class="eyebrow">Step 3 · Decisions</div>
+      <h2>Make the call on each asset</h2>
+      </div></div>
+    <div class="decbar">
+      <div class="vtoggle">
+        <button class="vt ${assetsView==='needs'?'on':''}" data-view="needs">Needs decision <span>${needList.length-doneCount}</span></button>
+        <button class="vt ${assetsView==='all'?'on':''}" data-view="all">All <span>${scope.length}</span></button>
+      </div>
+      <div class="prog"><div class="progbar"><span style="width:${pct}%"></span></div>
+        <span class="progtxt">${doneCount} of ${needList.length} decided</span></div>
+    </div>
+    <div class="worklist">${rowHtml||empty}</div>
+  </div>`;
+}
+
+/* ============ DRAWER: asset workspace ============ */
+function openWorkspace(name){
+  const a=PORTFOLIO.find(x=>x.asset===name); if(!a) return; openAsset=name;
+  a._ev=evalAsset(a); const st=ST[a._ev.key];
+  const plan=PLANS[name]||{path:"— choose —",owner:"",target:"",status:"Not started",prio:autoPrio(a),notes:""};
+  const prof=PROFILE_FIELDS.some(f=>plan[f])?plan:null;
+  const tierColor={HIGH:"rgba(237,27,66,.16)|#FF6E89","MED-HIGH":"rgba(232,130,30,.18)|#FFB266",MEDIUM:"rgba(201,162,39,.20)|#E9C84E",LOW:"rgba(255,255,255,.08)|#B9BABE",SAFE:"rgba(31,157,87,.18)|#3FDD8C","N/A":"rgba(255,255,255,.08)|#9B9CA2",TBC:"rgba(232,130,30,.18)|#FFB266"};
+  const lineRows=a.lines.map(l=>{ const e=evalLine(l,plan.cel); const tc=(tierColor[l.tier]||"rgba(255,255,255,.08)|#9B9CA2").split("|");
+    return `<tr><td><b>${esc(l.name)}</b></td>
+      <td><span class="tierpill" style="background:${tc[0]};color:${tc[1]}">${esc(l.tier)}</span></td>
+      <td><span class="statustag" style="background:${ST[e.key].dot}22;color:${ST[e.key].dot}">${ST[e.key].lab}</span></td>
+      <td style="color:var(--pb-muted)">${esc(l.prov)}</td></tr>`;}).join("");
+  const hasOwnedAudience=plan.data==="Yes";
+  const needsHome=a._ev.upside&&!hasOwnedAudience;
+  const upsideNote=!a._ev.upside?'':hasOwnedAudience?' · upside available — owned audience confirmed':' · structural upside, but no owned audience yet — needs a home';
+  const reasons=a._ev.reasons.map(r=>`<li>${esc(r)}</li>`).join("")||"<li>No active restriction under the current scenario.</li>";
+  const profSec=prof?`<div class="dsec"><div class="k">Asset profile · ownership, platform &amp; data</div>
+    <div class="impact"><div class="proflist">
+      <div><span class="pl">PB owned</span><b>${esc(prof.owned||'—')}</b></div>
+      <div><span class="pl">Digital platform</span><b>${esc(prof.platform||'—')}</b></div>
+      <div><span class="pl">First-party data</span><b>${esc(prof.data||'—')}</b></div>
+      <div><span class="pl">Content</span><b>${esc(prof.content||'—')}</b></div>
+      <div><span class="pl">Production</span><b>${esc(prof.production||'—')}</b></div>
+      <div><span class="pl">Distribution</span><b>${esc(prof.distribution||'—')}</b></div>
+      <div><span class="pl">PB integration</span><b>${esc(prof.integration||'—')}</b></div>
+      <div><span class="pl">Team</span><b>${esc(prof.team||'—')}</b></div>
+    </div>
+    <div style="margin-top:10px;font-size:11.5px;color:var(--ddim)">Editable in Step 1 · Asset Status — this is a live view of the same record.</div>
+    </div></div>`:`<div class="dsec"><div class="k">Asset profile · ownership, platform &amp; data</div>
+    <div class="impact"><p style="margin:0;color:var(--pb-muted);font-size:13px">Not set yet. Add ownership, platform and data details in Step 1 · Asset Status.</p></div></div>`;
+  $("#drawerHead").innerHTML=`<div><div class="e">Asset workspace</div><h3>${esc(name)}</h3>
+    <div class="ls">${a.lines.length} budget line${a.lines.length>1?'s':''} · status reflects the live scenario</div></div>
+    <button class="dclose" id="dcl">×</button>`;
+  $("#drawerBody").innerHTML=`
+    <div class="dsec"><div class="k">Under the current scenario</div>
+      <div class="impact"><span class="st"><span class="dot" style="background:${st.dot}"></span>${st.lab}${upsideNote}</span>
+        <ul class="reasons">${reasons}</ul>
+        ${needsHome?`<div class="callout" style="border-left-color:#C9A227;margin-top:10px"><b>Needs a home.</b> This channel type could carry gated/owned upside, but nothing confirms ${esc(name)} actually has its own first-party audience yet (a database, logged-in users) rather than just reach (followers, subscribers). Set "Data" in Step 1 · Asset Status once you know.</div>`:''}
+      </div></div>
+    ${profSec}
+    <div class="dsec"><div class="k">Recommended move</div>
+      <div class="recbox"><div class="k">Do this</div><p>${esc(moveFor(a))}</p></div></div>
+    <div class="dsec"><div class="k">Path routing</div>
+      <div class="impact"><span class="st"><span class="dot" style="background:${st.dot}"></span>${esc(getPathModel(a).destination)}</span>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">${getPathModel(a).branches.filter(b=>b.active).map(b=>`<span class="scchip on" style="font-size:11px">${esc(b.title)}</span>`).join("")}</div></div></div>
+    <div class="dsec"><div class="k">Lines in this asset</div>
+      <table class="ltab"><thead><tr><th>Line</th><th>Tier</th><th>Under scenario</th><th>Key provision</th></tr></thead>
+      <tbody>${lineRows}</tbody></table></div>
+    <div class="dsec"><div class="k">Your path</div>
+      <div class="plan">
+        <div class="fld full"><label>Path / decision</label>
+          <select id="f-path">${PATHS.map(p=>`<option ${plan.path===p?'selected':''}>${p}</option>`).join("")}</select></div>
+        <div class="fld"><label>Owner</label><input id="f-owner" value="${esc(plan.owner)}" placeholder="e.g. David / Legal / Leggy"></div>
+        <div class="fld"><label>Target milestone</label><input id="f-target" value="${esc(plan.target)}" placeholder="e.g. Contracts reviewed by Oct"></div>
+        <div class="fld"><label>Status</label><select id="f-status">${STATUSES.map(s=>`<option ${plan.status===s?'selected':''}>${s}</option>`).join("")}</select></div>
+        <div class="fld"><label>Priority</label><select id="f-prio">${["P1 — urgent","P2 — this half","P3 — monitor"].map(p=>`<option ${plan.prio===p?'selected':''}>${p}</option>`).join("")}</select></div>
+        <div class="fld full"><label>Notes</label><textarea id="f-notes" placeholder="Contract end dates, legal questions, reallocation, next step…">${esc(plan.notes)}</textarea></div>
+      </div>
+      <div class="dactions"><button class="savebtn" id="f-save">Save path</button>
+        <button class="clrbtn" id="f-clear">Clear</button>
+        <span class="saved" id="f-saved">✓ Saved</span></div>
+    </div>`;
+  $("#dcl").onclick=closeWorkspace;
+  $("#f-save").onclick=()=>{ const ex=PLANS[name]||{}; Object.assign(ex,{path:$("#f-path").value,owner:$("#f-owner").value,target:$("#f-target").value,
+    status:$("#f-status").value,prio:$("#f-prio").value,notes:$("#f-notes").value}); PLANS[name]=ex; persist();
+    $("#f-saved").classList.add("on"); setTimeout(()=>$("#f-saved").classList.remove("on"),1400); render(); };
+  $("#f-clear").onclick=()=>{ const ex=PLANS[name]; if(ex){ ex.path="— choose —"; ex.owner=""; ex.target=""; ex.status="Not started"; ex.notes=""; } persist(); closeWorkspace(); render(); };
+  $("#scrim").classList.add("on"); $("#drawer").classList.add("on"); $(".wrap").classList.add("receding"); $(".bar").classList.add("receding"); $("#flow").classList.add("receding");
+}
+function closeWorkspace(){ $("#scrim").classList.remove("on"); $("#drawer").classList.remove("on"); $(".wrap").classList.remove("receding"); $(".bar").classList.remove("receding"); $("#flow").classList.remove("receding"); openAsset=null;
+  if(activeView==="assets"||activeView==="summary"||activeView==="actions"||activeView==="status") render(); }
+function autoPrio(a){ const k=a._ev.key; return k==="exposed"?"P1 — urgent":k==="rework"?"P2 — this half":"P3 — monitor"; }
+
+
+/* ============ PATH GROUPS (mirrors the FY27 budget doc's billing-code sections) ============ */
+const PATH_GROUPS=[
+  {h:"TV",assets:["Fox Footy Linear","ESPN Linear"]},
+  {h:"RADIO",assets:["SEN","Triple M","Nine Radio"]},
+  {h:"OOH & EVENTS",assets:["OOH & Events"]},
+  {h:"DIGITAL PARTNERS",assets:["ESPN.com","Fox Footy.com","Fox League","Digital Partners"]},
+  {h:"SOCIAL",assets:["Paid Social"]},
+  {h:"SEM",assets:["Search (SEM)"]},
+  {h:"PROGRAMMATIC",assets:["Programmatic"]},
+  {h:"AMBASSADORS",assets:["Ambassadors"]},
+  {h:"SOCIAL MEDIA CREATORS",assets:["Social Creators","Fanatics TV","100k Sports"]},
+  {h:"PRODUCTION",assets:["Production","Brand Production"]},
+  {h:"AUSMERICAN ACES",assets:["Ausmerican Aces"]},
+  {h:"FOXCATCHER",assets:["FoxCatcher"]},
+  {h:"STATMATE",assets:["StatMate"]},
+  {h:"RACING.COM (RDC)",assets:["Racing.com (RDC)"]}
+];
+// Agencies, Ad Tech (service/infra, not media or production) and Internal (labour, not a partner) are deliberately excluded
+
+/* ============ SCOPE: Content/Owned Brands filter — bleeds through every view ============ */
+const CORE_ASSETS=ASSET_PROFILE_ORDER; // StatMate, FoxCatcher, Ausmerican Aces, Fanatics TV, 100k Sports, Racing, ESPN — the original matrix's own order
+let coreOnly=true; // default on, per request
+const CORE_GROUP=[{h:"Original partnerships matrix",assets:CORE_ASSETS}];
+function activeGroups(){
+  if(coreOnly) return CORE_GROUP;
+  const withCoreFirst=PATH_GROUPS.map(g=>({h:g.h,assets:g.assets.slice().sort((a,b)=>{
+    const ai=CORE_ASSETS.indexOf(a),bi=CORE_ASSETS.indexOf(b);
+    if(ai!==-1&&bi!==-1) return ai-bi; if(ai!==-1) return -1; if(bi!==-1) return 1; return 0;
+  })}));
+  return withCoreFirst.slice().sort((ga,gb)=>{
+    const aHas=ga.assets.some(n=>CORE_ASSETS.includes(n)), bHas=gb.assets.some(n=>CORE_ASSETS.includes(n));
+    return aHas&&!bHas?-1:bHas&&!aHas?1:0;
+  });
+}
+function orderedAssets(){
+  const names=activeGroups().flatMap(g=>g.assets);
+  return names.map(n=>PORTFOLIO.find(a=>a.asset===n)).filter(Boolean);
+}
+
+/* ============ RENDER: asset status (owned audience) ============ */
+function renderAssetStatus(){
+  const groupsData=activeGroups();
+  const allNames=groupsData.flatMap(g=>g.assets);
+  const needCount=allNames.filter(name=>{
+    const a=PORTFOLIO.find(x=>x.asset===name); if(!a) return false;
+    const gatingDriven=a.lines.some(l=>l.tags&&l.tags.includes("online_gating"));
+    const oa=(PLANS[name]&&PLANS[name].data)||"";
+    return gatingDriven&&oa!=="Yes";
+  }).length;
+  const yn=(name,field,val)=>`<select class="ap-select yn-${(val||'').toLowerCase()||'blank'}" data-asset="${esc(name)}" data-field="${field}">${[["","—"],["Yes","Yes"],["No","No"]].map(([v,l])=>`<option value="${v}" ${val===v?'selected':''}>${l}</option>`).join('')}</select>`;
+  const tx=(name,field,val,ph)=>`<input class="ap-input" data-asset="${esc(name)}" data-field="${field}" value="${esc(val||'')}" placeholder="${esc(ph||'—')}">`;
+  const celSelect=(name,val)=>`<select class="ap-select" data-asset="${esc(name)}" data-field="cel">
+    <option value="" ${!val?'selected':''}>— not assessed —</option>
+    ${CEL_TIERS.map(t=>`<option value="${t.v}" ${val===t.v?'selected':''}>${esc(t.label)}</option>`).join('')}
+    </select>`;
+  const groups=groupsData.map(g=>{
+    const cards=g.assets.map(name=>{
+      const a=PORTFOLIO.find(x=>x.asset===name); if(!a) return '';
+      a._ev=evalAsset(a); const p=PLANS[name]||{};
+      const gatingDriven=a.lines.some(l=>l.tags&&l.tags.includes("online_gating"));
+      const flag=!gatingDriven?'':p.data==="Yes"?'<span class="statustag s-locked">Has a home</span>':'<span class="statustag s-inprogress">Needs a home</span>';
+      return `<div class="apcard"><div class="aph"><b>${esc(name)}</b> ${flag}</div>
+        <div class="apgrid">
+          <div class="fld"><label>PB owned</label>${yn(name,'owned',p.owned)}</div>
+          <div class="fld"><label>Dig platform</label>${yn(name,'platform',p.platform)}</div>
+          <div class="fld"><label>Data (owned audience)</label>${yn(name,'data',p.data)}</div>
+          <div class="fld"><label>Content</label>${tx(name,'content',p.content)}</div>
+          <div class="fld"><label>Production</label>${tx(name,'production',p.production)}</div>
+          <div class="fld"><label>Distribution</label>${tx(name,'distribution',p.distribution)}</div>
+          <div class="fld"><label>PB integration</label>${tx(name,'integration',p.integration)}</div>
+          <div class="fld"><label>Employees</label>${tx(name,'team',p.team)}</div>
+          <div class="fld full"><label>Celebrities <span style="color:var(--pb-faint);font-weight:400">(matches the Notable-person ban tiers)</span></label>${celSelect(name,p.cel)}</div>
+          <div class="fld full"><label>Notes</label>${tx(name,'mnotes',p.mnotes,'Anything else worth flagging')}</div>
+        </div></div>`;
+    }).join('');
+    return `<div class="dsec"><div class="k">${esc(g.h)}</div><div class="apcards">${cards}</div></div>`;
+  }).join('');
+  return `<div class="view">
+    <div class="vh"><div><div class="eyebrow">Step 1 · Asset status</div>
+      <h2>Partnership Matrix</h2></div></div>
+    ${groups}
+    <div class="disc">Agencies, Ad Tech and Internal aren't shown here — they're services or labour, not audience channels.</div>
+  </div>`;
+}
+
+/* ============ RENDER: paths (if X then Y) ============ */
+const TONE={good:"#1F9D57",watch:"#C9A227",risk:"#ED1B42",neutral:"#7C7E84"};
+function renderPaths(){
+  const groupsData=activeGroups();
+  if(!pathAsset||!groupsData.some(g=>g.assets.includes(pathAsset))) pathAsset=groupsData[0].assets[0];
+  const groups=groupsData.map(g=>{
+    const btns=g.assets.map(name=>{const a=PORTFOLIO.find(x=>x.asset===name); if(!a) return '';
+      a._ev=evalAsset(a);const st=ST[a._ev.key];
+      return `<button class="atab-btn ${pathAsset===name?'on':''}" data-pa="${esc(name)}">
+        <span class="adot" style="background:${st.dot}"></span>${esc(name)}</button>`;}).join('');
+    return `<div class="atabgroup"><div class="atabgroup-h">${esc(g.h)}</div><div class="atabgroup-row">${btns}</div></div>`;
+  }).join('');
+  const a=PORTFOLIO.find(x=>x.asset===pathAsset); a._ev=evalAsset(a);
+  const pm=getPathModel(a); const st=ST[pm.ev.key];
+  const rulings=pm.rulings.map(r=>`<div class="ruling ${r.active?'':'inactive'}">
+      <div class="rdot" style="background:${TONE[r.tone]}"></div>
+      <div class="rtext"><span class="rif">${esc(r.if)}</span>
+        <span class="rarrow">→</span><span class="rthen">${esc(r.then)}</span></div></div>`).join("");
+  // branching diagram
+  const lanes=pm.branches; const n=lanes.length; const H=300, top=30, gap=(H-top*2)/(n-1);
+  const ax=70, ay=H/2, bx=300;
+  const lines=lanes.map((b,i)=>{const by=top+gap*i; const c=b.active?TONE[b.tone]:"#D2CFC8";
+    return `<path d="M${ax} ${ay} C${(ax+bx)/2} ${ay}, ${(ax+bx)/2} ${by}, ${bx} ${by}" fill="none" stroke="${c}" stroke-width="${b.active?2.4:1.2}" stroke-dasharray="${b.active?'':'4 4'}" opacity="${b.active?1:.5}"/>`;}).join("");
+  const nodes=lanes.map((b,i)=>{const by=top+gap*i; const c=b.active?TONE[b.tone]:"#9A9B9F";
+    return `<g opacity="${b.active?1:.45}"><circle cx="${bx}" cy="${by}" r="6" fill="${c}"/>
+      <text x="${bx+14}" y="${by+4}" font-size="12.5" font-weight="${b.active?700:500}" fill="${b.active?'#16171A':'#9A9B9F'}">${esc(b.title)}</text></g>`;}).join("");
+  const svg=`<svg viewBox="0 0 560 ${H}" width="100%" preserveAspectRatio="xMinYMid meet">
+    ${lines}
+    <circle cx="${ax}" cy="${ay}" r="9" fill="${st.dot}"/><circle cx="${ax}" cy="${ay}" r="15" fill="none" stroke="${st.dot}" stroke-width="1.5" opacity=".4"/>
+    <text x="${ax}" y="${ay-24}" font-size="11" font-weight="700" fill="#16171A" text-anchor="middle">${esc(a.asset)}</text>
+    ${nodes}</svg>`;
+  const laneCards=lanes.map(b=>`<div class="lane ${b.active?'on':''}" style="${b.active?'border-left-color:'+TONE[b.tone]:''}">
+      <div class="lh"><span class="lstatus" style="color:${b.active?TONE[b.tone]:'#9A9B9F'}">${b.active?'● Open':'○ Off'}</span>${esc(b.title)}</div>
+      <p>${esc(b.text)}</p></div>`).join("");
+  const next=a._ev.reasons.slice(0,3).map(r=>`<li>${esc(r)}</li>`).join("");
+  return `<div class="view">
+    <div class="vh"><div><div class="eyebrow">Step 4 · Paths</div>
+      <h2>If this lands, then this asset moves</h2>
+      <p>Pick an asset to see its routing: each active lever produces a ruling, lanes open or close, and the asset lands on a destination.</p></div></div>
+    <div class="atabs">${groups}</div>
+    <div class="pathwrap">
+      <div class="pathmain">
+        <div class="dest ${pm.ev.key}"><div class="k">Destination under this scenario</div>
+          <div class="destrow"><span class="dot" style="background:${st.dot}"></span>
+            <strong>${esc(pm.destination)}</strong><span class="destbadge ${st.b}">${st.lab}</span></div>
+          <p class="destmove">${esc(pm.move)}</p></div>
+        <div class="diagram">${svg}</div>
+      </div>
+      <div class="pathside">
+        <div class="psec"><div class="k">Rulings · if X, then Y</div>${rulings||'<div class="empty">No active levers touch this asset.</div>'}</div>
+      </div>
+    </div>
+    <div class="lanes">${laneCards}</div>
+    <div class="panel" style="margin-top:16px"><div class="k">Open this asset's workspace to commit a path</div>
+      <button class="savebtn" data-openws="${esc(a.asset)}" style="margin-top:4px">Set ${esc(a.asset)} path →</button></div>
+  </div>`;
+}
+
+/* ============ RENDER: summary ============ */
+function tally(){ const c={}; orderedAssets().forEach(a=>{a._ev=evalAsset(a); const g=a._ev.key==="strong"?"protected":a._ev.key; c[g]=(c[g]||0)+1;}); return c; }
+function renderSummary(){
+  const counts=tally();
+  const onChips=SCENARIOS.map(s=>`<span class="scchip ${S[s.id]!=='off'?(s.up?'on up':'on'):''}">${s.t}: <b>${LV[S[s.id]]}</b></span>`).join("");
+  const order=["exposed","rework","watch","protected","safe"];
+  const total=orderedAssets().length;
+  const segs=order.map(k=>{const n=counts[k]||0; if(!n)return""; const c={exposed:"#ED1B42",rework:"#E8821E",watch:"#C9A227",protected:"#1F9D57",safe:"#7C7E84"}[k];
+    return `<span style="background:${c};flex:${n}" title="${ST[k].lab}: ${n}">${n}</span>`;}).join("");
+  // paths built
+  const planned=orderedAssets().filter(a=>PLANS[a.asset]&&PLANS[a.asset].path&&PLANS[a.asset].path!=="— choose —");
+  const lockedCount=planned.filter(a=>(PLANS[a.asset].status||"")==="Locked").length;
+  const inProgCount=planned.filter(a=>(PLANS[a.asset].status||"")==="In progress").length;
+  const plist=planned.length?planned.map(a=>{const p=PLANS[a.asset];const sc=p.status==="Locked"?"s-locked":p.status==="In progress"?"s-inprogress":"s-notstarted";
+    return `<li><span class="pa">${esc(a.asset)}</span><span class="pd">${esc(p.path)}${p.owner?' · '+esc(p.owner):''}${p.target?' · '+esc(p.target):''}
+      ${p.notes?`<span class="pmeta">${esc(p.notes)}</span>`:''}</span>
+      <span class="statustag ${sc}">${esc(p.status||'')}</span></li>`;}).join("")
+    :`<div class="empty"><b>No paths built yet.</b>Open an asset in Step 3 and set its path — it appears here.</div>`;
+  // outstanding = exposed/rework with no path
+  const outstanding=orderedAssets().filter(a=>{a._ev=evalAsset(a);const k=a._ev.key;const has=PLANS[a.asset]&&PLANS[a.asset].path&&PLANS[a.asset].path!=="— choose —";return (k==="exposed"||k==="rework")&&!has;});
+  const olist=outstanding.length?outstanding.map(a=>`<li><span class="pa">${esc(a.asset)}</span>
+    <span class="pd">${esc(a._ev.reasons[0]||'')}</span>
+    <button class="jumpbtn" data-jump="${esc(a.asset)}">Set path →</button></li>`).join("")
+    :`<div class="empty"><b>All clear.</b>No exposed or restructure assets are missing a path.</div>`;
+  const daysLeft=Math.max(0,Math.ceil((new Date("2027-01-01")-new Date())/86400000));
+  const needsDec=(counts.exposed||0)+(counts.rework||0);
+  const decided=orderedAssets().filter(a=>a._ev&&(a._ev.key==="exposed"||a._ev.key==="rework")&&PLANS[a.asset]&&PLANS[a.asset].path&&PLANS[a.asset].path!=="— choose —"&&PLANS[a.asset].path!=="No action").length;
+  const verdict=`<div class="readout" style="grid-template-columns:repeat(4,1fr);margin:0 0 16px">
+    <div class="ro"><div class="num">${daysLeft}</div><div class="lab">Days to 1 Jan 2027</div></div>
+    <div class="ro exposed"><div class="num">${needsDec}</div><div class="lab">Need a decision</div></div>
+    <div class="ro ${decided>=needsDec&&needsDec>0?'protected':'watch'}"><div class="num">${decided}</div><div class="lab">Calls made</div></div>
+    <div class="ro ${lockedCount>0?'protected':'safe'}"><div class="num">${lockedCount}</div><div class="lab">Ready for GLT</div></div></div>`;
+  return `<div class="view">
+    <div class="vh"><div><div class="eyebrow">Step 5 · Exec summary</div>
+      <h2>The one-pager</h2>
+      <p>Built for the Legg / Kennedy / Catterall read: the exposure, the calls made, and what's still open.</p></div>
+      <button class="ghostbtn" id="exportBtn" style="border-color:var(--pb-line2);color:var(--pb-ink)">⤓ Export plan</button></div>
+    ${verdict}
+    <div class="panel" style="margin-bottom:16px"><div class="k">Scenario in force</div>
+      <div class="scchips">${onChips}</div></div>
+    <div class="panel" style="margin-bottom:16px"><div class="k">Portfolio under this scenario · ${total} assets</div>
+      <div class="statusbar">${segs}</div>
+      <div style="font-size:12px;color:var(--pb-muted)">${counts.exposed||0} exposed · ${counts.rework||0} to restructure · ${counts.watch||0} with conditions · ${counts.protected||0} protected / strengthening · ${counts.safe||0} out of scope</div></div>
+    <div class="sumgrid">
+      <div class="panel"><div class="k">Paths built (${planned.length}) · <span style="color:#3FDD8C">${lockedCount} ready for GLT</span>${inProgCount?` · ${inProgCount} in progress`:''}</div><ul class="plist">${plist}</ul></div>
+      <div class="panel"><div class="k outstanding">Open calls (${outstanding.length}) · needs a decision</div><ul class="plist outstanding">${olist}</ul></div>
+    </div></div>`;
+}
+
+/* ============ RENDER: actions ============ */
+function renderActions(){
+  const rows=orderedAssets().filter(a=>PLANS[a.asset]&&PLANS[a.asset].path&&PLANS[a.asset].path!=="— choose —")
+    .map(a=>({a,p:PLANS[a.asset]}))
+    .sort((x,y)=>(x.p.prio||"").localeCompare(y.p.prio||""))
+    .map(({a,p})=>{const pc=p.prio&&p.prio.startsWith("P1")?"p1":p.prio&&p.prio.startsWith("P2")?"p2":"p3";
+      return `<tr><td class="prio ${pc}">${esc((p.prio||'').split(' ')[0])}</td>
+        <td><b>${esc(a.asset)}</b></td><td>${esc(p.path)}</td><td>${esc(p.owner||'—')}</td>
+        <td>${esc(p.target||'—')}</td><td>${esc(p.status||'—')}</td>
+        <td style="color:var(--pb-muted)">${esc(p.notes||'')}</td></tr>`;}).join("");
+  return `<div class="view"><div class="vh"><div><div class="eyebrow">Step 6 · Roadmap</div>
+    <h2>H2 action plan</h2><p>Every path you've set, ranked by priority. This is the working list to 1 Jan 2027.</p></div></div>
+    ${rows?`<table class="atab"><thead><tr><th>Pri</th><th>Asset</th><th>Path</th><th>Owner</th><th>Target</th><th>Status</th><th>Notes</th></tr></thead><tbody>${rows}</tbody></table>`
+      :`<div class="empty"><b>No actions yet.</b>Set paths on your assets and they'll populate here, ranked by priority.</div>`}</div>`;
+}
+
+/* ============ RENDER: notes / logic ============ */
+function renderNotes(){
+  const prov=[["62T","Notable-person sponsorship ban","No sponsorship/promo arrangement with athletes, celebrities, influencers or prominent individuals. Dedicated-wagering exemption does NOT apply."],
+    ["62K/L","Live-sport broadcast ban","No wagering ads in conjunction with live sport, 6am–8:30pm (with overnight treatment differing)."],
+    ["62M","Frequency cap","No more than 3 wagering ads per 60 minutes, 6am–8:30pm on TV."],
+    ["62N","Radio school hours","No radio wagering ads 8–9am and 3–4pm on school days."],
+    ["62P/Q","Online-content gating","Online wagering ads need reasonable steps: exclude restricted users, registered-account delivery, opt-out."],
+    ["62R","Age-assurance limits","Can't rely solely on government ID / Digital ID unless reasonable alternatives exist."],
+    ["62S","Uniforms & venues","No wagering ads on sporting uniforms or at venues — except racing."],
+    ["62U","Odds in broadcast","Odds promotion banned in broadcast/datacast except dedicated wagering programs."],
+    ["62V","Reps as commentators","Provider representatives can't act as commentators / appear at venue during live coverage."],
+    ["62W","Harmful/misleading","No targeting children, exaggerated claims, gambling-as-success, alcohol association."],
+    ["s10A(3) / 62G","Racing carve-out","Horse, harness and greyhound racing excluded from 'sporting event' and 'odds' definitions."]];
+  return `<div class="view"><div class="vh"><div><div class="eyebrow">Step 7 · Logic</div>
+    <h2>How the engine decides</h2><p>Each line carries the provisions it's exposed to. Set a lever's intensity and only the lines touched by that provision move — scaled by how hard it lands.</p></div></div>
+    <div class="callout"><b>Reading the engine:</b> each lever runs <b>High</b>, <b>Medium</b>, <b>Low</b> or <b>Not at all</b>. The notable-person ban reaches further as intensity rises — High catches any public profile, Medium ~50K+ followers, Low ~200K+ only. Every tagged line re-evaluates; the asset takes its worst line.</div>
+    <div class="callout" style="border-left-color:#1F9D57"><b>Racing is the safe harbour.</b> RDC, Racing.com and greyhound stay protected and strengthen as broadcast and talent close — the lane to lean into.</div>
+    <div class="callout" style="border-left-color:#1F9D57"><b>Gated/owned upside, asset by asset.</b> A line flags as upside once it's fully gated (Online gating → Off, trading reach for the ability to advertise at all) — first-party data and owned audiences gain value as broadcast and talent close. <b>Confirmed against the matrix below:</b> Ausmerican Aces, Fanatics TV and 100k Sports are rightly excluded — none PB-owned, none on a PB platform, none carry first-party data. StatMate and FoxCatcher are the two PB-owned, data-carrying assets — StatMate stays out-of-scope (Part 7C doesn't apply) rather than strengthening, though its relative value still rises as rivals lose channels it never depended on.</div>
+    <div class="dsec"><div class="k">Source: the original partnerships matrix</div>
+      <table class="note-prov"><thead><tr><th>Asset</th><th>PB owned</th><th>Dig. platform</th><th>Data</th><th>Production</th><th>Distribution</th><th>PB integration</th></tr></thead>
+      <tbody>${ASSET_PROFILE_ORDER.map(k=>{const p=ASSET_PROFILE[k];return `<tr><td><b>${esc(ASSET_PROFILE_LABEL[k])}</b></td><td>${esc(p.owned)}</td><td>${esc(p.platform)}</td><td>${esc(p.data)}</td><td style="color:var(--pb-muted)">${esc(p.production)}</td><td style="color:var(--pb-muted)">${esc(p.distribution)}</td><td style="color:var(--pb-muted)">${esc(p.integration)}</td></tr>`;}).join("")}</tbody></table>
+      <div style="font-size:11.5px;color:var(--ddim);margin-top:8px">This is the first piece of work behind the whole exercise — the qualitative comparison that started the "which of our assets are actually ours" question. Carried forward here so the upside logic above traces back to it.</div></div>
+    <table class="note-prov"><thead><tr><th style="width:90px">Provision</th><th style="width:200px">What it is</th><th>What it restricts</th></tr></thead>
+    <tbody>${prov.map(p=>`<tr><td><code>${p[0]}</code></td><td><b>${p[1]}</b></td><td style="color:var(--pb-muted)">${p[2]}</td></tr>`).join("")}</tbody></table>
+    <div class="callout" style="margin-top:16px"><b>Status note (Jun 2026):</b> Exposure draft for consultation; Government reaffirmed the package in its 12 May 2026 response, commencement intended 1 Jan 2027. Not legal advice — borderline calls (SEM, grandfathering, dedicated-wagering qualification) need a compliance read before acting.</div>
+    <div class="disc">PointsBet Reform Scenario Planner · built from the FY27 partner portfolio · scenario outputs are planning aids, not legal advice.</div>
+  </div>`;
+}
+
+/* ============ MAIN RENDER ============ */
+function render(){
+  renderFlow();
+  const m=$("#main");
+  if(activeView==="scenario") m.innerHTML=renderScenario();
+  else if(activeView==="status") m.innerHTML=renderAssetStatus();
+  else if(activeView==="assets") m.innerHTML=renderAssets();
+  else if(activeView==="paths") m.innerHTML=renderPaths();
+  else if(activeView==="summary") m.innerHTML=renderSummary();
+  else if(activeView==="actions") m.innerHTML=renderActions();
+  else if(activeView==="notes") m.innerHTML=renderNotes();
+  bind();
+}
+function bind(){
+  $$(".segb").forEach(b=>b.onclick=()=>{S[b.dataset.s]=b.dataset.lv;persist();render();});
+  $$(".ap-select").forEach(sel=>sel.onchange=()=>{const name=sel.dataset.asset,field=sel.dataset.field;
+    if(!PLANS[name]) PLANS[name]={path:"— choose —",owner:"",target:"",status:"Not started",prio:"P3 — monitor",notes:""};
+    PLANS[name][field]=sel.value; persist(); render();});
+  $$(".ap-input").forEach(inp=>inp.oninput=()=>{const name=inp.dataset.asset,field=inp.dataset.field;
+    if(!PLANS[name]) PLANS[name]={path:"— choose —",owner:"",target:"",status:"Not started",prio:"P3 — monitor",notes:""};
+    PLANS[name][field]=inp.value; persist();});
+  $$(".chipbtn").forEach(b=>b.onclick=()=>{const p=PRESETS[b.dataset.preset];if(p){Object.assign(S,p);persist();render();}});
+  $$(".fbtn").forEach(b=>b.onclick=()=>{activeFilter=b.dataset.f;render();});
+  $$(".card").forEach(b=>b.onclick=()=>openWorkspace(b.dataset.a));
+  $$("[data-jump]").forEach(b=>b.onclick=(e)=>{e.stopPropagation();openWorkspace(b.dataset.jump);});
+  $$("[data-pa]").forEach(b=>b.onclick=()=>{pathAsset=b.dataset.pa;render();});
+  $$("[data-openws]").forEach(b=>b.onclick=()=>openWorkspace(b.dataset.openws));
+  $$(".vt").forEach(b=>b.onclick=()=>{assetsView=b.dataset.view;render();});
+  $$(".wl-more").forEach(b=>b.onclick=()=>openWorkspace(b.dataset.a));
+  $$(".verb").forEach(b=>b.onclick=()=>{const name=b.dataset.a,v=b.dataset.verb;
+    const a=PORTFOLIO.find(x=>x.asset===name); a._ev=evalAsset(a);
+    const ex=PLANS[name];
+    if(ex&&ex.path===v){ ex.path="— choose —"; ex.status="Not started"; }
+    else if(ex){ ex.path=v; }
+    else { PLANS[name]={path:v,owner:"",target:"",status:"In progress",prio:autoPrio(a),notes:""}; }
+    persist(); render();});
+  const ex=$("#exportBtn"); if(ex)ex.onclick=exportPlan;
+}
+function exportPlan(){
+  const active=SCENARIOS.filter(s=>S[s.id]).map(s=>s.t);
+  const out={generated:new Date().toISOString(),scenario:active,plans:PLANS};
+  const blob=new Blob([JSON.stringify(out,null,2)],{type:"application/json"});
+  const u=URL.createObjectURL(blob);const a=document.createElement("a");
+  a.href=u;a.download="pointsbet-reform-plan.json";a.click();URL.revokeObjectURL(u);
+}
+$("#scrim").onclick=closeWorkspace;
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&openAsset)closeWorkspace();});
+const llb=$("#loadLatestBtn"); if(llb) llb.onclick=async()=>{
+  if(!confirm("Load the latest saved version? Any local edits you haven't had a chance to save will be replaced.")) return;
+  await loadFromCloud(); if(openAsset) closeWorkspace(); render();
+};
+const ct=$("#coreToggle"); if(ct) ct.onclick=()=>{
+  coreOnly=!coreOnly; ct.classList.toggle("on",coreOnly);
+  if(openAsset&&!activeGroups().flatMap(g=>g.assets).includes(openAsset)) closeWorkspace();
+  render();
+};
+// clock
+(function(){const el=$("#clock");if(el){const f=()=>el.textContent=new Date().toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'})+' · '+new Date().toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});f();setInterval(f,30000);} })();
+render();
+loadFromCloud(true).then(render);
+setInterval(()=>{
+  const ae=document.activeElement;
+  const editing=ae&&(ae.tagName==="INPUT"||ae.tagName==="TEXTAREA"||ae.tagName==="SELECT");
+  if(editing||Date.now()-lastLocalEdit<15000) return; // user mid-edit or save in flight — don't pull or re-render
+  loadFromCloud(true).then(()=>{ if(!openAsset) render(); });
+}, 20000);
+
+</script></body></html>
