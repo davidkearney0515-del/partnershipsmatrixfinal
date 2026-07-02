@@ -949,7 +949,7 @@ let activeView="status", activeFilter="all", openAsset=null, pathAsset=null, ass
 
 /* ============ RENDER: workflow + shell ============ */
 function renderFlow(){
-  const steps=[["status","Asset Status","What's caught today"],["scenario","Scenario","How hard it lands"],["assets","Decisions","The call per asset"],["paths","Paths","If X, then Y"],["summary","Exec Summary","The one-pager"],["actions","Actions","H2 roadmap"],["notes","Logic","Appendix"]];
+  const steps=[["status","Asset Status",""],["scenario","Legislation Scenarios","How hard it lands"],["assets","Decisions",""],["paths","Paths","If X, then Y"],["summary","Exec Summary","The one-pager"],["actions","Actions","H2 roadmap"],["notes","Logic","Appendix"]];
   $("#flow").innerHTML=steps.map((s,i)=>`<button class="step ${activeView===s[0]?'on':''}" data-v="${s[0]}">
     <span class="n">${i+1}</span><span><span class="lab">${s[1]}</span><span class="hint">${s[2]}</span></span></button>`).join("");
   $$(".step").forEach(b=>b.onclick=()=>{activeView=b.dataset.v;render();});
@@ -977,8 +977,7 @@ function renderScenario(){
     .map(([k,lab])=>`<div class="ro ${k}"><div class="num">${counts[k]||0}</div><div class="lab">${lab}</div></div>`).join("");
   return `<div class="view">
     <div class="vh"><div><div class="eyebrow">Step 2 · Scenario builder</div>
-      <h2>Set how hard each outcome lands</h2>
-      <p>Each lever runs High → Medium → Low → Not at all. Dial the intensity and the whole portfolio re-prices against the combined set.</p></div></div>
+      <h2>How each legislation scenario lands</h2></div></div>
     ${headline}
     <div class="slate">
       <div class="shead"><div class="t"><div class="e">Active scenario</div>
@@ -1050,7 +1049,7 @@ function renderAssets(){
   return `<div class="view">
     <div class="vh"><div><div class="eyebrow">Step 3 · Decisions</div>
       <h2>Make the call on each asset</h2>
-      <p>These assets need a call under the live scenario. Tap a decision — <b>rec</b> is the suggested move. Owner, timing and notes live in Details.</p></div></div>
+      </div></div>
     <div class="decbar">
       <div class="vtoggle">
         <button class="vt ${assetsView==='needs'?'on':''}" data-view="needs">Needs decision <span>${needList.length-doneCount}</span></button>
@@ -1216,7 +1215,7 @@ function renderAssetStatus(){
   }).join('');
   return `<div class="view">
     <div class="vh"><div><div class="eyebrow">Step 1 · Asset status</div>
-      <h2>What we own, and what the Bill catches</h2></div></div>
+      <h2>Partnership Matrix</h2></div></div>
     ${groups}
     <div class="disc">Agencies, Ad Tech and Internal aren't shown here — they're services or labour, not audience channels.</div>
   </div>`;
