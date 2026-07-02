@@ -695,7 +695,7 @@ const ST={
 };
 const fracToStatus=f=> f>=0.6?"exposed":f>=0.3?"rework":f>0?"watch":"watch";
 
-function evalLine(l,celTier){
+function evalLine(l,celTier,ageGating){
   const t=l.tags, cands=[];
   if(t.includes("not_wagering")) return {key:"safe",frac:0,reasons:["Not a wagering product — Part 7C doesn't apply."]};
   if(t.includes("adtech")||t.includes("internal")) return {key:"safe",frac:0,reasons:["Infrastructure / internal — no advertising content."]};
@@ -745,7 +745,13 @@ function evalLine(l,celTier){
 
   // Online gating
   if(t.includes("online_gating")){ const ofl=strn("onlineFails");
-    if(ofl>0){const f=0.8*ofl;cands.push({key:fracToStatus(f),frac:f,driver:"online fails",why:`Platform can't gate restricted users (${LV[S.onlineFails]}) — open delivery falls away.`});}
+    if(ofl>0){
+      if(ageGating==="Yes"){
+        cands.push({key:"watch",frac:0.15,driver:"online fails gated",why:`Already runs age assurance, registered-account access and opt-out — confirm it meets the exact "reasonable steps" bar (${LV[S.onlineFails]}) rather than assuming full clearance.`});
+      } else {
+        const f=0.8*ofl;cands.push({key:fracToStatus(f),frac:f,driver:"online fails",why:`Platform can't gate restricted users (${LV[S.onlineFails]}) — open delivery falls away.`});
+      }
+    }
     else cands.push({key:"watch",frac:0,driver:"online gated",upside:true,why:`Deliverable behind age assurance, registered-account access and opt-out (${LV[S.onlineFails]}) — owned/logged-in audience gains relative value as broadcast and talent lanes close.`}); }
   if(t.includes("sem")){ const ss=strn("sem");
     if(ss>0){const f=0.7*ss;cands.push({key:fracToStatus(f),frac:f,driver:"sem",why:`Search caught as an online content service (${lvlWord("sem")}) — large spend exposed.`});}
@@ -765,7 +771,8 @@ function evalLine(l,celTier){
 function evalAsset(a){
   let worst=null,driver=null,upside=false,reasons=[];
   const celTier=PLANS[a.asset]&&PLANS[a.asset].cel;
-  const perLine=a.lines.map(l=>{const e=evalLine(l,celTier);
+  const ageGating=PLANS[a.asset]&&PLANS[a.asset].ageGating;
+  const perLine=a.lines.map(l=>{const e=evalLine(l,celTier,ageGating);
     if(ST[e.key].rank<(worst?ST[worst].rank:99)){worst=e.key;driver=e.driver;}
     if(e.upside)upside=true; return {l,e};});
   const oa=PLANS[a.asset]&&PLANS[a.asset].data;
@@ -784,6 +791,7 @@ const MOVES={
   "commentator":"Remove provider representatives from live commentary and venue roles during coverage.",
   "odds":"Strip odds from broadcast creative; relocate odds-led content to owned and online channels.",
   "online fails":"At risk if the platform can't gate. Secure gating commitments early or reallocate to owned, logged-in surfaces.",
+  "online fails gated":"Already gated — confirm age assurance, registered-account delivery and opt-out meet the Bill's exact bar. Don't treat as fully cleared until confirmed.",
   "online gated":"Confirm age assurance, registered-account delivery and a clean opt-out. Deliverable as planned.",
   "online":"Confirm the platform can exclude restricted users before committing spend.",
   "sem":"Get a legal read on SEM now — this is large spend. Plan a fallback if search is caught.",
@@ -878,7 +886,7 @@ let PLANS={};      // assetName -> {path,owner,target,status,prio,notes, ...prof
 // Owned audience = does PB itself hold a first-party database for this asset (not just reach/followers).
 // PROFILE_FIELDS mirrors the original matrix's columns exactly, stored per-asset inside PLANS so it's
 // one editable, persisted record per asset — not a separate read-only table.
-const PROFILE_FIELDS=["owned","platform","content","production","distribution","data","integration","team","cel","mnotes"];
+const PROFILE_FIELDS=["owned","platform","content","production","distribution","data","integration","team","cel","mnotes","ageGating"];
 const PROFILE_DEFAULT={...ASSET_PROFILE,
   "Ambassadors":{owned:"No",data:"No"},"Social Creators":{owned:"No",data:"No"},
   "Fox Footy Linear":{owned:"No",data:"No"},"Fox Footy.com":{owned:"No",data:"No"},"Paid Social":{owned:"No",data:"No"},
@@ -934,6 +942,7 @@ const VERB_HINT={Exit:"Wind down or terminate before commencement.",Renegotiate:
 function recVerb(a){const ev=a._ev||evalAsset(a);const d=ev.driver||"";
   if(ev.key==="protected"||ev.key==="strong")return "Protect";
   if(ev.key==="safe")return "Monitor";
+  if(d==="online fails gated")return "Monitor"; // already gated, just needs confirmation against the exact bar — not a renegotiation
   if(d.indexOf("notable")===0)return "Renegotiate";
   if(["broadcast","broadcast tvc","commentator","odds","espn lapse","racing lost","venue","dooh"].includes(d))return "Restructure";
   if(["online fails","online"].includes(d)){
@@ -1064,7 +1073,7 @@ function openWorkspace(name){
   const plan=PLANS[name]||{path:"— choose —",owner:"",target:"",status:"Not started",prio:autoPrio(a),notes:""};
   const prof=PROFILE_FIELDS.some(f=>plan[f])?plan:null;
   const tierColor={HIGH:"rgba(237,27,66,.16)|#FF6E89","MED-HIGH":"rgba(232,130,30,.18)|#FFB266",MEDIUM:"rgba(201,162,39,.20)|#E9C84E",LOW:"rgba(255,255,255,.08)|#B9BABE",SAFE:"rgba(31,157,87,.18)|#3FDD8C","N/A":"rgba(255,255,255,.08)|#9B9CA2",TBC:"rgba(232,130,30,.18)|#FFB266"};
-  const lineRows=a.lines.map(l=>{ const e=evalLine(l,plan.cel); const tc=(tierColor[l.tier]||"rgba(255,255,255,.08)|#9B9CA2").split("|");
+  const lineRows=a.lines.map(l=>{ const e=evalLine(l,plan.cel,plan.ageGating); const tc=(tierColor[l.tier]||"rgba(255,255,255,.08)|#9B9CA2").split("|");
     return `<tr><td><b>${esc(l.name)}</b></td>
       <td><span class="tierpill" style="background:${tc[0]};color:${tc[1]}">${esc(l.tier)}</span></td>
       <td><span class="statustag" style="background:${ST[e.key].dot}22;color:${ST[e.key].dot}">${ST[e.key].lab}</span></td>
@@ -1197,6 +1206,7 @@ function renderAssetStatus(){
           <div class="fld"><label>PB owned</label>${yn(name,'owned',p.owned)}</div>
           <div class="fld"><label>Dig platform</label>${yn(name,'platform',p.platform)}</div>
           <div class="fld"><label>Data (owned audience)</label>${yn(name,'data',p.data)}</div>
+          ${p.platform==="Yes"?`<div class="fld full"><label>Age gating <span style="color:var(--pb-faint);font-weight:400">(age assurance, registered-account access, opt-out already in place today)</span></label>${yn(name,'ageGating',p.ageGating)}</div>`:''}
           <div class="fld"><label>Content</label>${tx(name,'content',p.content)}</div>
           <div class="fld"><label>Production</label>${tx(name,'production',p.production)}</div>
           <div class="fld"><label>Distribution</label>${tx(name,'distribution',p.distribution)}</div>
