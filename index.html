@@ -204,7 +204,12 @@ a{color:var(--pb-red-text)}
 .proflist{display:grid;grid-template-columns:1fr 1fr;gap:2px 18px}
 .apcards{display:flex;flex-direction:column;gap:10px}
 .apcard{background:var(--chrome2);border-radius:10px;padding:14px 16px}
-.aph{font-size:13.5px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.apcard.collapsed{padding:10px 16px}
+.aph{font-size:13.5px;margin-bottom:8px;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
+.apcard.collapsed .aph{margin-bottom:0}
+.apchev{color:var(--pb-muted);font-size:11px;width:12px;flex:none}
+.apsummary{color:var(--pb-muted);font-weight:400;font-size:12px;margin-left:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.apcollapse-ctl{display:flex;gap:6px;align-self:flex-start}
 .apgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px 12px}
 .apgrid .fld.full{grid-column:1/-1}
 .apgrid .fld label{font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--pb-faint);margin-bottom:3px;display:block}
@@ -1010,6 +1015,11 @@ function seedProfiles(){
   });
 }
 let LM={edits:{},added:{t1:[],t2:[],t3:[],t4:[]}}; let lmTab="t1";
+// Collapsed asset cards on Step 1 — a per-viewer UI preference, stored locally only
+// (not in the shared Supabase payload, so one person collapsing doesn't collapse it for everyone).
+let COLLAPSED={};
+try{ const rc=localStorage.getItem(STORE+"_collapsed"); if(rc) COLLAPSED=JSON.parse(rc)||{}; }catch(e){}
+function saveCollapsed(){ try{ localStorage.setItem(STORE+"_collapsed",JSON.stringify(COLLAPSED)); }catch(e){} }
 try{ const raw=localStorage.getItem(STORE); if(raw){const o=JSON.parse(raw); PLANS=o.plans||{}; if(o.scenarios)SCENARIOS.forEach(s=>{if(s.id in o.scenarios)S[s.id]=o.scenarios[s.id];}); if(o.lm)LM=o.lm;} }catch(e){}
 seedProfiles();
 function setSyncStatus(state){ const el=$("#syncStatus"); if(!el) return;
@@ -1422,7 +1432,7 @@ const ASSET_FIELD_OPTS={
   content:["PB-produced","Partner-produced","Co-produced","Talent-led","Editorial","None / N/A"],
   production:["Low Freq / Low Cost","Low Freq / High Cost","High Freq / Low Cost","High Freq / High Cost","None / N/A"],
   distribution:["Low Reach","Medium Reach","High Reach","None / N/A"],
-  distMethod:["PB owned channels","Partner channels","Talent channels","Paid amplification","Broadcast/linear","N/A"],
+  distMethod:["PB owned channels","Partner channels","Talent channels","Paid amplification","Broadcast/linear","Digital","Social","OOH / DOOH","Email / CRM","Radio / audio","Programmatic","N/A"],
   integration:["Odds / pricing integration","Brand integration","Talent read","Sponsored Segment","Logo integration","Commercials","Pop-ups","Talent integration","N/A"],
   team:["1–2","3–5","6–9","10+","None / N/A"]
 };
@@ -1458,14 +1468,28 @@ function renderAssetStatus(){
     <option value="" ${!val?'selected':''}>— not assessed —</option>
     ${CEL_TIERS.map(t=>`<option value="${t.v}" ${val===t.v?'selected':''}>${esc(t.label)}</option>`).join('')}
     </select>`;
+  // one-line gist for collapsed cards: owned/platform/data flags + content/reach if set
+  const summaryLine=(p)=>{
+    const bits=[];
+    if(p.owned==="Yes") bits.push("Owned"); else if(p.owned==="No") bits.push("Not owned");
+    if(p.platform==="Yes") bits.push("Platform");
+    if(p.data==="Yes") bits.push("Data"); else if(p.data==="No") bits.push("No data");
+    if(p.content) bits.push(esc(p.content));
+    if(p.distribution) bits.push(esc(p.distribution));
+    return bits.length?bits.join(" · "):"Not set";
+  };
   const groups=groupsData.map(g=>{
     const cards=g.assets.map(name=>{
       const a=PORTFOLIO.find(x=>x.asset===name); if(!a) return '';
       a._ev=evalAsset(a); const p=PLANS[name]||{};
       const gatingDriven=a.lines.some(l=>l.tags&&l.tags.includes("online_gating"));
       const flag=!gatingDriven?'':p.data==="Yes"?'<span class="statustag s-locked">Has a home</span>':'<span class="statustag s-inprogress">Needs a home</span>';
-      return `<div class="apcard"><div class="aph"><b>${esc(name)}</b> ${flag}</div>
-        <div class="apgrid">
+      const isCol=!!COLLAPSED[name];
+      const chevron=`<span class="apchev">${isCol?'▸':'▾'}</span>`;
+      const summary=isCol?`<span class="apsummary">${summaryLine(p)}</span>`:'';
+      return `<div class="apcard ${isCol?'collapsed':''}">
+        <div class="aph" data-collapse="${esc(name)}">${chevron}<b>${esc(name)}</b> ${flag}${summary}</div>
+        ${isCol?'':`<div class="apgrid">
           <div class="fld"><label>PB owned</label>${yn(name,'owned',p.owned)}</div>
           <div class="fld"><label>Dig platform</label>${yn(name,'platform',p.platform)}</div>
           <div class="fld"><label>Data (owned audience)</label>${yn(name,'data',p.data)}</div>
@@ -1478,13 +1502,14 @@ function renderAssetStatus(){
           <div class="fld"><label>Employees</label>${dd(name,'team',p.team,ASSET_FIELD_OPTS.team)}</div>
           <div class="fld full"><label>Celebrities <span style="color:var(--pb-faint);font-weight:400">(matches the Notable-person ban tiers)</span></label>${celSelect(name,p.cel)}</div>
           <div class="fld full"><label>Notes</label>${tx(name,'mnotes',p.mnotes,'Anything else worth flagging')}</div>
-        </div></div>`;
+        </div>`}</div>`;
     }).join('');
     return `<div class="dsec"><div class="k">${esc(g.h)}</div><div class="apcards">${cards}</div></div>`;
   }).join('');
   return `<div class="view">
     <div class="vh"><div><div class="eyebrow">Step 1 · Asset status</div>
-      <h2>Partnership Matrix</h2></div></div>
+      <h2>Partnership Matrix</h2></div>
+      <div class="apcollapse-ctl"><button class="chipbtn" id="collapseAll">Collapse all</button><button class="chipbtn" id="expandAll">Expand all</button></div></div>
     ${groups}
     <div class="disc">Agencies, Ad Tech and Internal aren't shown here — they're services or labour, not audience channels.</div>
   </div>`;
@@ -1741,6 +1766,9 @@ function bind(){
   $$(".ap-select").forEach(sel=>sel.onchange=()=>{const name=sel.dataset.asset,field=sel.dataset.field;
     if(!PLANS[name]) PLANS[name]={path:"— choose —",owner:"",target:"",status:"Not started",prio:"P3 — monitor",notes:""};
     PLANS[name][field]=sel.value; persist(); render();});
+  $$("[data-collapse]").forEach(h=>h.onclick=()=>{const name=h.dataset.collapse;
+    if(COLLAPSED[name]) delete COLLAPSED[name]; else COLLAPSED[name]=1;
+    saveCollapsed(); render();});
   $$(".ap-input").forEach(inp=>inp.oninput=()=>{const name=inp.dataset.asset,field=inp.dataset.field;
     if(!PLANS[name]) PLANS[name]={path:"— choose —",owner:"",target:"",status:"Not started",prio:"P3 — monitor",notes:""};
     PLANS[name][field]=inp.value; persist();});
@@ -1753,6 +1781,8 @@ function bind(){
     else { sel=sel.filter(s=>s!==NA); sel.push(opt); }  // any real option clears N/A
     PLANS[name][field]=sel.join('; '); persist(); render();});
   $$(".chipbtn").forEach(b=>b.onclick=()=>{const p=PRESETS[b.dataset.preset];if(p){Object.assign(S,p);persist();render();}});
+  const cA=$("#collapseAll"); if(cA) cA.onclick=()=>{orderedAssets().forEach(a=>{COLLAPSED[a.asset]=1;}); saveCollapsed(); render();};
+  const eA=$("#expandAll"); if(eA) eA.onclick=()=>{COLLAPSED={}; saveCollapsed(); render();};
   $$(".fbtn").forEach(b=>b.onclick=()=>{activeFilter=b.dataset.f;render();});
   $$(".card").forEach(b=>b.onclick=()=>openWorkspace(b.dataset.a));
   $$("[data-jump]").forEach(b=>b.onclick=(e)=>{e.stopPropagation();openWorkspace(b.dataset.jump);});
