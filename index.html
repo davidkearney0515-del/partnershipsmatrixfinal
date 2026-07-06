@@ -1326,7 +1326,7 @@ function openWorkspace(name){
       <div><span class="pl">First-party data</span><b>${esc(prof.data||'—')}</b></div>
       <div><span class="pl">Content</span><b>${esc(prof.content||'—')}</b></div>
       <div><span class="pl">Production</span><b>${esc(prof.production||'—')}</b></div>
-      <div><span class="pl">Distribution freq/cost</span><b>${esc(prof.distribution||'—')}</b></div>
+      <div><span class="pl">Distribution reach</span><b>${esc(prof.distribution||'—')}</b></div>
       <div><span class="pl">Distribution method</span><b>${esc(prof.distMethod||'—')}</b></div>
       <div><span class="pl">PB integration</span><b>${esc(prof.integration||'—')}</b></div>
       <div><span class="pl">Team</span><b>${esc(prof.team||'—')}</b></div>
@@ -1421,8 +1421,8 @@ function orderedAssets(){
 const ASSET_FIELD_OPTS={
   content:["PB-produced","Partner-produced","Co-produced","Talent-led","Editorial","None / N/A"],
   production:["Low Freq / Low Cost","Low Freq / High Cost","High Freq / Low Cost","High Freq / High Cost","None / N/A"],
-  distribution:["Low Freq / Low Cost","Low Freq / High Cost","High Freq / Low Cost","High Freq / High Cost","None / N/A"],
-  distMethod:["PB owned channels","Partner channels","Talent channels","Paid amplification","Broadcast/linear","Mixed","None / N/A"],
+  distribution:["Low Reach","Medium Reach","High Reach","None / N/A"],
+  distMethod:["PB owned channels","Partner channels","Talent channels","Paid amplification","Broadcast/linear","N/A"],
   integration:["Odds / pricing integration","Brand integration","Talent read","Sponsored Segment","Logo integration","Commercials","Pop-ups","Talent integration","N/A"],
   team:["1–2","3–5","6–9","10+","None / N/A"]
 };
@@ -1472,8 +1472,8 @@ function renderAssetStatus(){
           ${p.platform==="Yes"?`<div class="fld full"><label>Age gating <span style="color:var(--pb-faint);font-weight:400">(age assurance, registered-account access, opt-out already in place today)</span></label>${yn(name,'ageGating',p.ageGating)}</div>`:''}
           <div class="fld"><label>Content</label>${dd(name,'content',p.content,ASSET_FIELD_OPTS.content)}</div>
           <div class="fld"><label>Production</label>${dd(name,'production',p.production,ASSET_FIELD_OPTS.production)}</div>
-          <div class="fld"><label>Distribution freq / cost</label>${dd(name,'distribution',p.distribution,ASSET_FIELD_OPTS.distribution)}</div>
-          <div class="fld"><label>Distribution method</label>${dd(name,'distMethod',p.distMethod,ASSET_FIELD_OPTS.distMethod)}</div>
+          <div class="fld"><label>Distribution reach</label>${dd(name,'distribution',p.distribution,ASSET_FIELD_OPTS.distribution)}</div>
+          <div class="fld full"><label>Distribution method <span style="color:var(--pb-faint);font-weight:400">(select all that apply)</span></label>${multichip(name,'distMethod',p.distMethod,ASSET_FIELD_OPTS.distMethod)}</div>
           <div class="fld full"><label>PB integration <span style="color:var(--pb-faint);font-weight:400">(select all that apply)</span></label>${multichip(name,'integration',p.integration,ASSET_FIELD_OPTS.integration)}</div>
           <div class="fld"><label>Employees</label>${dd(name,'team',p.team,ASSET_FIELD_OPTS.team)}</div>
           <div class="fld full"><label>Celebrities <span style="color:var(--pb-faint);font-weight:400">(matches the Notable-person ban tiers)</span></label>${celSelect(name,p.cel)}</div>
@@ -1690,7 +1690,7 @@ function renderNotes(){
     <div class="callout" style="border-left-color:#3BD183"><b>Racing is the safe harbour.</b> RDC, Racing.com and greyhound stay protected and strengthen as broadcast and talent close — the lane to lean into.</div>
     <div class="callout" style="border-left-color:#3BD183"><b>Gated/owned upside, asset by asset.</b> A line flags as upside once it's fully gated (Online gating → Off, trading reach for the ability to advertise at all) — first-party data and owned audiences gain value as broadcast and talent close. <b>Confirmed against the matrix below:</b> Ausmerican Aces, Fanatics TV and 100k Sports are rightly excluded — none PB-owned, none on a PB platform, none carry first-party data. StatMate and FoxCatcher are the two PB-owned, data-carrying assets — StatMate stays out-of-scope (Part 7C doesn't apply) rather than strengthening, though its relative value still rises as rivals lose channels it never depended on.</div>
     <div class="dsec"><div class="k">Source: the original partnerships matrix</div>
-      <table class="note-prov"><thead><tr><th>Asset</th><th>PB owned</th><th>Dig. platform</th><th>Data</th><th>Production</th><th>Dist. freq/cost</th><th>Dist. method</th><th>PB integration</th></tr></thead>
+      <table class="note-prov"><thead><tr><th>Asset</th><th>PB owned</th><th>Dig. platform</th><th>Data</th><th>Production</th><th>Dist. reach</th><th>Dist. method</th><th>PB integration</th></tr></thead>
       <tbody>${ASSET_PROFILE_ORDER.map(k=>{const p=ASSET_PROFILE[k];return `<tr><td><b>${esc(ASSET_PROFILE_LABEL[k])}</b></td><td>${esc(p.owned)}</td><td>${esc(p.platform)}</td><td>${esc(p.data)}</td><td style="color:var(--pb-muted)">${esc(p.production)}</td><td style="color:var(--pb-muted)">${esc(p.distribution)}</td><td style="color:var(--pb-muted)">${esc(p.distMethod||'—')}</td><td style="color:var(--pb-muted)">${esc(p.integration)}</td></tr>`;}).join("")}</tbody></table>
       <div style="font-size:11.5px;color:var(--ddim);margin-top:8px">This is the first piece of work behind the whole exercise — the qualitative comparison that started the "which of our assets are actually ours" question. Carried forward here so the upside logic above traces back to it.</div></div>
     <table class="note-prov"><thead><tr><th style="width:90px">Provision</th><th style="width:200px">What it is</th><th>What it restricts</th></tr></thead>
