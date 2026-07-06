@@ -1,7 +1,8 @@
 <!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>PointsBet · Reform Scenario Planner V2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<title>PointsBet · Reform Scenario Planner V2.2</title>
 <meta name="description" content="Scenario-driven planning tool for the Gambling Reform Bill 2026 across the PointsBet FY27 partner portfolio."/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -9,18 +10,20 @@
 <style>
 
 :root{
-  --pb-red:#EE1A42; --pb-red-deep:#C40E33; --pb-black:#0E0E0F; --pb-ink:#16171A;
-  --pb-paper:#F7F9FB; --pb-panel:#FFFFFF; --pb-line:#E2E8F0; --pb-line2:#CBD5E1;
-  --pb-muted:#64748B; --pb-faint:#94A3B8;
-  --st-exposed:#ED1B42; --st-rework:#E8821E; --st-watch:#C9A227;
-  --st-protected:#1F9D57; --st-strong:#1F9D57; --st-safe:#7C7E84;
+  /* FIFA26-language theme: deep navy shell (#020F2A from fifa.com), gold primary accent, host-nation tri-tones */
+  --pb-red:#D4A94C; --pb-red-deep:#B08832; --pb-black:#020F2A; --pb-ink:#F4F7FE;
+  --pb-paper:#020F2A; --pb-panel:#0B1B3E; --pb-line:#152A55; --pb-line2:#26407A;
+  --pb-muted:#9AAED6; --pb-faint:#647BAB;
+  --fifa-blue:#326295; --fifa-red:#C8102E; --fifa-green:#00843D;
+  --st-exposed:#FF4D66; --st-rework:#FF9A3D; --st-watch:#E8C25A;
+  --st-protected:#3BD183; --st-strong:#3BD183; --st-safe:#8FA0BF;
   --shadow:none; --shadow-sm:none;
   --hair:1px solid var(--pb-line);
-  --ff: "IBM Plex Sans",Calibri,Helvetica,sans-serif;
-  --fdisplay: "Poppins","IBM Plex Sans",Calibri,sans-serif;
-  --fui: "IBM Plex Sans",Calibri,Helvetica,sans-serif;
+  --ff: "Noto Sans","IBM Plex Sans",Helvetica,sans-serif;
+  --fdisplay: "Archivo","Noto Sans",Helvetica,sans-serif;
+  --fui: "Noto Sans","IBM Plex Sans",Helvetica,sans-serif;
   --fmono: "IBM Plex Mono",ui-monospace,SFMono-Regular,monospace;
-  --r: 5px;
+  --r: 12px;
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--pb-paper);color:var(--pb-ink);font-family:var(--ff);
@@ -51,7 +54,7 @@ a{color:var(--pb-red)}
 .swknob{position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:#fff;transition:.15s}
 .swtrack.on .swknob{left:17px}
 .syncstat{font-size:11.5px;font-weight:700;letter-spacing:.03em;padding:5px 10px;border-radius:20px;background:rgba(255,255,255,.06)}
-.syncstat.synced{color:#3FDD8C}
+.syncstat.synced{color:#3BD183}
 .syncstat.saving,.syncstat.loading{color:#E9C84E}
 .syncstat.offline{color:#9B9CA2}
 .syncstat.error{color:#FF6E89}
@@ -209,8 +212,8 @@ a{color:var(--pb-red)}
 .apgrid .fld label{font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--pb-faint);margin-bottom:3px;display:block}
 .ap-select,.ap-input{width:100%;background-color:var(--pb-panel);color:var(--pb-ink);border-radius:6px;padding:6px 8px;font-size:12.5px;box-shadow:inset 0 0 0 1px var(--pb-line2)}
 .ap-select:focus,.ap-input:focus{box-shadow:inset 0 0 0 1.5px var(--pb-red);outline:none}
-.ap-select.yn-yes{background-color:rgba(31,157,87,.14);color:#0E5C30;font-weight:600;box-shadow:inset 0 0 0 1px rgba(21,122,65,.4)}
-.ap-select.yn-no{background-color:rgba(238,26,66,.10);color:#A8102F;font-weight:600;box-shadow:inset 0 0 0 1px rgba(238,26,66,.3)}
+.ap-select.yn-yes{background:rgba(59,209,131,.16);border-color:#3BD183;color:#7FE7B0;font-weight:700}
+.ap-select.yn-no{background:rgba(255,77,102,.14);border-color:#FF4D66;color:#FF8A9B;font-weight:700}
 @media(max-width:720px){.apgrid{grid-template-columns:1fr 1fr}}
 .proflist>div{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;padding:6px 0;border-bottom:1px solid var(--pb-line)}
 .proflist .pl{color:var(--pb-muted)}
@@ -387,10 +390,11 @@ a{color:var(--pb-red)}
    for selection, signal and CTAs — chosen for contrast, not decor.
    ============================================================ */
 :root{
-  --pb-bg:#F8F9FA; --chrome:#FFFFFF; --chrome2:#F2F3F4; --chrome3:#E5E6E8; --dline:#E5E6E8;
-  --dtext:#16171A; --ddim:#6B6C70; --ddim2:#96979B; --pb-soft:#F2F3F4;
-  --pb-paper:#F8F9FA; --pb-panel:#FFFFFF; --pb-line:#E5E6E8; --pb-line2:#D2D3D6;
-  --pb-ink:#16171A; --pb-muted:#6B6C70; --pb-faint:#96979B; --pb-cream:#F2F3F4;
+  /* FIFA26 navy content theme */
+  --pb-bg:#020F2A; --chrome:#0B1B3E; --chrome2:#112450; --chrome3:#1A3060; --dline:#1B315E;
+  --dtext:#F4F7FE; --ddim:#9AAED6; --ddim2:#647BAB; --pb-soft:#0E2148;
+  --pb-paper:#020F2A; --pb-panel:#0B1B3E; --pb-line:#152A55; --pb-line2:#26407A;
+  --pb-ink:#F4F7FE; --pb-muted:#9AAED6; --pb-faint:#647BAB; --pb-cream:#0E2148;
   --shadow:none; --shadow-sm:none;
 }
 html,body{background:
@@ -607,9 +611,9 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:2px;backgroun
 
 /* step help popovers */
 .helpbtn{margin-left:12px;width:24px;height:24px;border:1px solid var(--pb-line2,#D9D9DC);background:transparent;color:var(--pb-muted,#7C7E84);font-weight:700;font-size:13px;cursor:pointer;flex:0 0 auto}
-.helpbtn:hover{border-color:#ED1B42;color:#ED1B42}
-.helpbox{border:1px solid var(--pb-line2,#D9D9DC);border-left:3px solid #ED1B42;background:var(--pb-panel,#fff);padding:12px 14px;margin:0 0 16px;font-size:12.5px;line-height:1.55;color:var(--pb-ink,#16171A)}
-.helpbox b{color:#ED1B42}
+.helpbtn:hover{border-color:var(--pb-red);color:var(--pb-red)}
+.helpbox{border:1px solid var(--pb-line2,#D9D9DC);border-left:3px solid var(--pb-red);background:var(--pb-panel,#fff);padding:12px 14px;margin:0 0 16px;font-size:12.5px;line-height:1.55;color:var(--pb-ink,#16171A)}
+.helpbox b{color:var(--pb-red)}
 .helpbox .hnext{display:block;margin-top:6px;color:var(--pb-muted,#7C7E84)}
 /* exec summary mini charts */
 .senswrap{display:flex;flex-direction:column;gap:7px;margin-top:4px}
@@ -619,9 +623,58 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:2px;backgroun
 .sensbar{flex:1;height:14px;background:var(--pb-line,#EEEEF0);position:relative}
 .sensbar span{display:block;height:100%;min-width:2px}
 .sensnum{flex:0 0 64px;text-align:right;font-size:12px;font-variant-numeric:tabular-nums;color:var(--pb-ink,#16171A)}
+
+/* ===== FIFA26-language layer: navy shell, gold accent, tri-nation strip, rounded modular UI ===== */
+.bar{background:#020F2A!important;border-bottom:0!important;position:relative}
+.bar::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:4px;
+  background:linear-gradient(90deg,var(--fifa-red) 0 33.4%,var(--fifa-green) 33.4% 66.7%,var(--fifa-blue) 66.7% 100%)}
+.mark{color:#fff}.mark span{color:var(--pb-red)}
+.slate{background:linear-gradient(135deg,#04122F 0%,#0A1E45 55%,#122A5C 100%)!important;border:1px solid var(--pb-line2);border-radius:var(--r)}
+.panel,.apcard,.dsec,.dest,.lane,.callout,.helpbox,.empty{border-radius:var(--r)}
+.step{border-radius:999px!important}
+.step.on{border-color:var(--pb-red)!important}
+.step .n{border-radius:999px}
+button.segb,.chipbtn,.ghostbtn,.savebtn,.jumpbtn,.fbtn,.atab-btn,.dbtn,.helpbtn{border-radius:999px!important}
+.segb.on{background:var(--pb-red)!important;color:#08122B!important;font-weight:800}
+.segb.on.off,.segb.on[data-lv=off]{background:var(--pb-line2)!important;color:var(--pb-ink)!important}
+.savebtn{background:var(--pb-red)!important;color:#08122B!important;font-weight:800}
+a{color:var(--pb-red)}
+.vh h2{font-weight:900;letter-spacing:.02em}
+.eyebrow{color:var(--pb-red)!important;letter-spacing:.14em}
+.ro{border-radius:var(--r)}
+.statusbar span:first-child{border-radius:8px 0 0 8px}.statusbar span:last-child{border-radius:0 8px 8px 0}
+.sensbar,.sensbar span{border-radius:999px}
+input.ap-input,select.ap-select,textarea{background:#0A1A3C;border-color:var(--pb-line2);color:var(--pb-ink);border-radius:10px}
+.ws, .workspace{background:#071431}
+::selection{background:var(--pb-red);color:#08122B}
+/* modular 26-style corner motif — original geometry, squares + quarter-circles */
+.vh > div{position:relative}
+.view .vh::before{content:"";position:absolute;right:20px;top:8px;width:64px;height:64px;opacity:.5;pointer-events:none;
+  background:
+    radial-gradient(circle at 0 100%, var(--fifa-blue) 0 46%, transparent 47%) 100% 0/30px 30px no-repeat,
+    linear-gradient(var(--pb-red),var(--pb-red)) 0 0/30px 30px no-repeat,
+    linear-gradient(var(--fifa-green),var(--fifa-green)) 0 100%/30px 30px no-repeat,
+    radial-gradient(circle at 100% 0, var(--fifa-red) 0 46%, transparent 47%) 100% 100%/30px 30px no-repeat}
+
+/* legal map */
+.lmtabs{display:flex;gap:8px;margin:0 0 12px;flex-wrap:wrap}
+.lmtab{border:1px solid var(--pb-line2,#2A3A5C);background:transparent;color:var(--pb-muted,#8FA0BF);padding:8px 12px;font-size:12px;font-weight:700;cursor:pointer}
+.lmtab.on{border-color:var(--pb-red,#FF4D66);color:var(--pb-ink,#EDF1F9)}
+.lmgap{background:var(--pb-red,#FF4D66);color:#fff;padding:1px 6px;font-size:11px;margin-left:4px}
+.lmdone{color:#3DBE7B;margin-left:4px}
+.lmbar{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+.lmwrap{overflow-x:auto;border:1px solid var(--pb-line2,#2A3A5C)}
+.lmtab-table{border-collapse:collapse;width:max-content}
+.lmtab-table th{position:sticky;top:0;background:var(--pb-panel2,#0B1B3A);color:var(--pb-muted,#8FA0BF);font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;text-align:left;padding:8px;border-bottom:1px solid var(--pb-line2,#2A3A5C);z-index:2}
+.lmtab-table td{border-bottom:1px solid var(--pb-line,#16264A);padding:2px;vertical-align:top}
+.lmtab-table td.lmred{background:rgba(255,77,102,.16);box-shadow:inset 3px 0 0 var(--pb-red,#FF4D66)}
+.lm-cell{width:100%;min-width:100%;border:0;background:transparent;color:var(--pb-ink,#EDF1F9);font:inherit;font-size:12px;resize:vertical;padding:6px}
+.lm-cell:focus,.lm-sel:focus{outline:1px solid var(--pb-red,#FF4D66)}
+.lm-sel{width:100%;border:0;background:transparent;color:var(--pb-ink,#EDF1F9);font-size:12px;padding:6px}
+.lm-sel option{color:#111}
 </style></head><body>
 <div class="bar"><div class="brand"><span class="mark">Points<span>Bet</span></span>
-<span class="sub">Reform Scenario Planner · <b style="color:#ED1B42">V2</b> · 6 Jul 2026</span></div><div class="right">
+<span class="sub">Reform Scenario Planner · <b style="color:#ED1B42">V2.2</b> · 6 Jul 2026</span></div><div class="right">
 <label class="scopeToggle" title="Show only the seven Content/Owned Brand assets from the original partnerships matrix, everywhere in the tool">
   <span>Content/Owned Brands Only</span>
   <span class="swtrack on" id="coreToggle"><span class="swknob"></span></span>
@@ -700,12 +753,12 @@ let S={}; SCENARIOS.forEach(s=>S[s.id]=s.def);
 const strn=id=>SCMAP[id].levels[S[id]].s;
 
 const ST={
-  exposed:{rank:1,lab:"Exposed",dot:"#ED1B42",b:"b-exposed",ro:"exposed"},
-  rework:{rank:2,lab:"Restructure",dot:"#E8821E",b:"b-rework",ro:"rework"},
-  watch:{rank:3,lab:"Conditions",dot:"#C9A227",b:"b-watch",ro:"watch"},
-  protected:{rank:4,lab:"Protected",dot:"#1F9D57",b:"b-protected",ro:"protected"},
-  strong:{rank:4,lab:"Strengthens",dot:"#1F9D57",b:"b-strong",ro:"protected"},
-  safe:{rank:5,lab:"Out of scope",dot:"#7C7E84",b:"b-safe",ro:"safe"}
+  exposed:{rank:1,lab:"Exposed",dot:"#FF4D66",b:"b-exposed",ro:"exposed"},
+  rework:{rank:2,lab:"Restructure",dot:"#FF9A3D",b:"b-rework",ro:"rework"},
+  watch:{rank:3,lab:"Conditions",dot:"#E8C25A",b:"b-watch",ro:"watch"},
+  protected:{rank:4,lab:"Protected",dot:"#3BD183",b:"b-protected",ro:"protected"},
+  strong:{rank:4,lab:"Strengthens",dot:"#3BD183",b:"b-strong",ro:"protected"},
+  safe:{rank:5,lab:"Out of scope",dot:"#8FA0BF",b:"b-safe",ro:"safe"}
 };
 const fracToStatus=f=> f>=0.6?"exposed":f>=0.3?"rework":f>0?"watch":"watch";
 
@@ -957,14 +1010,15 @@ function seedProfiles(){
     PROFILE_FIELDS.forEach(f=>{ if(!PLANS[name][f]&&prof[f]) PLANS[name][f]=prof[f]; });
   });
 }
-try{ const raw=localStorage.getItem(STORE); if(raw){const o=JSON.parse(raw); PLANS=o.plans||{}; if(o.scenarios)SCENARIOS.forEach(s=>{if(s.id in o.scenarios)S[s.id]=o.scenarios[s.id];});} }catch(e){}
+let LM={edits:{},added:{t1:[],t2:[],t3:[],t4:[]}}; let lmTab="t1";
+try{ const raw=localStorage.getItem(STORE); if(raw){const o=JSON.parse(raw); PLANS=o.plans||{}; if(o.scenarios)SCENARIOS.forEach(s=>{if(s.id in o.scenarios)S[s.id]=o.scenarios[s.id];}); if(o.lm)LM=o.lm;} }catch(e){}
 seedProfiles();
 function setSyncStatus(state){ const el=$("#syncStatus"); if(!el) return;
   const map={loading:"Loading…",saving:"Saving…",synced:"✓ Synced",offline:"Offline — local only",error:"⚠ Save failed, retrying"};
   el.textContent=map[state]||""; el.className="syncstat "+state; }
-function applyCloud(o){ PLANS=o.plans||{}; if(o.scenarios)SCENARIOS.forEach(s=>{if(s.id in o.scenarios)S[s.id]=o.scenarios[s.id];});
+function applyCloud(o){ PLANS=o.plans||{}; if(o.scenarios)SCENARIOS.forEach(s=>{if(s.id in o.scenarios)S[s.id]=o.scenarios[s.id];}); if(o.lm)LM=o.lm;
   seedProfiles();
-  try{ localStorage.setItem(STORE,JSON.stringify({plans:PLANS,scenarios:S})); }catch(e){} }
+  try{ localStorage.setItem(STORE,JSON.stringify({plans:PLANS,scenarios:S,lm:LM})); }catch(e){} }
 async function loadFromCloud(silent){
   try{ if(!silent) setSyncStatus("loading");
     const res=await fetch(`${SUPA_URL}${SUPA_TABLE}?id=eq.shared&select=data`,{headers:SUPA_HEADERS});
@@ -976,7 +1030,7 @@ async function loadFromCloud(silent){
 }
 let saveTimer=null;
 function persist(){
-  try{ localStorage.setItem(STORE,JSON.stringify({plans:PLANS,scenarios:S})); }catch(e){}
+  try{ localStorage.setItem(STORE,JSON.stringify({plans:PLANS,scenarios:S,lm:LM})); }catch(e){}
   lastLocalEdit=Date.now();
   setSyncStatus("saving"); clearTimeout(saveTimer); saveTimer=setTimeout(saveToCloud,600);
 }
@@ -984,7 +1038,7 @@ async function saveToCloud(){
   try{
     const res=await fetch(`${SUPA_URL}${SUPA_TABLE}?id=eq.shared`,{method:"PATCH",
       headers:{...SUPA_HEADERS,Prefer:"return=minimal"},
-      body:JSON.stringify({data:{plans:PLANS,scenarios:S},updated_at:new Date().toISOString()})});
+      body:JSON.stringify({data:{plans:PLANS,scenarios:S,lm:LM},updated_at:new Date().toISOString()})});
     if(!res.ok) throw new Error("HTTP "+res.status);
     setSyncStatus("synced");
   }catch(e){ console.error("Supabase save failed",e); setSyncStatus("error"); }
@@ -1010,9 +1064,138 @@ const esc=s=>(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"
 
 let activeView="status", activeFilter="all", openAsset=null, pathAsset=null, assetsView="needs", lastLocalEdit=0;
 
+
+/* ============ LEGAL MAP: PBA Marketing Map registers (due Wed 9 Jul) ============ */
+const LM_YN=["","Yes","No"], LM_YNS=["","Yes","No","Sometimes"], LM_RG=["","Yes","No","Not sure"], LM_LOG=["","Yes","No","Partially","N/A"];
+const LEGALMAP={
+ t1:{title:"1. Advertising Inventory",cols:[
+   ["ch","Channel",130,["","Free-to-air TV","Subscription TV","Streaming / BVOD","Radio","Digital display / programmatic","Social — paid","Social — organic (owned)","Search","YouTube / video","Podcast / audio","Out-of-home","Print","CRM — email","CRM — SMS","CRM — push","Affiliate","In-app / website (owned)","Other"]],
+   ["sub","Sub-channel / platform",150],["camp","Campaign / activity",160],["desc","Description (what a viewer sees/hears)",240],
+   ["ex","Example (link / file ref)",160],["ag","Agency / placer",140],["cp","Contract counterparty",150],["exp","Contract expiry",110],
+   ["sched","Scheduling / dayparts",150],["live","Live sport adjacency",170],["odds","Odds?",90,LM_YNS],["person","People featured",150],
+   ["rg","RG message?",95,LM_RG],["log","Logged-in only?",95,LM_LOG],["targ","Targeting / exclusions",160],["spend","Annual spend (A$)",110],
+   ["b27","Beyond 1 Jan 27?",95,LM_YN],["notes","Notes",220]],
+  rows:[
+   {ch:"Subscription TV",sub:"Fox Footy (Foxtel)",camp:"AFL TVCs + sponsorship billboards",desc:"30s/15s TVCs and sponsorship billboards within AFL programming; creative rotations set by weekly Material Instructions.",ag:"Placed direct — weekly MI to Fox Footy",cp:"Foxtel Media",sched:"AFL rounds Thu–Sun, seasonal",live:"Yes — AFL live matches and pre/post",odds:"Sometimes",rg:"Yes",log:"N/A",targ:"N/A — linear broadcast",spend:"3030000",b27:"Yes",notes:"Spend per FY27 plan (~$3.03m).",_red:["ex","exp","person"]},
+   {ch:"Subscription TV",sub:"ESPN linear (Disney)",camp:"US sport TVC schedule",desc:"TVC spots across ESPN linear (NBA/NFL and other live US sport), incl. overnight live windows.",ag:"Placed direct — MI to ESPN/Disney",cp:"Disney (ESPN Australia)",sched:"US live sport windows incl. overnight",live:"Yes — NBA/NFL and other live US sport",odds:"Sometimes",rg:"Yes",log:"N/A",targ:"N/A — linear broadcast",spend:"1880000",b27:"Yes",notes:"~$1.88m per plan. No small-audience exemption in the introduced bill.",_red:["ex","exp","person"]},
+   {ch:"Radio",sub:"SEN",camp:"Live reads + Thursday SGM segment",desc:"Live reads plus weekly Thursday SGM segment (Arryn Siposs) built around Pull Em; PB-scripted.",ag:"Direct — weekly MI to SEN",cp:"Sports Entertainment Network (SEN)",sched:"Weekly, footy season",live:"Yes — footy programming adjacency",odds:"Yes",person:"Arryn Siposs",rg:"Yes",log:"N/A",targ:"N/A — radio",b27:"Yes",notes:"Confirm value + any reads in 8–9am / 3–4pm school windows (62N).",_red:["ex","exp","spend"]},
+   {ch:"Radio",sub:"Triple M",camp:"Live reads / spots",desc:"Live reads and spots per weekly Material Instructions.",ag:"Direct — weekly MI to Triple M",cp:"Southern Cross Austereo (Triple M)",sched:"Weekly, footy season",live:"Yes — footy programming adjacency",odds:"Sometimes",rg:"Yes",log:"N/A",targ:"N/A — radio",b27:"Yes",notes:"Confirm value, talent, school-window scheduling (62N).",_red:["ex","exp","person","spend"]},
+   {ch:"Radio",sub:"Nine Radio",camp:"Live reads / spots",desc:"Live reads and spots per weekly Material Instructions.",ag:"Direct — weekly MI to Nine Radio",cp:"Nine Radio",sched:"Weekly",live:"Yes — sport programming adjacency",odds:"Sometimes",rg:"Yes",log:"N/A",targ:"N/A — radio",b27:"Yes",notes:"Confirm value, talent, school-window scheduling (62N).",_red:["ex","exp","person","spend"]},
+   {ch:"Subscription TV",sub:"Racing.com linear",camp:"Racing channel sponsorship + Foxcatcher syndication",desc:"Sponsorship and spots on Racing.com linear; Foxcatcher content syndicated into racing coverage.",ag:"Direct",cp:"Racing.com (RDC)",sched:"Racing coverage, year-round",live:"Racing coverage only (racing excluded — s10A(3))",odds:"Yes",person:"Julian Vallance, Nick Ashman",rg:"Yes",log:"N/A",targ:"N/A — linear broadcast",spend:"900000",b27:"Yes",notes:"FY27 renewal $1.35m total: linear $900k / digital $250k / social $200k.",_red:["ex","exp"]},
+   {ch:"Digital display / programmatic",sub:"Racing.com digital",camp:"Display / pre-roll on racing.com",desc:"Display and video across Racing.com digital properties.",ag:"Direct",cp:"Racing.com (RDC)",sched:"Year-round",live:"Racing coverage only",odds:"Sometimes",rg:"Yes",log:"Partially",spend:"250000",b27:"Yes",notes:"Part of $1.35m renewal.",_red:["ex","exp","person","targ"]},
+   {ch:"Social — organic (owned)",sub:"Racing.com weekend digital/social",camp:"Foxcatcher social package on RDC channels",desc:"Foxcatcher formats on RDC weekend digital/social: FC Intel Notes, Head-to-Head (Jules v Nic), In the Moment carousels, 8 livestreams.",ag:"Direct",cp:"Racing.com (RDC)",sched:"Weekends, racing calendar",live:"Racing coverage only",odds:"Yes",person:"Julian Vallance, Nick Ashman",rg:"Yes",log:"No",spend:"200000",b27:"Yes",notes:"Net-new FY27 access. Part of $1.35m renewal.",_red:["ex","exp","targ"]},
+   {ch:"Search",sub:"Google SEM",camp:"Always-on brand + generic search",desc:"Paid search across brand and generic wagering terms.",sched:"Always-on",live:"No",odds:"No",rg:"Not sure",log:"No",spend:"5050000",b27:"Yes",notes:"Planning assumption: SEM caught as online content service (10C). Legal to confirm.",_red:["ex","ag","cp","exp","person","targ"]},
+   {ch:"Social — paid",sub:"Meta / TikTok / YouTube",camp:"Paid social — brand and product",desc:"Paid social across major platforms; creative incl. Pull Em and product promos.",sched:"Always-on / bursts",live:"Sometimes — event-adjacent bursts",odds:"Sometimes",rg:"Yes",log:"Partially",b27:"Yes",notes:"62P/Q gating will require logged-in, age-assured, opt-out delivery.",_red:["ex","ag","cp","exp","person","targ","spend"]},
+   {ch:"Digital display / programmatic",sub:"Programmatic display / video",camp:"Programmatic",desc:"Programmatic display and video via DSP.",sched:"Always-on",live:"Sometimes",odds:"No",rg:"Yes",log:"Partially",b27:"Yes",notes:"Confirm DSP/agency, spend, exclusion lists.",_red:["ex","ag","cp","exp","person","targ","spend"]},
+   {ch:"Out-of-home",sub:"7-Eleven retail network",camp:"7-Eleven OOH",desc:"Static/digital panels across the 7-Eleven network.",sched:"Ongoing",live:"No",odds:"No",rg:"Yes",log:"N/A",targ:"N/A — OOH",b27:"Yes",notes:"No general DOOH provision in the bill; check venue-adjacent sites (62V).",_red:["ex","ag","cp","exp","person","spend"]},
+   {ch:"Out-of-home",sub:"QMS DOOH — World Cup",camp:"WC dynamic DOOH feed",desc:"Dynamic DOOH: weather trigger + Socceroos next-match city; schedule in Monday.com.",ag:"QMS (Daisy Stickles)",cp:"QMS",sched:"World Cup window (Jun–Jul 2026)",live:"No — roadside DOOH",odds:"No",rg:"Yes",log:"N/A",targ:"N/A — OOH",b27:"No",notes:"Ends with the tournament — pre-commencement.",_red:["ex","exp","person","spend"]},
+   {ch:"CRM — email",sub:"Lifecycle + promo email",camp:"CRM email program",desc:"Lifecycle and promotional email to account holders, incl. Pull Em and racing promos.",sched:"Always-on",live:"No",odds:"Sometimes",rg:"Yes",log:"Yes",targ:"Account holders only — verified 18+",b27:"Yes",notes:"Confirm volumes/examples for Legal.",_red:["ex","ag","cp","exp","person","spend"]},
+   {ch:"CRM — push",sub:"App push + SMS",camp:"CRM push/SMS program",desc:"Push notifications and SMS to opted-in account holders.",sched:"Always-on",live:"Sometimes — event-led",odds:"Sometimes",rg:"Yes",log:"Yes",targ:"Account holders only — verified 18+",b27:"Yes",notes:"Confirm examples.",_red:["ex","ag","cp","exp","person","spend"]},
+   {ch:"In-app / website (owned)",sub:"PointsBet app + site",camp:"Owned channel content",desc:"On-platform promos and content: Pull Em, Statmate stats modules, Foxcatcher and Ausmerican Aces content.",sched:"Always-on",live:"Sometimes",odds:"Yes",rg:"Yes",log:"Yes",targ:"Verified account holders",b27:"Yes",notes:"Owned-platform treatment (62D(5)/dedicated-wagering) — Legal view.",_red:["ex","person","spend"]},
+   {ch:"Affiliate",sub:"—",camp:"No affiliate program",desc:"No affiliate spend in the FY27 plan ($0).",sched:"—",live:"No",odds:"No",rg:"Not sure",log:"N/A",targ:"—",spend:"0",b27:"No",notes:"Confirm no legacy affiliate arrangements remain live.",_red:[]},
+   {ch:"Out-of-home",sub:"LA Rams — 'PB LA Rides' wrapped Cadillac (proposed)",camp:"LA Rams ANZ hero creative",desc:"Wrapped-vehicle hero creative under proposed LA Rams ANZ partnership; win-contingent 'Victory Speech' posts also proposed.",cp:"LA Rams (via ANZ term sheet)",sched:"Proposed — not live",live:"No",odds:"No",rg:"Not sure",log:"N/A",targ:"N/A — OOH",b27:"No",notes:"$300k AUD fee (partnership, not media). Open: Crown carve-out, one-mile MCG radius, school zones. With Nathan Hinde.",_red:["ex","ag","exp","person"]}
+ ]},
+ t2:{title:"2. Notable Persons",cols:[
+   ["name","Name",150],
+   ["cat","Category",165,["","Professional athlete","Celebrity","Social media influencer","Prominent individual","Commentator / media identity","Racing identity","Multiple","Unsure — include anyway"]],
+   ["cf","Current / former",110,["","Current","Former","Both/It varies"]],
+   ["loc","Location",100,["","Australia","Overseas","Both"]],
+   ["rel","Relationship",170,["","Contracted ambassador","Partner / network talent","Influencer — campaign basis","Podcast host","Employee / representative","Organic (no arrangement)","Other"]],
+   ["via","Engaged via",150],["cp","Contract counterparty",150],["exp","Expiry",100],["val","Annual value (A$)",110],
+   ["wag","WAGERING promotion — examples",230],["nonwag","NON-wagering content",170],["plat","Platforms / programs",180],
+   ["aud","Audience / followers",120],["b27","Beyond 1 Jan 27?",120],["clause","Term / change-of-law clause",140],["notes","Notes",200]],
+  rows:[
+   {name:"Julian Vallance",cat:"Racing identity",cf:"Current",loc:"Australia",rel:"Contracted ambassador",via:"Direct (Foxcatcher — confirm structure)",wag:"Daily racing odds/markets and tips in Foxcatcher content; odds reads",nonwag:"Racing form/analysis editorial",plat:"Racing.com (linear + weekend social package), PB socials, YouTube",b27:"Yes — FY27 Foxcatcher plan",notes:"Foxcatcher co-host.",_red:["cp","exp","val","aud","clause"]},
+   {name:"Nick Ashman",cat:"Multiple",cf:"Current",loc:"Australia",rel:"Partner / network talent",via:"Direct + FanaticsTV (Take the Points)",wag:"Racing odds reads (Foxcatcher); NRL segments incl. odds (Take the Points)",nonwag:"Sport/racing editorial",plat:"Racing.com, FanaticsTV, PB socials",b27:"Yes",notes:"Foxcatcher + Take the Points co-host.",_red:["cp","exp","val","aud","clause"]},
+   {name:"Craig Hutchinson",cat:"Commentator / media identity",cf:"Current",loc:"Australia",rel:"Partner / network talent",wag:"Appears in Foxcatcher-connected content (per Legal Tab 4 note)",nonwag:"Sports media output generally",b27:"Confirm",notes:"Listed by Legal as fronting Foxcatcher — confirm role/arrangement.",_red:["via","cp","exp","val","plat","aud","b27","clause"]},
+   {name:"Arryn Siposs",cat:"Professional athlete",cf:"Former",loc:"Australia",rel:"Contracted ambassador",via:"Direct",wag:"Ausmerican Aces wagering content; SEN Thursday SGM segment with odds",nonwag:"US sport analysis editorial",plat:"Ausmerican Aces (YouTube/socials), SEN radio",b27:"Yes — FY27 plan",notes:"Ex-AFL/NFL. Ausmerican Aces co-host.",_red:["cp","exp","val","aud","clause"]},
+   {name:"Daisy Thomas",cat:"Professional athlete",cf:"Former",loc:"Australia",rel:"Contracted ambassador",via:"Direct",wag:"Ausmerican Aces wagering content incl. preview SGMs",nonwag:"AFL/US sport editorial",plat:"Ausmerican Aces (YouTube/socials)",b27:"Yes — FY27 plan",notes:"Ausmerican Aces co-host.",_red:["cp","exp","val","aud","clause"]},
+   {name:"Mark Bosnich",cat:"Professional athlete",cf:"Former",loc:"Australia",rel:"Contracted ambassador",via:"Direct",val:"25000",wag:"'Bozza's Bunker' WC content ambassadorship incl. wagering-facing promos",nonwag:"WC punditry/editorial",plat:"PB socials + WC campaign media",b27:"No — WC 2026 term only",notes:"$25k + GST, WC term. 'No Physical Activity Clause' campaign element. T&Cs done.",_red:["cp","exp","aud","clause"]},
+   {name:"Aaron Mooy",cat:"Professional athlete",cf:"Former",loc:"Australia",rel:"Partner / network talent",via:"FanaticsTV (WC Pod)",wag:"FanaticsTV World Cup Pod — PB-integrated segments",nonwag:"WC punditry",plat:"FanaticsTV + clips/socials",b27:"No — WC term",notes:"Pod fee $85k+GST at partnership level (Tab 3).",_red:["cp","exp","val","aud","clause"]},
+   {name:"Stan Lazaridis",cat:"Professional athlete",cf:"Former",loc:"Australia",rel:"Partner / network talent",via:"FanaticsTV (WC Pod)",wag:"FanaticsTV World Cup Pod — PB-integrated segments",nonwag:"WC punditry",plat:"FanaticsTV + clips/socials",b27:"No — WC term",_red:["cp","exp","val","aud","clause"]},
+   {name:"Adam Peacock",cat:"Commentator / media identity",cf:"Current",loc:"Australia",rel:"Partner / network talent",via:"FanaticsTV (WC Pod)",wag:"FanaticsTV World Cup Pod — PB-integrated segments",nonwag:"WC hosting/editorial",plat:"FanaticsTV + clips/socials",b27:"No — WC term",_red:["cp","exp","val","aud","clause"]},
+   {name:"Aaron Woods",cat:"Professional athlete",cf:"Former",loc:"Australia",rel:"Partner / network talent",via:"FanaticsTV (Take the Points)",wag:"Take the Points NRL segments incl. odds",nonwag:"NRL editorial",plat:"FanaticsTV + clips/socials",_red:["cp","exp","val","aud","b27","clause"]},
+   {name:"Jules de Stoop",cat:"Social media influencer",cf:"Current",loc:"Australia",rel:"Influencer — campaign basis",via:"Direct",wag:"Pull Em SGM script content (AFL format)",nonwag:"Footy content",_red:["cp","exp","val","plat","aud","b27","clause"]},
+   {name:"Justin Hodges",cat:"Professional athlete",cf:"Former",loc:"Australia",rel:"Other",via:"Direct (event appearance)",wag:"SOO G3 activation, The Milton Rooftop (8 Jul) — pre and post-game",plat:"Event appearance",b27:"No",notes:"One-off — confirmed.",_red:["cp","exp","val","aud","clause"]},
+   {name:"Ryan Girdler",cat:"Professional athlete",cf:"Former",loc:"Australia",rel:"Other",via:"Direct (event appearance)",wag:"SOO G3 activation — pre-game",plat:"Event appearance",b27:"No",notes:"One-off — confirmed.",_red:["cp","exp","val","aud","clause"]},
+   {name:"Paul Gallen",cat:"Professional athlete",cf:"Former",loc:"Australia",rel:"Other",via:"Direct (event appearance)",wag:"SOO G3 activation — post-game (IN NEGOTIATION)",plat:"Event appearance",b27:"No",notes:"Not yet contracted as at 6 Jul.",_red:["cp","exp","val","aud","clause"]},
+   {name:"Liam Stapleton",cat:"Celebrity",cf:"Current",loc:"Australia",rel:"Influencer — campaign basis",via:"Direct",wag:"World Cup on-ground content",nonwag:"WC colour content",b27:"No — WC term",_red:["cp","exp","val","plat","aud","clause"]},
+   {name:"Andrew Davis",cat:"Unsure — include anyway",cf:"Current",loc:"Australia",rel:"Employee / representative",via:"Statmate",wag:"Fronts Statmate content (stats used alongside PB odds)",nonwag:"Stats/analysis content",plat:"Statmate + PB channels",notes:"Per Statmate row, Tab 4 — confirm category/arrangement.",_red:["cp","exp","val","aud","b27","clause"]},
+   {name:"Daniel Thornton",cat:"Unsure — include anyway",cf:"Current",loc:"Australia",rel:"Employee / representative",via:"Statmate",wag:"Fronts Statmate content",nonwag:"Stats/analysis content",plat:"Statmate + PB channels",_red:["cp","exp","val","aud","b27","clause"]},
+   {name:"",notes:"SOCIAL CREATORS ROSTER — one row per individual creator (8 budget lines; 62F catches influencers). Use + Add row.",_red:["name","cat","cf","loc","rel","via","wag","plat","aud","b27"]},
+   {name:"",notes:"100K SPORTS TALENT — name each person in PB-connected content. Use + Add row.",_red:["name","cat","cf","loc","rel","via","wag","plat","aud","b27"]},
+   {name:"",notes:"KENTY BLITZ HOST — enter full legal name.",_red:["name","cat","cf","loc","rel","via","wag","plat","aud","b27"]},
+   {name:"",notes:"NRL SOAPBOX TALENT ('Alex' — confirm surname). Rep: Jake Bulgin. Editorial-only; PB handles wagering integration separately.",_red:["name","cat","cf","loc","rel","via","wag","plat","aud","b27"]}
+ ]},
+ t3:{title:"3. Content Partnerships",cols:[
+   ["partner","Partner",140],["prog","Program / asset",150],["integ","What the integration looks like",240],["ex","Example (link/file)",140],
+   ["where","Where it appears",180],["bo","Broadcast / online",110,["","Broadcast","Online","Both"]],
+   ["live","Live sport connection",160,["","During live coverage","Pre/post game shows","Highlights / replays","Racing coverage","No live sport connection","Varies"]],
+   ["talent","Talent in PB segments",170],
+   ["appr","PB approve / pay?",170,["","Yes — paid & approved","Paid,editorial control with partner","Unpaid / organic","Mixed"]],
+   ["odds","Odds?",90,LM_YNS],["cp","Counterparty",150],["exp","Expiry",100],["val","Annual value (A$)",110],["b27","Beyond 1 Jan 27?",110],["notes","Notes",220]],
+  rows:[
+   {partner:"Fanatics TV",prog:"Kenty Blitz",integ:"Sponsorship and integrated PB segments within the show; clips cut for social.",where:"FanaticsTV app/site + socials/clips",bo:"Online",live:"Varies",talent:"Kenty Blitz host (confirm name)",appr:"Yes — paid & approved",odds:"Sometimes",cp:"Fanatics TV",notes:"Existing partnership.",_red:["ex","talent","exp","val","b27"]},
+   {partner:"Fanatics TV",prog:"Take the Points",integ:"PB-integrated NRL segments with odds discussion.",where:"FanaticsTV + clips/socials",bo:"Online",live:"Pre/post game shows",talent:"Aaron Woods, Nick Ashman",appr:"Yes — paid & approved",odds:"Yes",cp:"Fanatics TV",_red:["ex","exp","val","b27"]},
+   {partner:"Fanatics TV",prog:"World Cup Pod",integ:"PB-integrated WC podcast; four-host panel.",where:"FanaticsTV + audio platforms + clips",bo:"Online",live:"Varies",talent:"Aaron Mooy, Stan Lazaridis, Mark Bosnich, Adam Peacock",appr:"Yes — paid & approved",odds:"Sometimes",cp:"Fanatics TV",exp:"End of WC 2026 term",val:"85000",b27:"No",notes:"$85k + GST. Ends pre-commencement.",_red:["ex"]},
+   {partner:"Racing.com",prog:"Foxcatcher syndication",integ:"Foxcatcher segments syndicated into Racing.com coverage.",where:"Racing.com linear + digital",bo:"Both",live:"Racing coverage",talent:"Julian Vallance, Nick Ashman",appr:"Yes — paid & approved",odds:"Yes",cp:"Racing.com (RDC)",val:"50000",b27:"Yes",notes:"~1.33m qualified views. Racing carve-out relevant (s10A(3), 62E).",_red:["ex","exp"]},
+   {partner:"Racing.com",prog:"Weekend digital/social package",integ:"Foxcatcher formats on RDC weekend digital/social: FC Intel Notes, Head-to-Head, In the Moment, 8 livestreams.",where:"Racing.com digital + socials",bo:"Online",live:"Racing coverage",talent:"Julian Vallance, Nick Ashman",appr:"Yes — paid & approved",odds:"Yes",cp:"Racing.com (RDC)",val:"200000",b27:"Yes",notes:"Net-new FY27 access. Dedicated-racing-service analysis is the key legal question (62E/62W(3)).",_red:["ex","exp"]},
+   {partner:"SEN",prog:"Thursday SGM segment",integ:"Weekly PB segment with Arryn Siposs — SGM build with odds, Pull Em angle; PB-scripted.",where:"SEN radio + digital",bo:"Broadcast",live:"Pre/post game shows",talent:"Arryn Siposs",appr:"Yes — paid & approved",odds:"Yes",cp:"Sports Entertainment Network (SEN)",_red:["ex","exp","val","b27"]},
+   {partner:"NRL Soapbox",prog:"Editorial content deal",integ:"4 editorial pieces + optional reactive; PB handles wagering-facing integration separately.",bo:"Online",live:"No live sport connection",talent:"'Alex' (confirm surname) — rep Jake Bulgin",appr:"Paid,editorial control with partner",odds:"No",notes:"Structured as editorial — Legal to confirm the split holds under 62C(2).",_red:["ex","where","talent","cp","exp","val","b27"]},
+   {partner:"Manly Sea Eagles",prog:"Club partnership",integ:"Complete from contract — flagged by Legal in the 'How to' tab.",cp:"Manly Warringah Sea Eagles",notes:"Legal to pull the contract. Sch 5: pre-2 Jul 2026 venue/uniform displays protected to end-2031 if unvaried; talent not grandfathered (62W(2)).",_red:["integ","ex","where","bo","live","talent","appr","odds","exp","val","b27"]},
+   {partner:"Cronulla Sharks",prog:"Club partnership",integ:"Complete from contract — flagged by Legal in the 'How to' tab.",cp:"Cronulla-Sutherland Sharks",notes:"Legal to pull the contract. Same Sch 5 notes as Manly.",_red:["integ","ex","where","bo","live","talent","appr","odds","exp","val","b27"]},
+   {partner:"LA Rams (via ANZ)",prog:"Proposed partnership — term sheet",integ:"Proposed: 'PB LA Rides' wrapped Cadillac, win-contingent 'Victory Speech' posts, activation rights.",where:"Term sheet / deck on file",bo:"Online",live:"No live sport connection",talent:"TBC",appr:"Mixed",odds:"No",cp:"LA Rams",exp:"Not signed",val:"300000",b27:"No",notes:"$300k fee vs ~$183k assessed value. Open: Crown carve-out, one-mile MCG radius. With Nathan Hinde.",_red:["ex"]},
+   {partner:"100k Sports",prog:"World Cup content partner",integ:"WC content program.",bo:"Online",live:"Varies",appr:"Yes — paid & approved",odds:"Sometimes",cp:"100k Sports",_red:["integ","ex","where","talent","exp","val","b27"]},
+   {partner:"Fanatics TV",prog:"RLI expansion (PROPOSAL ONLY)",integ:"Proposed: Pull Em NRL launch integration; $200k / $8.38 blended CPM; 82.4% non-overlap with Kenty Blitz.",where:"Deck with S. Legg / D. McCullagh (2 Jun)",bo:"Online",live:"Varies",talent:"TBC",appr:"Yes — paid & approved",odds:"Sometimes",cp:"Fanatics TV",exp:"Not contracted",val:"200000",b27:"No",notes:"Proposal only — included for anti-avoidance visibility (cl 4; 62W(1) from 1 Jan 27).",_red:[]}
+ ]},
+ t4:{title:"4. Adjacent & Owned Brands",cols:[
+   ["brand","Brand / product",130],["own","Ownership",170],["does","What it does / publishes",240],["aud","Audience & platforms (links)",190],
+   ["promo","Promotes PB / wagering? How",210],["shared","Shared branding?",120,["","Yes — visible","No","Limited"]],
+   ["money","How it makes money",190],["people","People who front it",160],["cross","Cross-promotion",190],["changes","Planned changes",150],["notes","Notes",180]],
+  rows:[
+   {brand:"Statmate",own:"PB-owned (per Legal row: '1')",does:"Sports statistics and form product — match/player stats, 'StatMate Hot Stats' callouts used in PB content and SGM scripts; stats modules on PB site/app.",promo:"Sometimes — PB odds often promoted in connection with Statmate stats; stats appear on PB website and direct marketing.",shared:"Yes — visible",money:"Does not, other than cross-sell to PB. Could in future monetise ads/subscriptions.",people:"Andrew Davis, Daniel Thornton",cross:"Statmate stats on PB website and direct comms; may feature in PB TVCs.",_red:["aud","changes"]},
+   {brand:"Foxcatcher",own:"PB-owned (per Legal row: '1')",does:"Owned racing content brand — daily previews, tips, market intel; formats incl. FC Intel Notes, Head-to-Head (Jules v Nic), In the Moment carousels and livestreams; hosted by Julian Vallance and Nick Ashman.",promo:"Yes — frequently promotes PB odds and betting markets on sport and racing shows.",shared:"Yes — visible",money:"It does not.",people:"Julian Vallance, Nick Ashman, Craig Hutchinson (confirm)",cross:"Featured on PB website and in some PB materials.",_red:["aud","changes"]},
+   {brand:"Ausmerican Aces",own:"PB-owned content property (confirm entity/%)",does:"Multi-sport AU/US content brand — video/podcast + social, hosted by Arryn Siposs and Daisy Thomas; wagering-adjacent content incl. odds and preview SGMs.",promo:"Yes — promotes PB markets incl. US sport and AFL odds.",money:"PB-funded (~$949k all-in FY27); no external revenue known — confirm.",people:"Arryn Siposs, Daisy Thomas",cross:"Cross-promoted on PB socials; talent appear in PB campaigns and SEN segment.",_red:["own","aud","shared","money","changes"]}
+ ]}
+};
+function lmKey(t,i,k){return t+":"+i+":"+k;}
+function lmVal(t,i,row,k){const e=LM.edits[lmKey(t,i,k)];return e!==undefined?e:(row[k]||"");}
+function lmIsGap(t,i,row,k){return (row._red||[]).includes(k)&&!lmVal(t,i,row,k);}
+function lmRows(t){return LEGALMAP[t].rows.concat(LM.added[t]||[]);}
+function lmGapCount(t){let n=0;lmRows(t).forEach((r,i)=>{(r._red||[]).forEach(k=>{if(!lmVal(t,i,r,k))n++;});});return n;}
+function lmCSV(t){
+  const reg=LEGALMAP[t];const head=reg.cols.map(c=>c[1]);
+  const lines=[head.map(h=>'"'+h.replace(/"/g,'""')+'"').join(",")];
+  lmRows(t).forEach((r,i)=>{lines.push(reg.cols.map(c=>'"'+String(lmVal(t,i,r,c[0])).replace(/"/g,'""')+'"').join(","));});
+  const blob=new Blob(["\ufeff"+lines.join("\r\n")],{type:"text/csv"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="PBA_MarketingMap_"+reg.title.replace(/[^A-Za-z0-9]+/g,"_")+".csv";a.click();
+}
+function renderLegalMap(){
+  const reg=LEGALMAP[lmTab];
+  const tabs=Object.keys(LEGALMAP).map(t=>{const g=lmGapCount(t);
+    return `<button class="lmtab ${lmTab===t?'on':''}" data-lmtab="${t}">${LEGALMAP[t].title}${g?` <span class="lmgap">${g}</span>`:' <span class="lmdone">✓</span>'}</button>`;}).join("");
+  const totalGaps=Object.keys(LEGALMAP).reduce((n,t)=>n+lmGapCount(t),0);
+  const head=reg.cols.map(c=>`<th style="min-width:${c[2]}px">${c[1]}</th>`).join("");
+  const body=lmRows(lmTab).map((r,i)=>"<tr>"+reg.cols.map(c=>{
+    const k=c[0],v=lmVal(lmTab,i,r,k),gap=lmIsGap(lmTab,i,r,k);
+    if(c[3]){const opts=c[3].map(o=>`<option ${o===v?'selected':''}>${esc(o)}</option>`).join("");
+      return `<td class="${gap?'lmred':''}"><select class="lm-sel" data-t="${lmTab}" data-r="${i}" data-k="${k}">${opts}</select></td>`;}
+    return `<td class="${gap?'lmred':''}"><textarea class="lm-cell" rows="2" data-t="${lmTab}" data-r="${i}" data-k="${k}">${esc(v)}</textarea></td>`;
+  }).join("")+"</tr>").join("");
+  return `<div class="view"><div class="vh"><div><div class="eyebrow">Step 7 · Legal data request · due Wed 9 Jul</div>
+    <h2>PBA Marketing Map</h2><p>Fill the registers here — everything saves and syncs live. <b>Red cells are the gaps</b>; the counter clears as they're filled. Facts only — Legal's cream columns stay with Legal.</p></div>
+    <div style="text-align:right"><div class="bignum" id="lmTotal">${totalGaps}</div><div class="k">gaps to fill</div></div></div>
+    <div class="lmtabs">${tabs}</div>
+    <div class="lmbar"><button class="chipbtn" id="lmAdd">+ Add row</button>
+      <button class="chipbtn" id="lmExportTab">Export this register (CSV)</button>
+      <button class="chipbtn" id="lmExportAll">Export all 4 (CSV)</button>
+      <span class="k" style="margin-left:auto">When the counter hits zero, export and the Legal workbook gets regenerated for return.</span></div>
+    <div class="lmwrap"><table class="lmtab-table"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div></div>`;
+}
+
 /* ============ RENDER: workflow + shell ============ */
 function renderFlow(){
-  const steps=[["status","Asset Status",""],["scenario","Legislation Scenarios","How hard it lands"],["assets","Decisions",""],["paths","Paths","If X, then Y"],["summary","Exec Summary","The one-pager"],["actions","Actions","H2 roadmap"],["notes","Logic","Appendix"]];
+  const steps=[["status","Asset Status",""],["scenario","Legislation Scenarios","How hard it lands"],["assets","Decisions",""],["paths","Paths","If X, then Y"],["summary","Exec Summary","The one-pager"],["actions","Actions","H2 roadmap"],["legalmap","Legal Map","due Wed 9 Jul"],["notes","Logic","Appendix"]];
   $("#flow").innerHTML=steps.map((s,i)=>`<button class="step ${activeView===s[0]?'on':''}" data-v="${s[0]}">
     <span class="n">${i+1}</span><span><span class="lab">${s[1]}</span><span class="hint">${s[2]}</span></span></button>`).join("");
   $$(".step").forEach(b=>b.onclick=()=>{activeView=b.dataset.v;render();});
@@ -1030,7 +1213,7 @@ function renderScenario(){
     return `<div class="leg ${S[s.id]!=='off'?'on':''}">
     <div class="meta"><span class="lt">${s.t}</span>
       <span class="ld">${s.levels[S[s.id]].d}</span>
-      <span class="tag">${s.tag}${s.up?' · upside lever':''}${sw>0?` · <b style="color:var(--pb-red,#ED1B42)">moves ${fmtM(sw)}</b>`:''}</span></div>
+      <span class="tag">${s.tag}${s.up?' · upside lever':''}${sw>0?` · <b style="color:var(--pb-red)">moves ${fmtM(sw)}</b>`:''}</span></div>
     <div class="seg">${LEVELS.filter(lv=>lv in s.levels).map(lv=>`<button class="segb ${S[s.id]===lv?'on '+lv:''}" data-s="${s.id}" data-lv="${lv}" title="${LV[lv]}">${(s.labels&&s.labels[lv])||LVSHORT[lv]}</button>`).join('')}</div>
   </div>`;}).join("");
   const ro=[["exposed","Exposed"],["rework","Restructure"],["watch","Conditions"],["protected","Protected / strengthens"],["safe","Out of scope"]]
@@ -1282,7 +1465,7 @@ function renderAssetStatus(){
 }
 
 /* ============ RENDER: paths (if X then Y) ============ */
-const TONE={good:"#1F9D57",watch:"#C9A227",risk:"#ED1B42",neutral:"#7C7E84"};
+const TONE={good:"#3BD183",watch:"#E8C25A",risk:"#FF4D66",neutral:"#8FA0BF"};
 function renderPaths(){
   const groupsData=activeGroups();
   if(!pathAsset||!groupsData.some(g=>g.assets.includes(pathAsset))) pathAsset=groupsData[0].assets[0];
@@ -1302,15 +1485,15 @@ function renderPaths(){
   // branching diagram
   const lanes=pm.branches; const n=lanes.length; const H=300, top=30, gap=(H-top*2)/(n-1);
   const ax=70, ay=H/2, bx=300;
-  const lines=lanes.map((b,i)=>{const by=top+gap*i; const c=b.active?TONE[b.tone]:"#D2CFC8";
+  const lines=lanes.map((b,i)=>{const by=top+gap*i; const c=b.active?TONE[b.tone]:"#33477A";
     return `<path d="M${ax} ${ay} C${(ax+bx)/2} ${ay}, ${(ax+bx)/2} ${by}, ${bx} ${by}" fill="none" stroke="${c}" stroke-width="${b.active?2.4:1.2}" stroke-dasharray="${b.active?'':'4 4'}" opacity="${b.active?1:.5}"/>`;}).join("");
-  const nodes=lanes.map((b,i)=>{const by=top+gap*i; const c=b.active?TONE[b.tone]:"#9A9B9F";
+  const nodes=lanes.map((b,i)=>{const by=top+gap*i; const c=b.active?TONE[b.tone]:"#647BAB";
     return `<g opacity="${b.active?1:.45}"><circle cx="${bx}" cy="${by}" r="6" fill="${c}"/>
-      <text x="${bx+14}" y="${by+4}" font-size="12.5" font-weight="${b.active?700:500}" fill="${b.active?'#16171A':'#9A9B9F'}">${esc(b.title)}</text></g>`;}).join("");
+      <text x="${bx+14}" y="${by+4}" font-size="12.5" font-weight="${b.active?700:500}" fill="${b.active?'var(--pb-ink)':'var(--pb-faint)'}">${esc(b.title)}</text></g>`;}).join("");
   const svg=`<svg viewBox="0 0 560 ${H}" width="100%" preserveAspectRatio="xMinYMid meet">
     ${lines}
     <circle cx="${ax}" cy="${ay}" r="9" fill="${st.dot}"/><circle cx="${ax}" cy="${ay}" r="15" fill="none" stroke="${st.dot}" stroke-width="1.5" opacity=".4"/>
-    <text x="${ax}" y="${ay-24}" font-size="11" font-weight="700" fill="#16171A" text-anchor="middle">${esc(a.asset)}</text>
+    <text x="${ax}" y="${ay-24}" font-size="11" font-weight="700" fill="var(--pb-ink)" text-anchor="middle">${esc(a.asset)}</text>
     ${nodes}</svg>`;
   const laneCards=lanes.map(b=>`<div class="lane ${b.active?'on':''}" style="${b.active?'border-left-color:'+TONE[b.tone]:''}">
       <div class="lh"><span class="lstatus" style="color:${b.active?TONE[b.tone]:'#9A9B9F'}">${b.active?'● Open':'○ Off'}</span>${esc(b.title)}</div>
@@ -1346,7 +1529,7 @@ function renderSummary(){
   const onChips=SCENARIOS.map(s=>`<span class="scchip ${S[s.id]!=='off'?(s.up?'on up':'on'):''}">${s.t}: <b>${LV[S[s.id]]}</b></span>`).join("");
   const order=["exposed","rework","watch","protected","safe"];
   const total=orderedAssets().length;
-  const segs=order.map(k=>{const n=counts[k]||0; if(!n)return""; const c={exposed:"#ED1B42",rework:"#E8821E",watch:"#C9A227",protected:"#1F9D57",safe:"#7C7E84"}[k];
+  const segs=order.map(k=>{const n=counts[k]||0; if(!n)return""; const c={exposed:"#FF4D66",rework:"#FF9A3D",watch:"#E8C25A",protected:"#3BD183",safe:"#8FA0BF"}[k];
     return `<span style="background:${c};flex:${n}" title="${ST[k].lab}: ${n}">${n}</span>`;}).join("");
   // paths built
   const planned=orderedAssets().filter(a=>PLANS[a.asset]&&PLANS[a.asset].path&&PLANS[a.asset].path!=="— choose —");
@@ -1375,12 +1558,12 @@ function renderSummary(){
   const sens=[["soft","Soft landing"],["base","Base case"],["hard","Hard landing"]].map(([k,lab])=>({k,lab,d:exposureUnder(PRESETS[k])}));
   const sensMax=Math.max(...sens.map(s=>s.d),dExposed,1);
   const sensRows=sens.map(s=>`<div class="sensrow"><span class="senslab">${s.lab}</span>
-      <span class="sensbar"><span style="width:${Math.round(100*s.d/sensMax)}%;background:${s.k==='hard'?'#ED1B42':s.k==='base'?'#E8821E':'#C9A227'}"></span></span>
+      <span class="sensbar"><span style="width:${Math.round(100*s.d/sensMax)}%;background:${s.k==='hard'?'#FF4D66':s.k==='base'?'#FF9A3D':'#E8C25A'}"></span></span>
       <span class="sensnum">${fmtM(s.d)}</span></div>`).join("");
   /* CFO lens — top exposures by $ under the current scenario */
   const tops=topExposures(5); const topMax=Math.max(...tops.map(t=>t.d),1);
   const topRows=tops.length?tops.map(t=>`<div class="sensrow"><span class="senslab" title="${esc(t.drv||'')}">${esc(t.asset)}</span>
-      <span class="sensbar"><span style="width:${Math.round(100*t.d/topMax)}%;background:#ED1B42"></span></span>
+      <span class="sensbar"><span style="width:${Math.round(100*t.d/topMax)}%;background:#FF4D66"></span></span>
       <span class="sensnum">${fmtM(t.d)}</span></div>`).join("")
     :`<div class="empty"><b>Nothing exposed.</b>No dollars sit in Exposed or Restructure under this scenario.</div>`;
   /* CMO lens — where reach gets rebuilt */
@@ -1412,7 +1595,7 @@ function renderSummary(){
       <div class="panel"><div class="k">Exposure range · same portfolio, three landings</div>
         <div class="senswrap">${sensRows}
         <div class="sensrow cur"><span class="senslab">Current settings</span>
-          <span class="sensbar"><span style="width:${Math.round(100*dExposed/sensMax)}%;background:var(--pb-ink,#16171A)"></span></span>
+          <span class="sensbar"><span style="width:${Math.round(100*dExposed/sensMax)}%;background:var(--pb-red)"></span></span>
           <span class="sensnum"><b>${fmtM(dExposed)}</b></span></div></div>
         <div class="disc" style="margin:8px 0 0">The Soft–Hard spread is the negotiation stake: ${fmtM(sens[2].d-sens[0].d)} rides on where the Senate lands.</div></div>
       <div class="panel"><div class="k">Biggest exposures · by FY27 dollars</div>
@@ -1420,7 +1603,7 @@ function renderSummary(){
         <div class="disc" style="margin:8px 0 0">Racing-safe spend ${fmtM(dRacing)} and ${gatedUp} gated/owned asset${gatedUp===1?'':'s'} strengthen as these lanes close — the rebuild story sits there.</div></div>
     </div>
     <div class="sumgrid">
-      <div class="panel"><div class="k">Paths built (${planned.length}) · <span style="color:#3FDD8C">${lockedCount} ready for GLT</span>${inProgCount?` · ${inProgCount} in progress`:''}</div><ul class="plist">${plist}</ul></div>
+      <div class="panel"><div class="k">Paths built (${planned.length}) · <span style="color:#3BD183">${lockedCount} ready for GLT</span>${inProgCount?` · ${inProgCount} in progress`:''}</div><ul class="plist">${plist}</ul></div>
       <div class="panel"><div class="k outstanding">Open calls (${outstanding.length}) · needs a decision</div><ul class="plist outstanding">${olist}</ul></div>
     </div></div>`;
 }
@@ -1431,15 +1614,19 @@ function renderActions(){
   const t0=new Date("2026-07-02").getTime(), t1=new Date("2027-01-01").getTime();
   const px=d=>60+820*(new Date(d).getTime()-t0)/(t1-t0);
   const now=Date.now(); const nowX=Math.min(880,Math.max(60,60+820*(now-t0)/(t1-t0)));
-  const marks=[["2026-07-02","Bill introduced","#7C7E84"],["2026-08-15","Senate inquiry reports (mid-Aug)","#C9A227"],["2027-01-01","Part 7C commences","#ED1B42"]];
+  const marks=[["2026-07-02","Bill introduced","#8FA0BF"],["2026-07-09","Legal map due","#1B2A4A"],["2026-08-15","Senate inquiry reports (mid-Aug)","#E8C25A"],["2027-01-01","Part 7C commences","#FF4D66"]];
   const tl=`<div class="panel" style="margin-bottom:16px"><div class="k">Regulatory runway</div>
     <svg viewBox="0 0 940 86" width="100%" preserveAspectRatio="xMidYMid meet">
       <line x1="60" y1="40" x2="880" y2="40" stroke="var(--pb-line2,#D9D9DC)" stroke-width="2"/>
-      <line x1="${nowX}" y1="14" x2="${nowX}" y2="66" stroke="#16171A" stroke-width="2"/>
-      <text x="${nowX}" y="80" font-size="11" font-weight="700" fill="#16171A" text-anchor="middle">Today</text>
+      <line x1="${nowX}" y1="14" x2="${nowX}" y2="66" stroke="var(--pb-ink)" stroke-width="2"/>
+      <text x="${nowX}" y="80" font-size="11" font-weight="700" fill="var(--pb-ink)" text-anchor="middle">Today</text>
       ${marks.map(([d,lab,c],i)=>`<rect x="${px(d)-5}" y="35" width="10" height="10" fill="${c}"/>
-        <text x="${px(d)}" y="${i%2?24:12}" font-size="11" fill="#16171A" text-anchor="middle">${lab}</text>`).join("")}
+        <text x="${px(d)}" y="${i%2?24:12}" font-size="11" fill="var(--pb-muted)" text-anchor="middle">${lab}</text>`).join("")}
     </svg></div>`;
+  const lg=`<div class="panel" style="margin-bottom:16px"><div class="k">Legal data request · PBA Marketing Map (due Wed 9 Jul)</div>
+    <div style="font-size:12.5px;line-height:1.6;color:var(--pb-ink,#16171A)">Legal’s impact-assessment workbook — four registers to return, facts only (cream columns are Legal’s):
+    <b>1. Advertising Inventory</b> (18 rows drafted) · <b>2. Notable Persons</b> (21 drafted — incl. Social Creators &amp; 100k rosters to name) · <b>3. Content Partnerships</b> (12 drafted — Manly &amp; Cronulla from contract) · <b>4. Adjacent &amp; Owned Brands</b> (Statmate / Foxcatcher / Ausmerican Aces).
+    Draft pre-filled 6 Jul from the FY27 plan — <b style="color:var(--pb-red,#ED1B42)">light-red cells</b> in the workbook still need Marketing input (examples/links, contract expiries, spends outside the plan, roster names) before it goes back.</div><div style="margin-top:10px"><button class="chipbtn" data-v-jump="legalmap">Open Step 7 · Legal Map — ${Object.keys(LEGALMAP).reduce((n,t)=>n+lmGapCount(t),0)} gaps to fill →</button></div></div>`;
   const rows=orderedAssets().filter(a=>PLANS[a.asset]&&PLANS[a.asset].path&&PLANS[a.asset].path!=="— choose —")
     .map(a=>({a,p:PLANS[a.asset]}))
     .sort((x,y)=>(x.p.prio||"").localeCompare(y.p.prio||""))
@@ -1451,6 +1638,7 @@ function renderActions(){
   return `<div class="view"><div class="vh"><div><div class="eyebrow">Step 6 · Roadmap</div>
     <h2>H2 action plan</h2><p>Every path you've set, ranked by priority. This is the working list to 1 Jan 2027.</p></div></div>
     ${tl}
+    ${lg}
     ${rows?`<table class="atab"><thead><tr><th>Pri</th><th>Asset</th><th>Path</th><th>Owner</th><th>Target</th><th>Status</th><th>Notes</th></tr></thead><tbody>${rows}</tbody></table>`
       :`<div class="empty"><b>No actions yet.</b>Set paths on your assets and they'll populate here, ranked by priority.</div>`}</div>`;
 }
@@ -1473,8 +1661,8 @@ function renderNotes(){
   return `<div class="view"><div class="vh"><div><div class="eyebrow">Step 7 · Logic</div>
     <h2>How the engine decides</h2><p>Each line carries the provisions it's exposed to. Set a lever's intensity and only the lines touched by that provision move — scaled by how hard it lands.</p></div></div>
     <div class="callout"><b>Reading the engine:</b> each lever runs <b>High</b>, <b>Medium</b>, <b>Low</b> or <b>Not at all</b>. The notable-person ban reaches further as intensity rises — High catches any public profile, Medium ~50K+ followers, Low ~200K+ only. Every tagged line re-evaluates; the asset takes its worst line.</div>
-    <div class="callout" style="border-left-color:#1F9D57"><b>Racing is the safe harbour.</b> RDC, Racing.com and greyhound stay protected and strengthen as broadcast and talent close — the lane to lean into.</div>
-    <div class="callout" style="border-left-color:#1F9D57"><b>Gated/owned upside, asset by asset.</b> A line flags as upside once it's fully gated (Online gating → Off, trading reach for the ability to advertise at all) — first-party data and owned audiences gain value as broadcast and talent close. <b>Confirmed against the matrix below:</b> Ausmerican Aces, Fanatics TV and 100k Sports are rightly excluded — none PB-owned, none on a PB platform, none carry first-party data. StatMate and FoxCatcher are the two PB-owned, data-carrying assets — StatMate stays out-of-scope (Part 7C doesn't apply) rather than strengthening, though its relative value still rises as rivals lose channels it never depended on.</div>
+    <div class="callout" style="border-left-color:#3BD183"><b>Racing is the safe harbour.</b> RDC, Racing.com and greyhound stay protected and strengthen as broadcast and talent close — the lane to lean into.</div>
+    <div class="callout" style="border-left-color:#3BD183"><b>Gated/owned upside, asset by asset.</b> A line flags as upside once it's fully gated (Online gating → Off, trading reach for the ability to advertise at all) — first-party data and owned audiences gain value as broadcast and talent close. <b>Confirmed against the matrix below:</b> Ausmerican Aces, Fanatics TV and 100k Sports are rightly excluded — none PB-owned, none on a PB platform, none carry first-party data. StatMate and FoxCatcher are the two PB-owned, data-carrying assets — StatMate stays out-of-scope (Part 7C doesn't apply) rather than strengthening, though its relative value still rises as rivals lose channels it never depended on.</div>
     <div class="dsec"><div class="k">Source: the original partnerships matrix</div>
       <table class="note-prov"><thead><tr><th>Asset</th><th>PB owned</th><th>Dig. platform</th><th>Data</th><th>Production</th><th>Distribution</th><th>PB integration</th></tr></thead>
       <tbody>${ASSET_PROFILE_ORDER.map(k=>{const p=ASSET_PROFILE[k];return `<tr><td><b>${esc(ASSET_PROFILE_LABEL[k])}</b></td><td>${esc(p.owned)}</td><td>${esc(p.platform)}</td><td>${esc(p.data)}</td><td style="color:var(--pb-muted)">${esc(p.production)}</td><td style="color:var(--pb-muted)">${esc(p.distribution)}</td><td style="color:var(--pb-muted)">${esc(p.integration)}</td></tr>`;}).join("")}</tbody></table>
@@ -1482,7 +1670,7 @@ function renderNotes(){
     <table class="note-prov"><thead><tr><th style="width:90px">Provision</th><th style="width:200px">What it is</th><th>What it restricts</th></tr></thead>
     <tbody>${prov.map(p=>`<tr><td><code>${p[0]}</code></td><td><b>${p[1]}</b></td><td style="color:var(--pb-muted)">${p[2]}</td></tr>`).join("")}</tbody></table>
     <div class="callout" style="margin-top:16px"><b>Status note (4 Jul 2026):</b> Provision numbers verified against the first-reading text of the Interactive Gambling Amendment (Gambling Reform) Bill 2026, introduced 2 Jul 2026 (five provisions renumbered from the exposure draft). Senate inquiry expected to report mid-August — 1 Jan 2027 commencement at risk but still the planning assumption. Bill-confirmed since the draft: no talent grandfathering (62W(2) applies from commencement regardless of contract date; only pre-2 Jul 2026 venue/uniform deals are protected, to end-2031); anti-avoidance applies from Royal Assent (cl 4); no ESPN small-audience exemption appears in the bill; new 62R extends the live-sport ban to online at all hours. Not legal advice — borderline calls (SEM, dedicated-racing qualification for social, gating bar) need a compliance read before acting.</div>
-    <div class="disc">PointsBet Reform Scenario Planner V2 (6 Jul 2026) · built from the FY27 partner portfolio · scenario outputs are planning aids, not legal advice.</div>
+    <div class="disc">PointsBet Reform Scenario Planner V2.2 (6 Jul 2026) · built from the FY27 partner portfolio · scenario outputs are planning aids, not legal advice.</div>
   </div>`;
 }
 
@@ -1494,6 +1682,7 @@ const HELP={
   paths:["<b>Trace the routing.</b> Pick an asset to see exactly why it lands where it does — each active lever produces a ruling, lanes open or close. Use this when someone asks \"why is this exposed?\"","If the routing looks wrong, the fix is usually in Step 1 (asset facts) or Step 2 (scenario)."],
   summary:["<b>The GLT read.</b> Exposure under the current settings, the Soft–Hard range (the negotiation stake), the biggest dollar exposures, calls made vs open. Export from here.","Anything in Open calls still needs a path — jump straight in from the list."],
   actions:["<b>The H2 roadmap.</b> Every committed path ranked by priority with owner, target and status. This is the working list to 1 Jan 2027 — keep statuses current so \"Ready for GLT\" on the summary stays honest.",""],
+  legalmap:["<b>Legal's data request \u2014 fill it here.</b> Four registers, facts only \u2014 red cells are the gaps. Everything you type saves and syncs, so the team can chip away in parallel. Cream (Legal) columns aren't here \u2014 they stay Legal's. When the gap counter hits zero, export the CSVs and I'll regenerate Legal's workbook for return.","Due back to Legal Wed 9 Jul."],
   notes:["<b>The appendix.</b> How the engine decides, every provision as introduced (first-reading text, verified 4 Jul 2026), and the source matrix the upside logic traces back to.",""]
 };
 let helpOpen=false;
@@ -1516,6 +1705,7 @@ function render(){
   else if(activeView==="paths") m.innerHTML=renderPaths();
   else if(activeView==="summary") m.innerHTML=renderSummary();
   else if(activeView==="actions") m.innerHTML=renderActions();
+  else if(activeView==="legalmap") m.innerHTML=renderLegalMap();
   else if(activeView==="notes") m.innerHTML=renderNotes();
   injectHelp();
   bind();
@@ -1535,6 +1725,18 @@ function bind(){
   $$("[data-pa]").forEach(b=>b.onclick=()=>{pathAsset=b.dataset.pa;render();});
   $$("[data-openws]").forEach(b=>b.onclick=()=>openWorkspace(b.dataset.openws));
   $$(".vt").forEach(b=>b.onclick=()=>{assetsView=b.dataset.view;render();});
+  $$(".lm-cell,.lm-sel").forEach(el=>{const h=()=>{const t=el.dataset.t,r=+el.dataset.r,k=el.dataset.k;
+    LM.edits[lmKey(t,r,k)]=el.value; persist();
+    const row=lmRows(t)[r]; el.closest("td").classList.toggle("lmred", lmIsGap(t,r,row,k));
+    const tot=$("#lmTotal"); if(tot) tot.textContent=Object.keys(LEGALMAP).reduce((n,tt)=>n+lmGapCount(tt),0);};
+    el.tagName==="SELECT"?el.onchange=h:el.oninput=h;});
+  $$("[data-v-jump]").forEach(b=>b.onclick=()=>{activeView=b.dataset.vJump;render();});
+  $$("[data-lmtab]").forEach(b=>b.onclick=()=>{lmTab=b.dataset.lmtab;render();});
+  const la=$("#lmAdd"); if(la) la.onclick=()=>{const cols=LEGALMAP[lmTab].cols.map(c=>c[0]);
+    LM.added[lmTab]=LM.added[lmTab]||[]; LM.added[lmTab].push({_red:cols.filter(k=>k!=="notes")}); persist(); render();};
+  const le=$("#lmExportTab"); if(le) le.onclick=()=>lmCSV(lmTab);
+  const lea=$("#lmExportAll"); if(lea) lea.onclick=()=>Object.keys(LEGALMAP).forEach((t,i)=>setTimeout(()=>lmCSV(t),i*350));
+
   $$(".wl-more").forEach(b=>b.onclick=()=>openWorkspace(b.dataset.a));
   $$(".verb").forEach(b=>b.onclick=()=>{const name=b.dataset.a,v=b.dataset.verb;
     const a=PORTFOLIO.find(x=>x.asset===name); a._ev=evalAsset(a);
