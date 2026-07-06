@@ -605,6 +605,20 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:2px;backgroun
 /* quiet hovers: surface shift only, never scale or glow */
 .card,.wl,.step,.atab-btn,.fbtn,.verb,.chipbtn,.jumpbtn,.wl-more,.savebtn,.ghostbtn{transition:background-color .14s ease,border-color .14s ease,color .14s ease}
 
+/* step help popovers */
+.helpbtn{margin-left:12px;width:24px;height:24px;border:1px solid var(--pb-line2,#D9D9DC);background:transparent;color:var(--pb-muted,#7C7E84);font-weight:700;font-size:13px;cursor:pointer;flex:0 0 auto}
+.helpbtn:hover{border-color:#ED1B42;color:#ED1B42}
+.helpbox{border:1px solid var(--pb-line2,#D9D9DC);border-left:3px solid #ED1B42;background:var(--pb-panel,#fff);padding:12px 14px;margin:0 0 16px;font-size:12.5px;line-height:1.55;color:var(--pb-ink,#16171A)}
+.helpbox b{color:#ED1B42}
+.helpbox .hnext{display:block;margin-top:6px;color:var(--pb-muted,#7C7E84)}
+/* exec summary mini charts */
+.senswrap{display:flex;flex-direction:column;gap:7px;margin-top:4px}
+.sensrow{display:flex;align-items:center;gap:10px}
+.sensrow.cur{border-top:1px solid var(--pb-line2,#D9D9DC);padding-top:7px;margin-top:2px}
+.senslab{flex:0 0 128px;font-size:12px;color:var(--pb-ink,#16171A);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sensbar{flex:1;height:14px;background:var(--pb-line,#EEEEF0);position:relative}
+.sensbar span{display:block;height:100%;min-width:2px}
+.sensnum{flex:0 0 64px;text-align:right;font-size:12px;font-variant-numeric:tabular-nums;color:var(--pb-ink,#16171A)}
 </style></head><body>
 <div class="bar"><div class="brand"><span class="mark">Points<span>Bet</span></span>
 <span class="sub">Reform Scenario Planner</span></div><div class="right">
@@ -772,12 +786,39 @@ function evalLine(l,celTier,ageGating){
 // Uses the same per-line evalLine() the status badges use, so the $ figure and the status badge can never disagree.
 function dollarsByStatus(){
   const out={exposed:0,rework:0,watch:0,protected:0,strong:0,safe:0};
+  const inScope=new Set(orderedAssets().map(a=>a.asset));
   PORTFOLIO.forEach(a=>{
+    if(coreOnly&&!inScope.has(a.asset)) return; // in Content/Owned scope, dollars match the visible asset set; full mode keeps the whole book incl. services
     const celTier=PLANS[a.asset]&&PLANS[a.asset].cel;
     const ageGating=PLANS[a.asset]&&PLANS[a.asset].ageGating;
     a.lines.forEach(l=>{ const e=evalLine(l,celTier,ageGating); out[e.key]=(out[e.key]||0)+(l.annual||0); });
   });
   return out;
+}
+/* exposure $ under an arbitrary lever set — save/restore S (synchronous, safe) */
+function exposureUnder(levers){
+  const save={...S}; Object.assign(S,levers);
+  const d=dollarsByStatus(); Object.keys(save).forEach(k=>S[k]=save[k]);
+  return d.exposed+d.rework;
+}
+/* per-lever $ swing vs current settings: what moves if this lever alone goes to off */
+function leverSwing(id){
+  const kind=SCMAP[id].kind;
+  const pick=d=> kind==='mitigate' ? d.exposed : d.exposed+d.rework; // mitigation converts exposed→restructure, so measure the exposed bucket alone
+  const cur=pick(dollarsByStatus());
+  const save={...S}; S[id]=S[id]==='off'?'high':'off';
+  const alt=pick(dollarsByStatus()); Object.keys(save).forEach(k=>S[k]=save[k]);
+  return Math.abs(cur-alt);
+}
+/* top assets by exposed/rework dollars under current scenario */
+function topExposures(n){
+  return orderedAssets().map(a=>{
+    const celTier=PLANS[a.asset]&&PLANS[a.asset].cel, ageGating=PLANS[a.asset]&&PLANS[a.asset].ageGating;
+    let d=0, drv=null, rank=99;
+    a.lines.forEach(l=>{const e=evalLine(l,celTier,ageGating);
+      if(e.key==='exposed'||e.key==='rework'){d+=(l.annual||0); if(ST[e.key].rank<rank){rank=ST[e.key].rank;drv=e.driver;}}});
+    return {asset:a.asset,d,drv};
+  }).filter(x=>x.d>0).sort((x,y)=>y.d-x.d).slice(0,n);
 }
 function fmtM(n){ return n>=1000000?"$"+(n/1000000).toFixed(2)+"m":n>=1000?"$"+Math.round(n/1000)+"k":"$"+n; }
 
@@ -985,12 +1026,13 @@ function renderScenario(){
   const needsDecision=(counts.exposed||0)+(counts.rework||0);
   const upsideCount=orderedAssets().filter(a=>a._ev&&a._ev.upside).length;
   const protectedCount=counts.protected||0;
-  const legs=SCENARIOS.map(s=>`<div class="leg ${S[s.id]!=='off'?'on':''}">
+  const legs=SCENARIOS.map(s=>{const sw=leverSwing(s.id);
+    return `<div class="leg ${S[s.id]!=='off'?'on':''}">
     <div class="meta"><span class="lt">${s.t}</span>
       <span class="ld">${s.levels[S[s.id]].d}</span>
-      <span class="tag">${s.tag}${s.up?' · upside lever':''}</span></div>
+      <span class="tag">${s.tag}${s.up?' · upside lever':''}${sw>0?` · <b style="color:var(--pb-red,#ED1B42)">moves ${fmtM(sw)}</b>`:''}</span></div>
     <div class="seg">${LEVELS.filter(lv=>lv in s.levels).map(lv=>`<button class="segb ${S[s.id]===lv?'on '+lv:''}" data-s="${s.id}" data-lv="${lv}" title="${LV[lv]}">${(s.labels&&s.labels[lv])||LVSHORT[lv]}</button>`).join('')}</div>
-  </div>`).join("");
+  </div>`;}).join("");
   const ro=[["exposed","Exposed"],["rework","Restructure"],["watch","Conditions"],["protected","Protected / strengthens"],["safe","Out of scope"]]
     .map(([k,lab])=>`<div class="ro ${k}"><div class="num">${counts[k]||0}</div><div class="lab">${lab}</div></div>`).join("");
   return `<div class="view">
@@ -999,7 +1041,7 @@ function renderScenario(){
     <div class="slate">
       <div class="shead"><div class="t"><div class="e">Active scenario</div>
         <h3>Interactive Gambling Amendment (Gambling Reform) Bill 2026</h3>
-        <p>Exposure draft · Schedules 1–3 commence 1 Jan 2027. Set the intensity you want to plan against.</p></div>
+        <p>Introduced bill (first reading 2 Jul 2026) · Schedules 1–4 commence 1 Jan 2027 · Senate inquiry reports mid-Aug. Set the intensity you want to plan against.</p></div>
         <div class="legcount"><b>${live}</b>of ${SCENARIOS.length} levers active</div></div>
       <div class="legs">${legs}</div>
       <div class="foot">
@@ -1016,7 +1058,7 @@ const PRESETS={
   base:{notable:"high",broadcast:"high",odds:"high",onlineFails:"off",racing:"high",sem:"high",espn:"high",grandfather:"off"},
   hard:{notable:"high",broadcast:"high",odds:"high",onlineFails:"high",racing:"off",sem:"high",espn:"off",grandfather:"off"},
   soft:{notable:"low",broadcast:"off",odds:"med",onlineFails:"off",racing:"high",sem:"off",espn:"high",grandfather:"high"},
-  clear:{notable:"off",broadcast:"off",odds:"off",onlineFails:"off",racing:"off",sem:"off",espn:"high",grandfather:"off"}
+  clear:{notable:"off",broadcast:"off",odds:"off",onlineFails:"off",racing:"high",sem:"off",espn:"high",grandfather:"off"}
 }
 
 /* ============ RENDER: asset grid ============ */
@@ -1329,6 +1371,22 @@ function renderSummary(){
   const dConditions=dByStatus.watch;
   const dClear=dByStatus.protected+dByStatus.strong+dByStatus.safe;
   const dTotal=dExposed+dConditions+dClear;
+  /* CEO lens — scenario sensitivity: same portfolio under Soft / Base / Hard, current marked */
+  const sens=[["soft","Soft landing"],["base","Base case"],["hard","Hard landing"]].map(([k,lab])=>({k,lab,d:exposureUnder(PRESETS[k])}));
+  const sensMax=Math.max(...sens.map(s=>s.d),dExposed,1);
+  const sensRows=sens.map(s=>`<div class="sensrow"><span class="senslab">${s.lab}</span>
+      <span class="sensbar"><span style="width:${Math.round(100*s.d/sensMax)}%;background:${s.k==='hard'?'#ED1B42':s.k==='base'?'#E8821E':'#C9A227'}"></span></span>
+      <span class="sensnum">${fmtM(s.d)}</span></div>`).join("");
+  /* CFO lens — top exposures by $ under the current scenario */
+  const tops=topExposures(5); const topMax=Math.max(...tops.map(t=>t.d),1);
+  const topRows=tops.length?tops.map(t=>`<div class="sensrow"><span class="senslab" title="${esc(t.drv||'')}">${esc(t.asset)}</span>
+      <span class="sensbar"><span style="width:${Math.round(100*t.d/topMax)}%;background:#ED1B42"></span></span>
+      <span class="sensnum">${fmtM(t.d)}</span></div>`).join("")
+    :`<div class="empty"><b>Nothing exposed.</b>No dollars sit in Exposed or Restructure under this scenario.</div>`;
+  /* CMO lens — where reach gets rebuilt */
+  const dRacing=dByStatus.protected+dByStatus.strong;
+  const gatedUp=orderedAssets().filter(a=>{a._ev=a._ev||evalAsset(a);return a._ev.upside;}).length;
+
   const verdict=`<div class="readout" style="grid-template-columns:repeat(4,1fr);margin:0 0 12px">
     <div class="ro"><div class="num">${daysLeft}</div><div class="lab">Days to 1 Jan 2027</div></div>
     <div class="ro exposed"><div class="num">${needsDec}</div><div class="lab">Need a decision</div></div>
@@ -1350,6 +1408,17 @@ function renderSummary(){
     <div class="panel" style="margin-bottom:16px"><div class="k">Portfolio under this scenario · ${total} assets</div>
       <div class="statusbar">${segs}</div>
       <div style="font-size:12px;color:var(--pb-muted)">${counts.exposed||0} exposed · ${counts.rework||0} to restructure · ${counts.watch||0} with conditions · ${counts.protected||0} protected / strengthening · ${counts.safe||0} out of scope</div></div>
+    <div class="sumgrid" style="margin-bottom:16px">
+      <div class="panel"><div class="k">Exposure range · same portfolio, three landings</div>
+        <div class="senswrap">${sensRows}
+        <div class="sensrow cur"><span class="senslab">Current settings</span>
+          <span class="sensbar"><span style="width:${Math.round(100*dExposed/sensMax)}%;background:var(--pb-ink,#16171A)"></span></span>
+          <span class="sensnum"><b>${fmtM(dExposed)}</b></span></div></div>
+        <div class="disc" style="margin:8px 0 0">The Soft–Hard spread is the negotiation stake: ${fmtM(sens[2].d-sens[0].d)} rides on where the Senate lands.</div></div>
+      <div class="panel"><div class="k">Biggest exposures · by FY27 dollars</div>
+        <div class="senswrap">${topRows}</div>
+        <div class="disc" style="margin:8px 0 0">Racing-safe spend ${fmtM(dRacing)} and ${gatedUp} gated/owned asset${gatedUp===1?'':'s'} strengthen as these lanes close — the rebuild story sits there.</div></div>
+    </div>
     <div class="sumgrid">
       <div class="panel"><div class="k">Paths built (${planned.length}) · <span style="color:#3FDD8C">${lockedCount} ready for GLT</span>${inProgCount?` · ${inProgCount} in progress`:''}</div><ul class="plist">${plist}</ul></div>
       <div class="panel"><div class="k outstanding">Open calls (${outstanding.length}) · needs a decision</div><ul class="plist outstanding">${olist}</ul></div>
@@ -1358,6 +1427,19 @@ function renderSummary(){
 
 /* ============ RENDER: actions ============ */
 function renderActions(){
+  /* regulatory runway — real dates only */
+  const t0=new Date("2026-07-02").getTime(), t1=new Date("2027-01-01").getTime();
+  const px=d=>60+820*(new Date(d).getTime()-t0)/(t1-t0);
+  const now=Date.now(); const nowX=Math.min(880,Math.max(60,60+820*(now-t0)/(t1-t0)));
+  const marks=[["2026-07-02","Bill introduced","#7C7E84"],["2026-08-15","Senate inquiry reports (mid-Aug)","#C9A227"],["2027-01-01","Part 7C commences","#ED1B42"]];
+  const tl=`<div class="panel" style="margin-bottom:16px"><div class="k">Regulatory runway</div>
+    <svg viewBox="0 0 940 86" width="100%" preserveAspectRatio="xMidYMid meet">
+      <line x1="60" y1="40" x2="880" y2="40" stroke="var(--pb-line2,#D9D9DC)" stroke-width="2"/>
+      <line x1="${nowX}" y1="14" x2="${nowX}" y2="66" stroke="#16171A" stroke-width="2"/>
+      <text x="${nowX}" y="80" font-size="11" font-weight="700" fill="#16171A" text-anchor="middle">Today</text>
+      ${marks.map(([d,lab,c],i)=>`<rect x="${px(d)-5}" y="35" width="10" height="10" fill="${c}"/>
+        <text x="${px(d)}" y="${i%2?24:12}" font-size="11" fill="#16171A" text-anchor="middle">${lab}</text>`).join("")}
+    </svg></div>`;
   const rows=orderedAssets().filter(a=>PLANS[a.asset]&&PLANS[a.asset].path&&PLANS[a.asset].path!=="— choose —")
     .map(a=>({a,p:PLANS[a.asset]}))
     .sort((x,y)=>(x.p.prio||"").localeCompare(y.p.prio||""))
@@ -1368,6 +1450,7 @@ function renderActions(){
         <td style="color:var(--pb-muted)">${esc(p.notes||'')}</td></tr>`;}).join("");
   return `<div class="view"><div class="vh"><div><div class="eyebrow">Step 6 · Roadmap</div>
     <h2>H2 action plan</h2><p>Every path you've set, ranked by priority. This is the working list to 1 Jan 2027.</p></div></div>
+    ${tl}
     ${rows?`<table class="atab"><thead><tr><th>Pri</th><th>Asset</th><th>Path</th><th>Owner</th><th>Target</th><th>Status</th><th>Notes</th></tr></thead><tbody>${rows}</tbody></table>`
       :`<div class="empty"><b>No actions yet.</b>Set paths on your assets and they'll populate here, ranked by priority.</div>`}</div>`;
 }
@@ -1404,6 +1487,26 @@ function renderNotes(){
 }
 
 /* ============ MAIN RENDER ============ */
+const HELP={
+  status:["<b>Start here.</b> Confirm what each asset actually is — ownership, platform, first-party data, whether age gating already runs, and the talent's follower tier. Every field feeds the engine: age gating softens online exposure, the celebrity tier decides whether talent is caught at each ban intensity.","Next: Step 2 — set how hard the legislation lands."],
+  scenario:["<b>Set the landing.</b> Each lever is one provision of the bill; the presets are the three planning cases. The <b>moves $</b> figure on a lever is FY27 spend that shifts in or out of exposure if that lever alone flips.","Next: Step 3 — the portfolio re-scores instantly; make the call on each asset."],
+  assets:["<b>Make the calls.</b> Every asset shows its status under the current scenario with a recommended move. Click a card to open its workspace — commit a path, owner, target date and priority there.","Committed paths flow to the Exec Summary and the Actions roadmap automatically."],
+  paths:["<b>Trace the routing.</b> Pick an asset to see exactly why it lands where it does — each active lever produces a ruling, lanes open or close. Use this when someone asks \"why is this exposed?\"","If the routing looks wrong, the fix is usually in Step 1 (asset facts) or Step 2 (scenario)."],
+  summary:["<b>The GLT read.</b> Exposure under the current settings, the Soft–Hard range (the negotiation stake), the biggest dollar exposures, calls made vs open. Export from here.","Anything in Open calls still needs a path — jump straight in from the list."],
+  actions:["<b>The H2 roadmap.</b> Every committed path ranked by priority with owner, target and status. This is the working list to 1 Jan 2027 — keep statuses current so \"Ready for GLT\" on the summary stays honest.",""],
+  notes:["<b>The appendix.</b> How the engine decides, every provision as introduced (first-reading text, verified 4 Jul 2026), and the source matrix the upside logic traces back to.",""]
+};
+let helpOpen=false;
+function injectHelp(){
+  const vh=$("#main .vh > div"); if(!vh) return;
+  const h=HELP[activeView]; if(!h) return;
+  const btn=document.createElement("button"); btn.className="helpbtn"; btn.textContent="?"; btn.title="What to do on this step";
+  btn.onclick=()=>{helpOpen=!helpOpen;render();};
+  const h2=vh.querySelector("h2"); if(h2){h2.appendChild(btn);}
+  if(helpOpen){const box=document.createElement("div");box.className="helpbox";
+    box.innerHTML=h[0]+(h[1]?`<span class="hnext">${h[1]}</span>`:"");
+    const view=$("#main .view"); const anchor=$("#main .vh"); if(view&&anchor) anchor.after(box);}
+}
 function render(){
   renderFlow();
   const m=$("#main");
@@ -1414,6 +1517,7 @@ function render(){
   else if(activeView==="summary") m.innerHTML=renderSummary();
   else if(activeView==="actions") m.innerHTML=renderActions();
   else if(activeView==="notes") m.innerHTML=renderNotes();
+  injectHelp();
   bind();
 }
 function bind(){
