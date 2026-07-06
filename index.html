@@ -1,29 +1,27 @@
 <!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-<title>PointsBet · Reform Scenario Planner V2.2</title>
-<meta name="description" content="Scenario-driven planning tool for the Gambling Reform Bill 2026 across the PointsBet FY27 partner portfolio."/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<title>PointsBet · Reform Scenario Planner V2.2</title>
+<meta name="description" content="Scenario-driven planning tool for the Gambling Reform Bill 2026 across the PointsBet FY27 partner portfolio."/>
 <style>
 
 :root{
-  /* FIFA26-language theme: deep navy shell (#020F2A from fifa.com), gold primary accent, host-nation tri-tones */
-  --pb-red:#D4A94C; --pb-red-deep:#B08832; --pb-black:#020F2A; --pb-ink:#F4F7FE;
-  --pb-paper:#020F2A; --pb-panel:#0B1B3E; --pb-line:#152A55; --pb-line2:#26407A;
-  --pb-muted:#9AAED6; --pb-faint:#647BAB;
-  --fifa-blue:#326295; --fifa-red:#C8102E; --fifa-green:#00843D;
+  /* Mode.com-language theme: near-black shell, signature lime accent (#C8F169), clean grotesque type */
+  --pb-red:#C8F169; --pb-red-deep:#AAD94A; --pb-red-text:#55701C; --pb-black:#0A0A0C; --pb-ink:#14141A;
+  --pb-paper:#FFFFFF; --pb-panel:#FFFFFF; --pb-line:#E3E3E1; --pb-line2:#D2D2CF;
+  --pb-muted:#6B6B70; --pb-faint:#97979C;
   --st-exposed:#FF4D66; --st-rework:#FF9A3D; --st-watch:#E8C25A;
   --st-protected:#3BD183; --st-strong:#3BD183; --st-safe:#8FA0BF;
   --shadow:none; --shadow-sm:none;
   --hair:1px solid var(--pb-line);
-  --ff: "Noto Sans","IBM Plex Sans",Helvetica,sans-serif;
-  --fdisplay: "Archivo","Noto Sans",Helvetica,sans-serif;
-  --fui: "Noto Sans","IBM Plex Sans",Helvetica,sans-serif;
+  --ff: "Calibri","Carlito","Segoe UI",Helvetica,sans-serif;
+  --fdisplay: "Calibri","Carlito","Segoe UI",Helvetica,sans-serif;
+  --fui: "Calibri","Carlito","Segoe UI",Helvetica,sans-serif;
   --fmono: "IBM Plex Mono",ui-monospace,SFMono-Regular,monospace;
-  --r: 12px;
+  --r: 14px;
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--pb-paper);color:var(--pb-ink);font-family:var(--ff);
@@ -35,7 +33,7 @@ select{appearance:none;-webkit-appearance:none;-moz-appearance:none;
 button{cursor:pointer;border:0;background:none}
 h1,h2,h3,h4{margin:0;font-family:var(--fdisplay);font-weight:700;letter-spacing:0}
 .num,.legcount b,.tierpill,.prio,.vt span,.ro .num{font-feature-settings:"tnum" 1;font-variant-numeric:tabular-nums}
-a{color:var(--pb-red)}
+a{color:var(--pb-red-text)}
 .wrap{max-width:1280px;margin:0 auto;padding:0 20px 80px}
 
 /* ===== Command bar ===== */
@@ -75,7 +73,7 @@ a{color:var(--pb-red)}
 .step .n{font-family:var(--fmono);font-size:12px;font-weight:700;color:var(--pb-faint);
   width:22px;height:22px;border:1.5px solid var(--pb-line2);border-radius:50%;
   display:grid;place-items:center;flex:none}
-.step.on .n{background:var(--pb-red);color:#fff;border-color:var(--pb-red)}
+.step.on .n{background:var(--pb-red);color:#0A0A0C;border-color:var(--pb-red)}
 .step .lab{display:block;font-weight:700;font-size:13.5px;line-height:1.15}
 .step .hint{display:block;font-size:11px;color:var(--pb-muted);margin-top:1px}
 
@@ -89,7 +87,7 @@ a{color:var(--pb-red)}
 /* ===== Section frame ===== */
 .view{padding-top:22px}
 .vh{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:16px}
-.eyebrow{font-family:var(--fui);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--pb-red);font-weight:700}
+.eyebrow{font-family:var(--fui);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--pb-red-text);font-weight:700}
 .vh h2{font-size:38px;margin-top:4px;text-transform:uppercase;letter-spacing:.01em;line-height:.95;font-weight:800}
 .vh p{margin:8px 0 0;color:var(--pb-muted);font-size:14px;max-width:64ch;line-height:1.5}
 
@@ -166,12 +164,12 @@ a{color:var(--pb-red)}
 .card .why b{color:var(--pb-ink)}
 .card .move{font-size:12px;color:var(--pb-muted);margin-top:9px;padding-top:9px;border-top:1px solid var(--pb-line);
   display:flex;gap:7px;align-items:flex-start}
-.card .move .ic{color:var(--pb-red);font-weight:800;flex:none}
+.card .move .ic{color:var(--pb-red-text);font-weight:800;flex:none}
 .card .planrow{display:flex;align-items:center;justify-content:space-between;gap:8px;
   background:var(--pb-cream,#FAF9F7);border-top:1px solid var(--pb-line);padding:9px 15px;font-size:11.5px}
 .path-set{color:var(--st-protected);font-weight:700}
 .path-none{color:var(--pb-faint);font-weight:600}
-.openhint{font-size:11px;color:var(--pb-red);font-weight:700}
+.openhint{font-size:11px;color:var(--pb-red-text);font-weight:700}
 
 /* upside flag */
 .up{display:inline-flex;gap:5px;align-items:center;font-size:11px;font-weight:700;color:var(--st-strong);
@@ -210,6 +208,11 @@ a{color:var(--pb-red)}
 .apgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px 12px}
 .apgrid .fld.full{grid-column:1/-1}
 .apgrid .fld label{font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--pb-faint);margin-bottom:3px;display:block}
+.mchips{display:flex;flex-wrap:wrap;gap:6px}
+.mchip{border:1px solid var(--pb-line2);background:var(--pb-panel);color:var(--pb-muted);border-radius:999px;padding:5px 11px;font-size:11.5px;font-weight:600;cursor:pointer;transition:background-color .12s,border-color .12s,color .12s}
+.mchip:hover{border-color:var(--pb-red)}
+.mchip.on{background:var(--pb-red);border-color:var(--pb-red);color:#0A0A0C;font-weight:700}
+.mchip.legacy{background:rgba(255,154,61,.14);border-color:var(--st-rework);color:var(--st-rework)}
 .ap-select,.ap-input{width:100%;background-color:var(--pb-panel);color:var(--pb-ink);border-radius:6px;padding:6px 8px;font-size:12.5px;box-shadow:inset 0 0 0 1px var(--pb-line2)}
 .ap-select:focus,.ap-input:focus{box-shadow:inset 0 0 0 1.5px var(--pb-red);outline:none}
 .ap-select.yn-yes{background:rgba(59,209,131,.16);border-color:#3BD183;color:#7FE7B0;font-weight:700}
@@ -239,7 +242,7 @@ a{color:var(--pb-red)}
 .fld textarea{min-height:72px;resize:vertical;line-height:1.45}
 .fld select:focus,.fld input:focus,.fld textarea:focus{outline:2px solid var(--pb-red);outline-offset:1px;border-color:var(--pb-red)}
 .dactions{display:flex;gap:10px;margin-top:18px;align-items:center}
-.savebtn{background:var(--pb-red);color:#fff;border-radius:9px;padding:11px 20px;font-weight:700;font-size:14px}
+.savebtn{background:var(--pb-red);color:#0A0A0C;border-radius:9px;padding:11px 20px;font-weight:700;font-size:14px}
 .savebtn:hover{background:var(--pb-red-deep)}
 .clrbtn{color:var(--pb-muted);font-size:13px;font-weight:600}
 .clrbtn:hover{color:var(--st-exposed)}
@@ -270,7 +273,7 @@ a{color:var(--pb-red)}
 .empty{padding:26px 16px;text-align:center;color:var(--pb-faint);font-size:13px}
 .empty b{color:var(--pb-ink);display:block;margin-bottom:5px;font-size:14px}
 .outstanding li .pa{color:var(--st-exposed)}
-.jumpbtn{font-size:11px;color:var(--pb-red);font-weight:700;border:1px solid var(--pb-line2);
+.jumpbtn{font-size:11px;color:var(--pb-red-text);font-weight:700;border:1px solid var(--pb-line2);
   border-radius:7px;padding:5px 10px;white-space:nowrap}
 .jumpbtn:hover{border-color:var(--pb-red)}
 
@@ -291,7 +294,7 @@ a{color:var(--pb-red)}
 .note-prov th{background:#FAF9F7;text-align:left;padding:9px 13px;font-size:10.5px;letter-spacing:.06em;
   text-transform:uppercase;color:var(--pb-muted);border-bottom:1px solid var(--pb-line)}
 .note-prov td{padding:9px 13px;border-bottom:1px solid var(--pb-line);vertical-align:top}
-.note-prov code{font-family:var(--fmono);font-weight:700;color:var(--pb-red);font-size:12px}
+.note-prov code{font-family:var(--fmono);font-weight:700;color:var(--pb-red-text);font-size:12px}
 .callout{background:#FAF9F7;border:1px solid var(--pb-line);border-left:4px solid var(--pb-red);
   border-radius:10px;padding:13px 16px;font-size:13px;color:var(--pb-ink);margin-bottom:14px}
 .disc{margin-top:30px;font-size:11.5px;color:var(--pb-faint);text-align:center;line-height:1.5}
@@ -324,7 +327,7 @@ a{color:var(--pb-red)}
 .ruling .rdot{width:9px;height:9px;border-radius:50%;flex:none;margin-top:5px}
 .ruling .rtext{font-size:12.5px;line-height:1.4}
 .ruling .rif{font-weight:700;color:var(--pb-ink)}
-.ruling .rarrow{color:var(--pb-red);font-weight:800;margin:0 6px}
+.ruling .rarrow{color:var(--pb-red-text);font-weight:800;margin:0 6px}
 .ruling .rthen{color:var(--pb-muted)}
 .lanes{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:16px}
 .lane{background:var(--pb-panel);border:1px solid var(--pb-line);border-left:4px solid var(--pb-line2);
@@ -358,7 +361,7 @@ a{color:var(--pb-red)}
 .wl-name{font-size:16px;font-weight:700;letter-spacing:-.01em}
 .wl-up{font-size:11px;font-weight:700;color:var(--st-strong)}
 .wl-lines{font-size:11.5px;color:var(--pb-faint)}
-.wl-more{font-size:12px;font-weight:700;color:var(--pb-red);border:1px solid var(--pb-line2);border-radius:7px;padding:5px 11px;white-space:nowrap}
+.wl-more{font-size:12px;font-weight:700;color:var(--pb-red-text);border:1px solid var(--pb-line2);border-radius:7px;padding:5px 11px;white-space:nowrap}
 .wl-more:hover{border-color:var(--pb-red)}
 .wl-why{font-size:13px;color:var(--pb-muted);margin:8px 0 11px;line-height:1.4}
 .wl-decide{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
@@ -367,12 +370,12 @@ a{color:var(--pb-red)}
 .verb{position:relative;border:1.5px solid var(--pb-line2);background:var(--pb-panel);border-radius:9px;
   padding:8px 13px;font-size:13px;font-weight:700;color:var(--pb-muted);transition:.13s}
 .verb:hover{border-color:var(--pb-ink);color:var(--pb-ink)}
-.verb.on{background:var(--pb-red);border-color:var(--pb-red);color:#fff}
-.verb.rec{border-color:var(--pb-red);color:var(--pb-red)}
+.verb.on{background:var(--pb-red);border-color:var(--pb-red);color:#0A0A0C}
+.verb.rec{border-color:var(--pb-red);color:var(--pb-red-text)}
 .verb.rec.on{color:#fff}
 .verb i{font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
-  position:absolute;top:-7px;right:-5px;background:var(--pb-red);color:#fff;padding:1px 5px;border-radius:8px}
-.verb.on i{background:#fff;color:var(--pb-red)}
+  position:absolute;top:-7px;right:-5px;background:var(--pb-red);color:#0A0A0C;padding:1px 5px;border-radius:8px}
+.verb.on i{background:#0A0A0C;color:var(--pb-red)}
 .wl-status{font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--st-protected);
   background:#DFF3E7;padding:4px 9px;border-radius:6px;margin-left:auto}
 @media(max-width:600px){.wl-status{margin-left:0}}
@@ -390,15 +393,15 @@ a{color:var(--pb-red)}
    for selection, signal and CTAs — chosen for contrast, not decor.
    ============================================================ */
 :root{
-  /* FIFA26 navy content theme */
-  --pb-bg:#020F2A; --chrome:#0B1B3E; --chrome2:#112450; --chrome3:#1A3060; --dline:#1B315E;
-  --dtext:#F4F7FE; --ddim:#9AAED6; --ddim2:#647BAB; --pb-soft:#0E2148;
-  --pb-paper:#020F2A; --pb-panel:#0B1B3E; --pb-line:#152A55; --pb-line2:#26407A;
-  --pb-ink:#F4F7FE; --pb-muted:#9AAED6; --pb-faint:#647BAB; --pb-cream:#0E2148;
+  /* Mode.com content theme, white variant: white surfaces, lime accent only for signal/CTA */
+  --pb-bg:#FFFFFF; --chrome:#FFFFFF; --chrome2:#F5F5F3; --chrome3:#F0F0EE; --dline:#E3E3E1;
+  --dtext:#14141A; --ddim:#6B6B70; --ddim2:#97979C; --pb-soft:#F0F0EE;
+  --pb-paper:#FFFFFF; --pb-panel:#FFFFFF; --pb-line:#E3E3E1; --pb-line2:#D2D2CF;
+  --pb-ink:#14141A; --pb-muted:#6B6B70; --pb-faint:#97979C; --pb-cream:#F7F7F5;
   --shadow:none; --shadow-sm:none;
 }
 html,body{background:
-  radial-gradient(1100px 520px at 12% -8%, rgba(217,28,66,.04), transparent 60%),
+  radial-gradient(1100px 520px at 12% -8%, rgba(200,241,105,.06), transparent 60%),
   var(--pb-bg);color:var(--dtext)}
 
 /* page-level */
@@ -416,7 +419,7 @@ html,body{background:
 .step .lab{color:var(--pb-ink)}
 .step .hint{color:var(--ddim)}
 .step .n{border-color:var(--pb-line2);color:var(--ddim)}
-.step.on .n{background:var(--pb-red);color:#fff;border-color:var(--pb-red)}
+.step.on .n{background:var(--pb-red);color:#0A0A0C;border-color:var(--pb-red)}
 
 /* hero slate: the one other deliberately-dark navy surface */
 .slate{background:linear-gradient(118deg,#0E0E0F 0%,#161617 55%,#1D1D1F 100%)}
@@ -431,7 +434,7 @@ html,body{background:
 /* Paths asset pills: light, navy when selected */
 .atab-btn{background:var(--chrome);border-color:var(--dline);color:var(--ddim)}
 .atab-btn:hover{color:var(--pb-ink);border-color:var(--pb-line2)}
-.atab-btn.on{background:var(--pb-red);color:#fff;border-color:var(--pb-red)}
+.atab-btn.on{background:var(--pb-red);color:#0A0A0C;border-color:var(--pb-red)}
 
 /* working surfaces: white, separated by hairline + whitespace, no shadow */
 .panel,.wl,.card,.impact,.ltab,.dest,.diagram,.psec,.lane,.note-prov,.callout,.decbar{
@@ -491,7 +494,7 @@ html,body{background:
 .chipbtn:hover,.ghostbtn:hover,.dclose:hover{background:rgba(255,255,255,.16)}
 
 /* buttons/pills that sit on the light body: subtle dark-on-white fill instead of an outline */
-.jumpbtn,.wl-more{background:rgba(15,23,42,.045);color:var(--pb-red)}
+.jumpbtn,.wl-more{background:rgba(15,23,42,.045);color:var(--pb-red-text)}
 .jumpbtn:hover,.wl-more:hover{background:rgba(217,28,66,.10)}
 
 /* form fields: white fill, slate inset line, navy on focus (handled by the outline pass below) */
@@ -611,9 +614,9 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:2px;backgroun
 
 /* step help popovers */
 .helpbtn{margin-left:12px;width:24px;height:24px;border:1px solid var(--pb-line2,#D9D9DC);background:transparent;color:var(--pb-muted,#7C7E84);font-weight:700;font-size:13px;cursor:pointer;flex:0 0 auto}
-.helpbtn:hover{border-color:var(--pb-red);color:var(--pb-red)}
+.helpbtn:hover{border-color:var(--pb-red);color:var(--pb-red-text)}
 .helpbox{border:1px solid var(--pb-line2,#D9D9DC);border-left:3px solid var(--pb-red);background:var(--pb-panel,#fff);padding:12px 14px;margin:0 0 16px;font-size:12.5px;line-height:1.55;color:var(--pb-ink,#16171A)}
-.helpbox b{color:var(--pb-red)}
+.helpbox b{color:var(--pb-red-text)}
 .helpbox .hnext{display:block;margin-top:6px;color:var(--pb-muted,#7C7E84)}
 /* exec summary mini charts */
 .senswrap{display:flex;flex-direction:column;gap:7px;margin-top:4px}
@@ -624,52 +627,48 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:2px;backgroun
 .sensbar span{display:block;height:100%;min-width:2px}
 .sensnum{flex:0 0 64px;text-align:right;font-size:12px;font-variant-numeric:tabular-nums;color:var(--pb-ink,#16171A)}
 
-/* ===== FIFA26-language layer: navy shell, gold accent, tri-nation strip, rounded modular UI ===== */
-.bar{background:#020F2A!important;border-bottom:0!important;position:relative}
-.bar::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:4px;
-  background:linear-gradient(90deg,var(--fifa-red) 0 33.4%,var(--fifa-green) 33.4% 66.7%,var(--fifa-blue) 66.7% 100%)}
+/* ===== Mode.com-language layer: near-black shell, lime accent, rounded modular UI ===== */
+.bar{background:#0A0A0C!important;border-bottom:1px solid rgba(255,255,255,.08)!important;position:relative}
 .mark{color:#fff}.mark span{color:var(--pb-red)}
-.slate{background:linear-gradient(135deg,#04122F 0%,#0A1E45 55%,#122A5C 100%)!important;border:1px solid var(--pb-line2);border-radius:var(--r)}
+.slate{background:linear-gradient(135deg,#0E0E10 0%,#161618 55%,#1D1D1F 100%)!important;border:1px solid var(--pb-line2);border-radius:var(--r)}
 .panel,.apcard,.dsec,.dest,.lane,.callout,.helpbox,.empty{border-radius:var(--r)}
 .step{border-radius:999px!important}
 .step.on{border-color:var(--pb-red)!important}
 .step .n{border-radius:999px}
-button.segb,.chipbtn,.ghostbtn,.savebtn,.jumpbtn,.fbtn,.atab-btn,.dbtn,.helpbtn{border-radius:999px!important}
-.segb.on{background:var(--pb-red)!important;color:#08122B!important;font-weight:800}
+button.segb,.chipbtn,.ghostbtn,.savebtn,.jumpbtn,.fbtn,.atab-btn,.dbtn,.helpbtn,.mchip{border-radius:999px!important}
+.segb.on{background:var(--pb-red)!important;color:#0A0A0C!important;font-weight:800}
 .segb.on.off,.segb.on[data-lv=off]{background:var(--pb-line2)!important;color:var(--pb-ink)!important}
-.savebtn{background:var(--pb-red)!important;color:#08122B!important;font-weight:800}
-a{color:var(--pb-red)}
+.savebtn{background:var(--pb-red)!important;color:#0A0A0C!important;font-weight:800}
+a{color:var(--pb-red-text)}
 .vh h2{font-weight:900;letter-spacing:.02em}
-.eyebrow{color:var(--pb-red)!important;letter-spacing:.14em}
+.eyebrow{color:var(--pb-red-text)!important;letter-spacing:.14em}
 .ro{border-radius:var(--r)}
 .statusbar span:first-child{border-radius:8px 0 0 8px}.statusbar span:last-child{border-radius:0 8px 8px 0}
 .sensbar,.sensbar span{border-radius:999px}
-input.ap-input,select.ap-select,textarea{background:#0A1A3C;border-color:var(--pb-line2);color:var(--pb-ink);border-radius:10px}
-.ws, .workspace{background:#071431}
-::selection{background:var(--pb-red);color:#08122B}
-/* modular 26-style corner motif — original geometry, squares + quarter-circles */
-.vh > div{position:relative}
-.view .vh::before{content:"";position:absolute;right:20px;top:8px;width:64px;height:64px;opacity:.5;pointer-events:none;
-  background:
-    radial-gradient(circle at 0 100%, var(--fifa-blue) 0 46%, transparent 47%) 100% 0/30px 30px no-repeat,
-    linear-gradient(var(--pb-red),var(--pb-red)) 0 0/30px 30px no-repeat,
-    linear-gradient(var(--fifa-green),var(--fifa-green)) 0 100%/30px 30px no-repeat,
-    radial-gradient(circle at 100% 0, var(--fifa-red) 0 46%, transparent 47%) 100% 100%/30px 30px no-repeat}
+input.ap-input,select.ap-select,textarea{background:var(--pb-panel);border-color:var(--pb-line2);color:var(--pb-ink);border-radius:10px}
+.ws, .workspace{background:var(--pb-panel)}
+::selection{background:var(--pb-red);color:#0A0A0C}
+
+/* chipbtn/ghostbtn/dclose default to the dark-chrome treatment (bar / hero footer / drawer header).
+   Legal Map's bar and the callout jump button sit on the light page instead, so they get the
+   light-body treatment used elsewhere for jumpbtn/wl-more. */
+.lmbar .chipbtn,.callout .chipbtn{background:rgba(10,10,10,.05);color:var(--pb-red-text)}
+.lmbar .chipbtn:hover,.callout .chipbtn:hover{background:rgba(200,241,105,.22);color:#0A0A0C}
 
 /* legal map */
 .lmtabs{display:flex;gap:8px;margin:0 0 12px;flex-wrap:wrap}
 .lmtab{border:1px solid var(--pb-line2,#2A3A5C);background:transparent;color:var(--pb-muted,#8FA0BF);padding:8px 12px;font-size:12px;font-weight:700;cursor:pointer}
-.lmtab.on{border-color:var(--pb-red,#FF4D66);color:var(--pb-ink,#EDF1F9)}
-.lmgap{background:var(--pb-red,#FF4D66);color:#fff;padding:1px 6px;font-size:11px;margin-left:4px}
+.lmtab.on{border-color:var(--pb-red);color:var(--pb-ink,#EDF1F9)}
+.lmgap{background:var(--st-exposed,#FF4D66);color:#fff;padding:1px 6px;font-size:11px;margin-left:4px}
 .lmdone{color:#3DBE7B;margin-left:4px}
 .lmbar{display:flex;gap:8px;align-items:center;margin-bottom:10px}
 .lmwrap{overflow-x:auto;border:1px solid var(--pb-line2,#2A3A5C)}
 .lmtab-table{border-collapse:collapse;width:max-content}
-.lmtab-table th{position:sticky;top:0;background:var(--pb-panel2,#0B1B3A);color:var(--pb-muted,#8FA0BF);font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;text-align:left;padding:8px;border-bottom:1px solid var(--pb-line2,#2A3A5C);z-index:2}
+.lmtab-table th{position:sticky;top:0;background:var(--pb-panel2,#F5F5F3);color:var(--pb-muted);font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;text-align:left;padding:8px;border-bottom:1px solid var(--pb-line2);z-index:2}
 .lmtab-table td{border-bottom:1px solid var(--pb-line,#16264A);padding:2px;vertical-align:top}
-.lmtab-table td.lmred{background:rgba(255,77,102,.16);box-shadow:inset 3px 0 0 var(--pb-red,#FF4D66)}
+.lmtab-table td.lmred{background:rgba(255,77,102,.16);box-shadow:inset 3px 0 0 var(--st-exposed,#FF4D66)}
 .lm-cell{width:100%;min-width:100%;border:0;background:transparent;color:var(--pb-ink,#EDF1F9);font:inherit;font-size:12px;resize:vertical;padding:6px}
-.lm-cell:focus,.lm-sel:focus{outline:1px solid var(--pb-red,#FF4D66)}
+.lm-cell:focus,.lm-sel:focus{outline:1px solid var(--pb-red)}
 .lm-sel{width:100%;border:0;background:transparent;color:var(--pb-ink,#EDF1F9);font-size:12px;padding:6px}
 .lm-sel option{color:#111}
 </style></head><body>
@@ -993,7 +992,7 @@ let PLANS={};      // assetName -> {path,owner,target,status,prio,notes, ...prof
 // Owned audience = does PB itself hold a first-party database for this asset (not just reach/followers).
 // PROFILE_FIELDS mirrors the original matrix's columns exactly, stored per-asset inside PLANS so it's
 // one editable, persisted record per asset — not a separate read-only table.
-const PROFILE_FIELDS=["owned","platform","content","production","distribution","data","integration","team","cel","mnotes","ageGating"];
+const PROFILE_FIELDS=["owned","platform","content","production","distribution","distMethod","data","integration","team","cel","mnotes","ageGating"];
 const PROFILE_DEFAULT={...ASSET_PROFILE,
   "Ambassadors":{owned:"No",data:"No"},"Social Creators":{owned:"No",data:"No"},
   "Fox Footy Linear":{owned:"No",data:"No"},"Fox Footy.com":{owned:"No",data:"No"},"Paid Social":{owned:"No",data:"No"},
@@ -1327,7 +1326,8 @@ function openWorkspace(name){
       <div><span class="pl">First-party data</span><b>${esc(prof.data||'—')}</b></div>
       <div><span class="pl">Content</span><b>${esc(prof.content||'—')}</b></div>
       <div><span class="pl">Production</span><b>${esc(prof.production||'—')}</b></div>
-      <div><span class="pl">Distribution</span><b>${esc(prof.distribution||'—')}</b></div>
+      <div><span class="pl">Distribution freq/cost</span><b>${esc(prof.distribution||'—')}</b></div>
+      <div><span class="pl">Distribution method</span><b>${esc(prof.distMethod||'—')}</b></div>
       <div><span class="pl">PB integration</span><b>${esc(prof.integration||'—')}</b></div>
       <div><span class="pl">Team</span><b>${esc(prof.team||'—')}</b></div>
     </div>
@@ -1418,6 +1418,14 @@ function orderedAssets(){
 }
 
 /* ============ RENDER: asset status (owned audience) ============ */
+const ASSET_FIELD_OPTS={
+  content:["PB-produced","Partner-produced","Co-produced","Talent-led","Editorial","None / N/A"],
+  production:["Low Freq / Low Cost","Low Freq / High Cost","High Freq / Low Cost","High Freq / High Cost","None / N/A"],
+  distribution:["Low Freq / Low Cost","Low Freq / High Cost","High Freq / Low Cost","High Freq / High Cost","None / N/A"],
+  distMethod:["PB owned channels","Partner channels","Talent channels","Paid amplification","Broadcast/linear","Mixed","None / N/A"],
+  integration:["Odds / pricing integration","Brand integration","Talent read","Sponsored Segment","Logo integration","Commercials","Pop-ups","Talent integration","N/A"],
+  team:["1–2","3–5","6–9","10+","None / N/A"]
+};
 function renderAssetStatus(){
   const groupsData=activeGroups();
   const allNames=groupsData.flatMap(g=>g.assets);
@@ -1429,6 +1437,23 @@ function renderAssetStatus(){
   }).length;
   const yn=(name,field,val)=>`<select class="ap-select yn-${(val||'').toLowerCase()||'blank'}" data-asset="${esc(name)}" data-field="${field}">${[["","—"],["Yes","Yes"],["No","No"]].map(([v,l])=>`<option value="${v}" ${val===v?'selected':''}>${l}</option>`).join('')}</select>`;
   const tx=(name,field,val,ph)=>`<input class="ap-input" data-asset="${esc(name)}" data-field="${field}" value="${esc(val||'')}" placeholder="${esc(ph||'—')}">`;
+  // single-select dropdown; preserves any legacy free-text value as its own option so nothing is wiped
+  const dd=(name,field,val,opts)=>{
+    const has=!val||opts.includes(val);
+    return `<select class="ap-select" data-asset="${esc(name)}" data-field="${field}">
+      <option value="" ${!val?'selected':''}>—</option>
+      ${opts.map(o=>`<option value="${esc(o)}" ${val===o?'selected':''}>${esc(o)}</option>`).join('')}
+      ${has?'':`<option value="${esc(val)}" selected>${esc(val)} (legacy)</option>`}
+    </select>`;
+  };
+  // multi-select chips; value stored as "A; B; C". N/A is exclusive.
+  const NA_OPT="N/A";
+  const multichip=(name,field,val,opts)=>{
+    const sel=(val||'').split(';').map(s=>s.trim()).filter(Boolean);
+    const known=opts.map(o=>`<button type="button" class="mchip ${sel.includes(o)?'on':''}" data-asset="${esc(name)}" data-field="${field}" data-opt="${esc(o)}">${esc(o)}</button>`).join('');
+    const legacy=sel.filter(s=>!opts.includes(s)).map(s=>`<button type="button" class="mchip on legacy" data-asset="${esc(name)}" data-field="${field}" data-opt="${esc(s)}" title="Legacy value — click to remove">${esc(s)} ✕</button>`).join('');
+    return `<div class="mchips">${known}${legacy}</div>`;
+  };
   const celSelect=(name,val)=>`<select class="ap-select" data-asset="${esc(name)}" data-field="cel">
     <option value="" ${!val?'selected':''}>— not assessed —</option>
     ${CEL_TIERS.map(t=>`<option value="${t.v}" ${val===t.v?'selected':''}>${esc(t.label)}</option>`).join('')}
@@ -1445,11 +1470,12 @@ function renderAssetStatus(){
           <div class="fld"><label>Dig platform</label>${yn(name,'platform',p.platform)}</div>
           <div class="fld"><label>Data (owned audience)</label>${yn(name,'data',p.data)}</div>
           ${p.platform==="Yes"?`<div class="fld full"><label>Age gating <span style="color:var(--pb-faint);font-weight:400">(age assurance, registered-account access, opt-out already in place today)</span></label>${yn(name,'ageGating',p.ageGating)}</div>`:''}
-          <div class="fld"><label>Content</label>${tx(name,'content',p.content)}</div>
-          <div class="fld"><label>Production</label>${tx(name,'production',p.production)}</div>
-          <div class="fld"><label>Distribution</label>${tx(name,'distribution',p.distribution)}</div>
-          <div class="fld"><label>PB integration</label>${tx(name,'integration',p.integration)}</div>
-          <div class="fld"><label>Employees</label>${tx(name,'team',p.team)}</div>
+          <div class="fld"><label>Content</label>${dd(name,'content',p.content,ASSET_FIELD_OPTS.content)}</div>
+          <div class="fld"><label>Production</label>${dd(name,'production',p.production,ASSET_FIELD_OPTS.production)}</div>
+          <div class="fld"><label>Distribution freq / cost</label>${dd(name,'distribution',p.distribution,ASSET_FIELD_OPTS.distribution)}</div>
+          <div class="fld"><label>Distribution method</label>${dd(name,'distMethod',p.distMethod,ASSET_FIELD_OPTS.distMethod)}</div>
+          <div class="fld full"><label>PB integration <span style="color:var(--pb-faint);font-weight:400">(select all that apply)</span></label>${multichip(name,'integration',p.integration,ASSET_FIELD_OPTS.integration)}</div>
+          <div class="fld"><label>Employees</label>${dd(name,'team',p.team,ASSET_FIELD_OPTS.team)}</div>
           <div class="fld full"><label>Celebrities <span style="color:var(--pb-faint);font-weight:400">(matches the Notable-person ban tiers)</span></label>${celSelect(name,p.cel)}</div>
           <div class="fld full"><label>Notes</label>${tx(name,'mnotes',p.mnotes,'Anything else worth flagging')}</div>
         </div></div>`;
@@ -1664,8 +1690,8 @@ function renderNotes(){
     <div class="callout" style="border-left-color:#3BD183"><b>Racing is the safe harbour.</b> RDC, Racing.com and greyhound stay protected and strengthen as broadcast and talent close — the lane to lean into.</div>
     <div class="callout" style="border-left-color:#3BD183"><b>Gated/owned upside, asset by asset.</b> A line flags as upside once it's fully gated (Online gating → Off, trading reach for the ability to advertise at all) — first-party data and owned audiences gain value as broadcast and talent close. <b>Confirmed against the matrix below:</b> Ausmerican Aces, Fanatics TV and 100k Sports are rightly excluded — none PB-owned, none on a PB platform, none carry first-party data. StatMate and FoxCatcher are the two PB-owned, data-carrying assets — StatMate stays out-of-scope (Part 7C doesn't apply) rather than strengthening, though its relative value still rises as rivals lose channels it never depended on.</div>
     <div class="dsec"><div class="k">Source: the original partnerships matrix</div>
-      <table class="note-prov"><thead><tr><th>Asset</th><th>PB owned</th><th>Dig. platform</th><th>Data</th><th>Production</th><th>Distribution</th><th>PB integration</th></tr></thead>
-      <tbody>${ASSET_PROFILE_ORDER.map(k=>{const p=ASSET_PROFILE[k];return `<tr><td><b>${esc(ASSET_PROFILE_LABEL[k])}</b></td><td>${esc(p.owned)}</td><td>${esc(p.platform)}</td><td>${esc(p.data)}</td><td style="color:var(--pb-muted)">${esc(p.production)}</td><td style="color:var(--pb-muted)">${esc(p.distribution)}</td><td style="color:var(--pb-muted)">${esc(p.integration)}</td></tr>`;}).join("")}</tbody></table>
+      <table class="note-prov"><thead><tr><th>Asset</th><th>PB owned</th><th>Dig. platform</th><th>Data</th><th>Production</th><th>Dist. freq/cost</th><th>Dist. method</th><th>PB integration</th></tr></thead>
+      <tbody>${ASSET_PROFILE_ORDER.map(k=>{const p=ASSET_PROFILE[k];return `<tr><td><b>${esc(ASSET_PROFILE_LABEL[k])}</b></td><td>${esc(p.owned)}</td><td>${esc(p.platform)}</td><td>${esc(p.data)}</td><td style="color:var(--pb-muted)">${esc(p.production)}</td><td style="color:var(--pb-muted)">${esc(p.distribution)}</td><td style="color:var(--pb-muted)">${esc(p.distMethod||'—')}</td><td style="color:var(--pb-muted)">${esc(p.integration)}</td></tr>`;}).join("")}</tbody></table>
       <div style="font-size:11.5px;color:var(--ddim);margin-top:8px">This is the first piece of work behind the whole exercise — the qualitative comparison that started the "which of our assets are actually ours" question. Carried forward here so the upside logic above traces back to it.</div></div>
     <table class="note-prov"><thead><tr><th style="width:90px">Provision</th><th style="width:200px">What it is</th><th>What it restricts</th></tr></thead>
     <tbody>${prov.map(p=>`<tr><td><code>${p[0]}</code></td><td><b>${p[1]}</b></td><td style="color:var(--pb-muted)">${p[2]}</td></tr>`).join("")}</tbody></table>
@@ -1718,6 +1744,14 @@ function bind(){
   $$(".ap-input").forEach(inp=>inp.oninput=()=>{const name=inp.dataset.asset,field=inp.dataset.field;
     if(!PLANS[name]) PLANS[name]={path:"— choose —",owner:"",target:"",status:"Not started",prio:"P3 — monitor",notes:""};
     PLANS[name][field]=inp.value; persist();});
+  $$(".mchip").forEach(b=>b.onclick=()=>{const name=b.dataset.asset,field=b.dataset.field,opt=b.dataset.opt;
+    if(!PLANS[name]) PLANS[name]={path:"— choose —",owner:"",target:"",status:"Not started",prio:"P3 — monitor",notes:""};
+    let sel=(PLANS[name][field]||'').split(';').map(s=>s.trim()).filter(Boolean);
+    const NA="N/A";
+    if(sel.includes(opt)){ sel=sel.filter(s=>s!==opt); }
+    else if(opt===NA){ sel=[NA]; }            // N/A clears everything else
+    else { sel=sel.filter(s=>s!==NA); sel.push(opt); }  // any real option clears N/A
+    PLANS[name][field]=sel.join('; '); persist(); render();});
   $$(".chipbtn").forEach(b=>b.onclick=()=>{const p=PRESETS[b.dataset.preset];if(p){Object.assign(S,p);persist();render();}});
   $$(".fbtn").forEach(b=>b.onclick=()=>{activeFilter=b.dataset.f;render();});
   $$(".card").forEach(b=>b.onclick=()=>openWorkspace(b.dataset.a));
