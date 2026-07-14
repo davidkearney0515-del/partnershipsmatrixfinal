@@ -63,7 +63,7 @@ a{color:var(--pb-red-text)}
 
 /* ===== Workflow nav ===== */
 .flow{max-width:1280px;margin:0 auto;padding:14px 20px 0;display:flex;gap:8px;flex-wrap:wrap}
-.step{flex:1;min-width:150px;background:var(--pb-panel);border:1px solid var(--pb-line);
+.step{flex:1 1 150px;min-width:150px;max-width:280px;background:var(--pb-panel);border:1px solid var(--pb-line);
   border-radius:6px;padding:11px 14px;display:flex;gap:11px;align-items:center;text-align:left;
   transition:.15s;position:relative}
 .step:hover{border-color:var(--pb-line2)}
@@ -667,7 +667,7 @@ input.ap-input,select.ap-select,textarea{background:var(--pb-panel);border-color
 .lmgap{background:var(--st-exposed,#FF4D66);color:#fff;padding:1px 6px;font-size:11px;margin-left:4px}
 .lmdone{color:#3DBE7B;margin-left:4px}
 .lmbar{display:flex;gap:8px;align-items:center;margin-bottom:10px}
-.lmwrap{overflow-x:auto;border:1px solid var(--pb-line2,#2A3A5C)}
+.lmwrap{overflow:auto;max-height:70vh;border:1px solid var(--pb-line2,#2A3A5C)}
 .chtable td{padding:6px 8px;vertical-align:top}
 .chtable .ap-select,.chtable .ap-input{font-size:12px}
 .chverdict{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap}
@@ -1261,7 +1261,22 @@ const LEGALMAP={
  ]}
 };
 function lmKey(t,i,k){return t+":"+i+":"+k;}
-function lmVal(t,i,row,k){const e=LM.edits[lmKey(t,i,k)];return e!==undefined?e:(row[k]||"");}
+const LM_MONEY_FIELDS={t1:"spend",t2:"val",t3:"val"};
+/* Normalise A$ columns to a full dollar figure: "650000"→"$650,000", "$2.4m"→"$2,400,000",
+   "$499k"→"$499,000". Bare numbers under 1000 (units ambiguous — could be $k) and any value
+   with extra text ("TBC — renewal") pass through verbatim: never invent a figure. */
+function fmtMoneyFull(raw){
+  const s=String(raw||"").trim(); if(!s) return "";
+  const m=s.match(/^\$?\s*([\d,]+(?:\.\d+)?)\s*([km])?\s*$/i);
+  if(!m) return s;
+  let n=parseFloat(m[1].replace(/,/g,""));
+  if(isNaN(n)) return s;
+  if(m[2]){ n*= (m[2].toLowerCase()==="m"?1e6:1e3); }
+  else if(n<1000) return s; // ambiguous — leave for confirmation
+  return "$"+Math.round(n).toLocaleString("en-AU");
+}
+function lmVal(t,i,row,k){const e=LM.edits[lmKey(t,i,k)];const v=e!==undefined?e:(row[k]||"");
+  return k===LM_MONEY_FIELDS[t]?fmtMoneyFull(v):v;}
 function lmIsGap(t,i,row,k){return (row._red||[]).includes(k)&&!lmVal(t,i,row,k);}
 function lmRows(t){return LEGALMAP[t].rows.concat(LM.added[t]||[]);}
 function lmVisible(t){LM.removed=LM.removed||{};return lmRows(t).map((r,i)=>({r,i})).filter(x=>!LM.removed[t+":"+x.i]);}
