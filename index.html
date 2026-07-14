@@ -1,4 +1,4 @@
-<!doctype html>
+\<!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -667,9 +667,8 @@ input.ap-input,select.ap-select,textarea{background:var(--pb-panel);border-color
 .lmgap{background:var(--st-exposed,#FF4D66);color:#fff;padding:1px 6px;font-size:11px;margin-left:4px}
 .lmdone{color:#3DBE7B;margin-left:4px}
 .lmbar{display:flex;gap:8px;align-items:center;margin-bottom:10px}
-.lmwrap{overflow:auto;max-height:70vh;border:1px solid var(--pb-line2,#2A3A5C);
-  /* break out of the 1280px content column — wide registers get the full viewport */
-  width:calc(100vw - 48px);margin-left:calc(50% - 50vw + 24px)}
+.lmwrap{overflow:auto;max-height:70vh;border:1px solid var(--pb-line2,#2A3A5C)}
+.lmwrap-bleed{width:calc(100vw - 48px);margin-left:calc(50% - 50vw + 24px)}
 .chtable td{padding:6px 8px;vertical-align:top}
 .chtable .ap-select,.chtable .ap-input{font-size:12px}
 .chverdict{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap}
@@ -1370,7 +1369,7 @@ function renderLegalMap(){
       <button class="chipbtn" id="lmExportTab">Export this register (CSV)</button>
       <button class="chipbtn" id="lmExportAll">Export all 4 (CSV)</button>
       ${lmRemovedCount(lmTab)?`<button class="chipbtn" id="lmRestore">Restore ${lmRemovedCount(lmTab)} removed</button>`:""}<span class="k" style="margin-left:auto">When the counter hits zero, export and the Legal workbook gets regenerated for return.</span></div>
-    <div class="lmwrap"><table class="lmtab-table"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div></div>`;
+    <div class="lmwrap lmwrap-bleed"><table class="lmtab-table"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div></div>`;
 }
 
 /* ============ RENDER: workflow + shell ============ */
