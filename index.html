@@ -667,7 +667,9 @@ input.ap-input,select.ap-select,textarea{background:var(--pb-panel);border-color
 .lmgap{background:var(--st-exposed,#FF4D66);color:#fff;padding:1px 6px;font-size:11px;margin-left:4px}
 .lmdone{color:#3DBE7B;margin-left:4px}
 .lmbar{display:flex;gap:8px;align-items:center;margin-bottom:10px}
-.lmwrap{overflow:auto;max-height:70vh;border:1px solid var(--pb-line2,#2A3A5C)}
+.lmwrap{overflow:auto;max-height:70vh;border:1px solid var(--pb-line2,#2A3A5C);
+  /* break out of the 1280px content column — wide registers get the full viewport */
+  width:calc(100vw - 48px);margin-left:calc(50% - 50vw + 24px)}
 .chtable td{padding:6px 8px;vertical-align:top}
 .chtable .ap-select,.chtable .ap-input{font-size:12px}
 .chverdict{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap}
