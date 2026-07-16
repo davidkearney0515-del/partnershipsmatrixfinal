@@ -712,6 +712,10 @@ input.ap-input,select.ap-select,textarea{background:var(--pb-panel);border-color
 .exp-colhead{font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:6px 0;border-bottom:2px solid var(--pb-line);margin-bottom:6px}
 .exp-colhead-safe{color:#1B7A46;border-color:rgba(59,209,131,.4)}
 .exp-colhead-risk{color:#B0242E;border-color:rgba(255,77,102,.4)}
+.exp-colhead-cont{color:#0E6B7A;border-color:rgba(30,160,180,.4)}
+.exp-cols-3{grid-template-columns:1fr 1fr 1fr}
+@media(max-width:1000px){.exp-cols-3{grid-template-columns:1fr}}
+.exp-dot.cont{background:#1EA0B4}
 .exp-month{font-size:10.5px;font-weight:700;color:var(--pb-faint);text-transform:uppercase;letter-spacing:.04em;margin:10px 0 3px}
 .exp-row{display:flex;align-items:center;gap:8px;padding:3px 0;font-size:12.5px}
 .exp-dot{width:7px;height:7px;border-radius:50%;flex:none}
@@ -1946,7 +1950,12 @@ function harvestExpiries(){
   ["t1","t2","t3"].forEach(t=>{
     lmVisible(t).forEach(({r,i})=>{
       const raw=lmVal(t,i,r,"exp"); const ms=parseExpiry(raw);
-      if(ms) out.push({t,name:String(lmVal(t,i,r,label[t])||"—"),exp:ms,raw:String(raw),kind:t==="t2"?"Talent":"Deal"});
+      if(ms){
+        const hay=(String(lmVal(t,i,r,label[t])||"")+" "+String(lmVal(t,i,r,t==="t1"?"camp":"prog")||"")).toLowerCase();
+        // deals only — whether 62W(3) exempts notable persons in racing content is an open legal question (Nathan)
+        const racing=(t!=="t2")&&/racing\.com|rdc|racing channel/.test(hay);
+        out.push({t,name:String(lmVal(t,i,r,label[t])||"—"),exp:ms,raw:String(raw),kind:t==="t2"?"Talent":"Deal",racing});
+      }
     });
   });
   return out.sort((a,b)=>a.exp-b.exp);
@@ -1954,7 +1963,10 @@ function harvestExpiries(){
 function renderExpiries(){
   const exps=harvestExpiries();
   const commence=new Date("2027-01-01").getTime();
-  const before=exps.filter(e=>e.exp<commence), through=exps.filter(e=>e.exp>=commence);
+  const racingHolds=S.racing!=="off";  // scenario lever: carve-out continuing?
+  const before=exps.filter(e=>e.exp<commence);
+  const canContinue=exps.filter(e=>e.exp>=commence && e.racing && racingHolds);
+  const through=exps.filter(e=>e.exp>=commence && !(e.racing && racingHolds));
   const fmtD=ms=>{const d=new Date(ms);return d.getDate()+" "+["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()]+" "+String(d.getFullYear()).slice(2);};
   const monthKey=ms=>{const d=new Date(ms);return d.getFullYear()+"-"+String(d.getMonth()).padStart(2,"0");};
   const monthLabel=ms=>{const d=new Date(ms);return ["January","February","March","April","May","June","July","August","September","October","November","December"][d.getMonth()]+" "+d.getFullYear();};
@@ -1997,14 +2009,15 @@ function renderExpiries(){
       <text x="${tx}" y="${axisY+29}" font-size="9.5" fill="var(--pb-muted)" text-anchor="middle">Today</text>
       <line x1="${cx}" y1="${topY}" x2="${cx}" y2="${axisY}" stroke="#FF4D66" stroke-width="2" stroke-dasharray="4 3"/>
       <text x="${cx}" y="${topY-4}" font-size="10.5" font-weight="700" fill="#B0242E" text-anchor="middle">1 Jan 2027</text>
-      ${dots.map(d=>`<circle cx="${d.x}" cy="${d.y}" r="${dotR}" fill="${d.e.exp<commence?"#3BD183":"#FF9A3D"}" stroke="#fff" stroke-width="1.5"><title>${esc(d.e.name)} · ${fmtFull(d.e.exp)}</title></circle>`).join("")}
+      ${dots.map(d=>{const col=d.e.exp<commence?"#3BD183":(d.e.racing&&racingHolds?"#1EA0B4":"#FF9A3D");return `<circle cx="${d.x}" cy="${d.y}" r="${dotR}" fill="${col}" stroke="#fff" stroke-width="1.5"><title>${esc(d.e.name)} · ${fmtFull(d.e.exp)}${d.e.racing&&racingHolds&&d.e.exp>=commence?" · racing carve-out":""}</title></circle>`}).join("")}
     </svg></div>`;
   }
   const body = exps.length? `<div class="panel">
     ${dotTL}
-    <p style="font-size:13px;color:var(--pb-muted);margin:10px 0 16px"><b style="color:#1B7A46">${before.length}</b> of ${exps.length} dated contracts lapse <b>before</b> 1 Jan 2027 — natural exit / renegotiation points, no live deal to wind down. <b style="color:#B0242E">${through.length}</b> run through commencement and need active restructuring. Hover a dot for the contract.</p>
-    <div class="exp-cols">
+    <p style="font-size:13px;color:var(--pb-muted);margin:10px 0 16px"><b style="color:#1B7A46">${before.length}</b> of ${exps.length} dated contracts lapse <b>before</b> 1 Jan 2027 — natural exit / renegotiation points. ${canContinue.length?`<b style="color:#0E6B7A">${canContinue.length}</b> run through but <b>can continue</b> under the racing carve-out (per the active scenario lever). `:""}<b style="color:#B0242E">${through.length}</b> run through commencement and need active restructuring.${racingHolds?"":" Racing Exemption lever is set to <b>No</b> — racing deals are shown as must-restructure."} Hover a dot for the contract.</p>
+    <div class="exp-cols ${canContinue.length?'exp-cols-3':''}">
       <div class="exp-col"><div class="exp-colhead exp-colhead-safe">Lapses before commencement · leverage</div>${colHTML(before,"safe")}</div>
+      ${canContinue.length?`<div class="exp-col"><div class="exp-colhead exp-colhead-cont">Runs through 1 Jan 2027 · can continue (racing carve-out)</div>${colHTML(canContinue,"cont")}</div>`:""}
       <div class="exp-col"><div class="exp-colhead exp-colhead-risk">Runs through 1 Jan 2027 · must restructure</div>${colHTML(through,"risk")}</div>
     </div></div>`
     : `<div class="panel"><p style="font-size:13px;color:var(--pb-muted)">No dated contract expiries in the Legal Map yet. Fill the <b>Contract expiry</b> columns in Step 8 · Legal Map and they'll appear here automatically, split around the 1 Jan 2027 commencement date.</p>
