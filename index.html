@@ -62,20 +62,38 @@ a{color:var(--pb-red-text)}
 .ghostbtn:hover{border-color:var(--pb-red);color:#fff}
 
 /* ===== Workflow nav ===== */
-.flow{max-width:1280px;margin:0 auto;padding:14px 20px 0;display:flex;gap:8px;flex-wrap:wrap}
-.step{flex:1 1 150px;min-width:150px;max-width:280px;background:var(--pb-panel);border:1px solid var(--pb-line);
-  border-radius:6px;padding:11px 14px;display:flex;gap:11px;align-items:center;text-align:left;
-  transition:.15s;position:relative}
-.step:hover{border-color:var(--pb-line2)}
-.step.on{border-color:var(--pb-black);box-shadow:var(--shadow-sm)}
-.step.on:before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:4px;
+/* ===== Sidebar navigation layout ===== */
+.shell{display:flex;align-items:flex-start}
+.sidenav{position:sticky;top:0;align-self:flex-start;width:238px;flex:none;height:100vh;overflow-y:auto;
+  background:var(--pb-panel);border-right:1px solid var(--pb-line);padding:16px 12px;box-sizing:border-box;
+  transition:width .22s cubic-bezier(.4,0,.2,1)}
+.sidenav.collapsed{width:60px;padding:16px 8px}
+.sidenav-toggle{width:100%;border:1px solid var(--pb-line2);background:transparent;color:var(--pb-muted);
+  border-radius:8px;height:28px;cursor:pointer;font-size:15px;line-height:1;margin-bottom:12px}
+.sidenav-toggle:hover{border-color:var(--pb-red);color:var(--pb-red-text)}
+.flow{display:flex;flex-direction:column;gap:4px}
+.step{width:100%;background:transparent;border:1px solid transparent;
+  border-radius:8px;padding:9px 10px;display:flex;gap:11px;align-items:center;text-align:left;
+  transition:background-color .13s,border-color .13s;position:relative;cursor:pointer}
+.step:hover{background:var(--chrome2)}
+.step.on{background:var(--chrome2);border-color:var(--pb-line)}
+.step.on:before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:3px;
   background:var(--pb-red);border-radius:0 3px 3px 0}
 .step .n{font-family:var(--fmono);font-size:12px;font-weight:700;color:var(--pb-faint);
-  width:22px;height:22px;border:1.5px solid var(--pb-line2);border-radius:50%;
+  width:24px;height:24px;border:1.5px solid var(--pb-line2);border-radius:50%;
   display:grid;place-items:center;flex:none}
 .step.on .n{background:var(--pb-red);color:#0A0A0C;border-color:var(--pb-red)}
-.step .lab{display:block;font-weight:700;font-size:13.5px;line-height:1.15}
-.step .hint{display:block;font-size:11px;color:var(--pb-muted);margin-top:1px}
+.step .lab{display:block;font-weight:700;font-size:13px;line-height:1.2}
+.step .hint{display:block;font-size:10.5px;color:var(--pb-muted);margin-top:1px}
+.sidenav.collapsed .step-txt{display:none}
+.sidenav.collapsed .step{justify-content:center;padding:9px 0}
+.sidenav.collapsed .sidenav-toggle{font-size:15px}
+.content-area{flex:1;min-width:0}
+@media(max-width:760px){
+  .sidenav{position:fixed;z-index:60;left:0;top:0;box-shadow:2px 0 18px rgba(0,0,0,.18)}
+  .sidenav.collapsed{width:0;padding:0;border:0;overflow:hidden}
+  .sidenav.collapsed .sidenav-toggle{display:none}
+}
 
 /* ===== Headline strip (exec summary) ===== */
 .headline{background:var(--pb-black);border:none;
@@ -418,7 +436,7 @@ html,body{background:
 .bar{background:#0E0E0F;border-bottom:1px solid rgba(255,255,255,.08)}
 
 /* workflow nav: light pills on the white page, navy on selected */
-.step{background:var(--chrome);border-color:var(--dline)}
+.step{background:transparent;border-color:transparent}
 .step:hover{border-color:var(--pb-line2)}
 .step.on{background:var(--chrome2);border-color:var(--pb-red)}
 .step .lab{color:var(--pb-ink)}
@@ -531,7 +549,7 @@ html,body{background:
 .dot,.wl-dot,.ruling .rdot,.atab-btn .adot{border-radius:0!important}
 
 /* step index badge: square chip instead of circle */
-.step .n{border-radius:0!important}
+.step .n{border-radius:50%!important}
 
 /* callout / rec box: the left-accent stripe is the signal border — restore it explicitly */
 .callout{border-left:3px solid var(--pb-red)}
@@ -637,7 +655,7 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:2px;backgroun
 .mark{color:#fff}.mark span{color:var(--pb-red)}
 .slate{background:linear-gradient(135deg,#0E0E10 0%,#161618 55%,#1D1D1F 100%)!important;border:1px solid var(--pb-line2);border-radius:var(--r)}
 .panel,.apcard,.dsec,.dest,.lane,.callout,.helpbox,.empty{border-radius:var(--r)}
-.step{border-radius:999px!important}
+.step{border-radius:8px!important}
 .step.on{border-color:var(--pb-red)!important}
 .step .n{border-radius:999px}
 button.segb,.chipbtn,.ghostbtn,.savebtn,.jumpbtn,.fbtn,.atab-btn,.dbtn,.helpbtn,.mchip{border-radius:999px!important}
@@ -668,11 +686,12 @@ input.ap-input,select.ap-select,textarea{background:var(--pb-panel);border-color
 .lmdone{color:#3DBE7B;margin-left:4px}
 .lmbar{display:flex;gap:8px;align-items:center;margin-bottom:10px}
 .lmwrap{overflow:auto;max-height:70vh;border:1px solid var(--pb-line2,#2A3A5C)}
-.lmwrap-bleed{width:calc(100vw - 48px);margin-left:calc(50% - 50vw + 24px)}
+.lmwrap-bleed{width:100%;margin-left:0}
 .chtable td{padding:6px 8px;vertical-align:top}
 .chtable .ap-select,.chtable .ap-input{font-size:12px}
 .chverdict{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap}
 .vd-full{background:rgba(59,209,131,.16);color:#1B7A46}
+.vd-racing{background:rgba(30,160,180,.16);color:#0E6B7A}
 .vd-part{background:rgba(232,194,90,.20);color:#8A6D12}
 .vd-none{background:rgba(255,77,102,.14);color:#B0242E}
 .chlegend{font-size:11.5px;color:var(--pb-muted);margin-bottom:10px;line-height:2}
@@ -683,6 +702,25 @@ input.ap-input,select.ap-select,textarea{background:var(--pb-panel);border-color
 .asset-lock.vd-full{background:rgba(59,209,131,.10);border-left:3px solid #3BD183}
 .asset-lock.vd-part{background:rgba(232,194,90,.12);border-left:3px solid #E8C25A}
 .asset-lock.vd-none{background:rgba(255,77,102,.10);border-left:3px solid #FF4D66}
+.asset-lock.vd-racing{background:rgba(30,160,180,.10);border-left:3px solid #1EA0B4}
+.exp-splitbar{height:6px;border-radius:999px;background:#FF9A3D;overflow:hidden}
+.exp-tlwrap{margin:4px 0 2px}
+.exp-tlwrap svg{display:block}
+.exp-splitfill{display:block;height:100%;background:#3BD183}
+.exp-cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:720px){.exp-cols{grid-template-columns:1fr}}
+.exp-colhead{font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:6px 0;border-bottom:2px solid var(--pb-line);margin-bottom:6px}
+.exp-colhead-safe{color:#1B7A46;border-color:rgba(59,209,131,.4)}
+.exp-colhead-risk{color:#B0242E;border-color:rgba(255,77,102,.4)}
+.exp-month{font-size:10.5px;font-weight:700;color:var(--pb-faint);text-transform:uppercase;letter-spacing:.04em;margin:10px 0 3px}
+.exp-row{display:flex;align-items:center;gap:8px;padding:3px 0;font-size:12.5px}
+.exp-dot{width:7px;height:7px;border-radius:50%;flex:none}
+.exp-dot.safe{background:#3BD183}.exp-dot.risk{background:#FF9A3D}
+.exp-name{flex:1;color:var(--pb-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.exp-date{color:var(--pb-muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.exp-kind{font-size:9px;font-weight:700;letter-spacing:.04em;padding:1px 6px;border-radius:999px;flex:none}
+.exp-t1{background:rgba(50,98,149,.14);color:#2B5580}.exp-t2{background:rgba(232,194,90,.22);color:#8A6D12}.exp-t3{background:rgba(59,209,131,.16);color:#1B7A46}
+.exp-empty{font-size:12px;color:var(--pb-faint);font-style:italic;padding:6px 0}
 .lmpanel{background:var(--pb-cream,#F7F7F5);border:1px solid var(--pb-line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:7px}
 .lmpanel-empty{color:var(--pb-muted);font-size:11.5px;font-style:italic}
 .lmhit{display:flex;align-items:baseline;gap:8px;font-size:11.5px;flex-wrap:wrap}
@@ -714,8 +752,15 @@ input.ap-input,select.ap-select,textarea{background:var(--pb-panel);border-color
 <span class="syncstat" id="syncStatus"></span>
 <button class="ghostbtn" id="loadLatestBtn" title="Pull in changes saved by someone else">⟳ Load latest</button>
 <span class="clock" id="clock"></span></div></div>
-<div id="flow" class="flow"></div>
+<div class="shell">
+<aside class="sidenav" id="sidenav">
+  <button class="sidenav-toggle" id="navToggle" title="Collapse / expand navigation" aria-label="Toggle navigation">‹</button>
+  <nav id="flow" class="flow"></nav>
+</aside>
+<div class="content-area">
 <div class="wrap"><div id="main"></div></div>
+</div>
+</div>
 <div class="scrim" id="scrim"></div>
 <aside class="drawer" id="drawer" aria-label="Asset workspace"><div class="dhead" id="drawerHead"></div><div class="dbody" id="drawerBody"></div></aside>
 <script>
@@ -1046,6 +1091,9 @@ let LM={edits:{},added:{t1:[],t2:[],t3:[],t4:[]}}; let lmTab="t1";
 // Collapsed asset cards on Step 1 — a per-viewer UI preference, stored locally only
 // (not in the shared Supabase payload, so one person collapsing doesn't collapse it for everyone).
 let COLLAPSED={};
+let NAV_COLLAPSED=false;
+try{ NAV_COLLAPSED=localStorage.getItem(STORE+"_nav")==="1"; }catch(e){}
+function saveNav(){ try{ localStorage.setItem(STORE+"_nav",NAV_COLLAPSED?"1":"0"); }catch(e){} }
 try{ const rc=localStorage.getItem(STORE+"_collapsed"); if(rc) COLLAPSED=JSON.parse(rc)||{}; }catch(e){}
 function saveCollapsed(){ try{ localStorage.setItem(STORE+"_collapsed",JSON.stringify(COLLAPSED)); }catch(e){} }
 // Channels register — "Triple Lock" per channel type. Shared reference data (everyone sees the
@@ -1061,7 +1109,7 @@ const CHANNELS_SEED=[
   {ch:"PB Website (owned)",login:"Optional",v18:"Yes",wager:"Yes",note:"Most content browsable pre-login — confirm whether wagering-facing content forces login."},
   {ch:"Broadcast TV",login:"No",v18:"No",wager:"No",note:"Not account-based; governed by siphoning/live-sport provisions, not online-gating. Confirm."},
   {ch:"Radio / audio",login:"No",v18:"No",wager:"No",note:"Not account-based. Confirm."},
-  {ch:"Racing.com",login:"Optional",v18:"No",wager:"No",note:"Has a digital platform + first-party data — confirm its logged-in / 18+ verification build."},
+  {ch:"Racing.com",login:"Optional",v18:"No",wager:"No",racing:"Yes",note:"Dedicated racing service — racing content carved out under 62W(3)/62E (s10A(3), 62G(a) racing exemption). Confirm scope with Nathan Hinde."},
   {ch:"ESPN.com",login:"Optional",v18:"No",wager:"No",note:"No age gating in place currently (per asset notes) — the live risk. Confirm."},
   {ch:"Podcast / audio",login:"No",v18:"No",wager:"No",note:"Open distribution. Confirm."}
 ];
@@ -1069,6 +1117,7 @@ let CHANNELS=null;
 function seedChannels(){ if(!CHANNELS||!CHANNELS.rows||!CHANNELS.rows.length){ CHANNELS={rows:CHANNELS_SEED.map(r=>({...r}))}; } }
 function channelVerdict(r){
   if(!r) return "Not locked";
+  if(r.racing==="Yes") return "Racing-exempt";  // 62W(3)/62E dedicated-racing carve-out overrides the lock
   const ok18=r.v18==="Yes", okW=r.wager==="Yes";
   if(r.login==="Compulsory"&&ok18&&okW) return "Fully locked";
   if(r.login==="Optional"&&ok18&&okW) return "Logged-in only";
@@ -1084,13 +1133,16 @@ function assetChannelVerdicts(chVal){
 function assetLockLine(chVal){
   const vs=assetChannelVerdicts(chVal);
   if(!vs.length) return '';
-  const rank={"Not locked":0,"Logged-in only":1,"Fully locked":2};
-  const worst=vs.reduce((w,x)=>rank[x.verdict]<rank[w]?x.verdict:w, "Fully locked");
+  const rank={"Not locked":0,"Logged-in only":1,"Fully locked":2,"Racing-exempt":2};
+  let worst=vs.reduce((w,x)=>rank[x.verdict]<rank[w]?x.verdict:w, vs[0].verdict);
+  if(rank[worst]===2 && vs.every(x=>x.verdict==="Racing-exempt")) worst="Racing-exempt";
+  else if(rank[worst]===2) worst="Fully locked";
   const cls=verdictClass(worst);
   const parts=vs.map(x=>`${esc(x.name)}: <b>${x.verdict}</b>`).join(" · ");
   const flag=worst==="Not locked"?"Exposed — at least one channel isn't locked"
     :worst==="Logged-in only"?"Partial — locked only for logged-in users on some channels"
-    :"All channels fully locked";
+    :worst==="Racing-exempt"?"Racing-exempt — carved out under the dedicated-racing exemption"
+    :"All channels locked or racing-exempt";
   return `<div class="asset-lock ${cls}"><b>Triple Lock across channels: ${flag}.</b> ${parts}</div>`;
 }
 const LM_IMPORT_L3J={"imports": {"t1": [{"ch": "Digital display / programmatic", "sub": "ESPN - Espn.com.au & ESPN App", "camp": "Always-on acquistion and brand awareness", "desc": "Standard PB display banners/ videos across sport sections, scores and match centres. Banners contain brand + offer messaging with a click-through to the PB sign-up page", "ex": "https://www.espn.com.au/afl/", "ag": "Direct IO with ESPN; ad-served via Flashtalking (Innovid); Kinesso supports trafficking/QA", "cp": "ESPN", "sched": "Always on", "live": "Yes — placements sit within/adjacent to live scores, match centres and sport editorial (AFL, NRL, football, US sports)", "odds": "No for standard brand units / Yes where offer includes prices", "person": "Tommy Sheridan, Chocs Chat (Jake). Kick it forward ( Harry Fitzgerald, Giorgio Savini, Josh Garlepp), Ash Wicks, Shaq", "rg": "Yes — creative carries the mandated responsible gambling taglines per current rules", "log": "No — served on open web/app inventory, not behind login or age gate.", "targ": "N/A", "spend": "$2.4m", "b27": "Yes - FY27 IO signed", "_red": ["exp"]}, {"ch": "Digital display / programmatic", "sub": "ESPN -footytips.espn.com.au & ESPN FT Apps", "camp": "Always-on acquistion and brand awareness", "desc": "sponsorship / display placements on tipping platform", "ex": "https://footytips.espn.com.au/", "ag": "Direct IO with ESPN; ad-served via Flashtalking (Innovid); Kinesso supports trafficking/QA", "cp": "ESPN", "exp": "30/11/2026", "sched": "Always on", "live": "Yes - creative  placements sit witin the tipping ecosystem.", "odds": "Yes", "person": "N/A", "rg": "Yes — creative carries the mandated responsible gambling taglines per current rules", "log": "Served only to logged-in", "targ": "N/A", "spend": "$1m", "b27": "Nothing signed as of yet"}, {"ch": "Digital display / programmatic", "sub": "Foxsports.com.au", "camp": "Always-on acquistion and brand awareness", "desc": "PB display banners/videos across sport news, scores and match coverage", "ex": "https://www.foxsports.com.au/afl", "ag": "Direct IO with Foxtel; ad-served via Flashtalking (Innovid); Kinesso supports trafficking/QA", "cp": "Foxtel", "exp": "6 Oct 2026", "sched": "Always on", "live": "Yes — placements sit within/adjacent to live scores, match centres and sport editorial (AFL, NRL)", "odds": "Yes", "person": "Tommy Sheridan, Chocs Chat (Jake). Kick it forward ( Harry Fitzgerald, Giorgio Savini, Josh Garlepp), Ash Wicks,Shaq", "rg": "Yes — creative carries the mandated responsible gambling taglines per current rules", "log": "No — served on open web/app inventory, not behind login or age gate.", "targ": "N/A", "spend": "$499k", "b27": "Nothing signed as of yet"}, {"ch": "Digital display / programmatic", "sub": "Foxsports.com.au/nrl", "camp": "Always-on acquistion and brand awareness", "desc": "PB display banners/videos across sport news, scores and match coverage", "ex": "https://www.foxsports.com.au/nrl", "ag": "Direct IO with Foxtel; ad-served via Flashtalking (Innovid); Kinesso supports trafficking/QA", "cp": "Foxtel", "exp": "6 Oct 2026", "sched": "Always on", "live": "Yes — placements sit within/adjacent to live scores, match centres and sport editorial (NRL)", "odds": "Yes", "person": "Tommy Sheridan, Chocs Chat (Jake). Kick it forward ( Harry Fitzgerald, Giorgio Savini, Josh Garlepp), Ash Wicks,Shaq", "rg": "Yes — creative carries the mandated responsible gambling taglines per current rules", "log": "No — served on open web/app inventory, not behind login or age gate.", "targ": "N/A", "spend": "$498k", "b27": "Nothing signed as of yet"}, {"ch": "Streaming / BVOD", "sub": "Kayo Sports & Foxtel Go (streaming/BVOD)", "camp": "Digital Videos 30\"", "desc": "AFL Mag Shows - First or Last in Break Placements", "ex": "https://cdn.intelligencebank.com/au/share/k7oXMR/KEzap/RYRdP/streaming/AFL_Pull-E_R18_30s_16-9", "ag": "Direct IO with Foxtel; ad-served via Flashtalking (Innovid); Kinesso supports trafficking/QA", "cp": "Foxtel", "exp": "30/9/2026", "sched": "Always on", "live": "Yes – adjacent to AFL programming (AFL Magazine Shows) on Kayo Sports/Foxtel Go.", "odds": "Yes", "person": "Tommy Sheridan, Chocs Chat (Jake). Kick it forward ( Harry Fitzgerald, Giorgio Savini, Josh Garlepp), Ash Wicks,Shaq", "rg": "Yes — creative carries the mandated responsible gambling taglines per current rules", "log": "Partially — Kayo requires a subscriber login (18+ account holder), though viewers may include minors.", "targ": "N/A", "spend": "200", "b27": "Nothing signed as of yet"}, {"ch": "Digital display / programmatic", "sub": "Fox League - Social Integrations", "camp": "Social Media", "desc": "FoxCatcher / StatMate/ PointsBet Stories/ Posts are reaching Fox League's followers. StatMate infographics and CTA are being applied to posts made by Fox League", "ex": "https://www.instagram.com/foxcatcherintel?igsh=MWkyZXFveXo2bXh2bg== https://www.instagram.com/statmate_au?igsh=MWQydngwYTlkeWR6Zg==", "ag": "Foxtel", "cp": "Foxtel", "exp": "6 Oct 2026", "sched": "Avg 3 per week (Thursday- Sunday usyally)", "live": "Yes - Stories/ Posts are reposted during potential NRL fixtures", "odds": "If StatMate related, no odds/prices. If PointsBet related, odds/prices are included", "person": "Daniel Thorson, Ben Summerfield, Darcy Ballard (Dobe/100k), Marcus Nolan, Bernie Vince, Tom Mitchell", "rg": "Yes — creative carries the mandated responsible gambling taglines per current rules where applicable", "log": "These stories can be viewed by minors if they follow Foxsports. The statmate infographics can be viewed by people who arent logged into FB or Instagram", "targ": "N/A", "spend": "$499k", "b27": "Nothing signed as of yet"}, {"ch": "Digital display / programmatic", "sub": "Fox Footy - Social Integration", "camp": "Social Media", "desc": "FoxCatcher / StatMate/ PointsBet Stories/ Posts are reaching Fox League's followers. StatMate inforgraphics and CTA are being applied to posts made by Fox Footy", "ex": "https://www.instagram.com/foxcatcherintel?igsh=MWkyZXFveXo2bXh2bg== https://www.instagram.com/statmate_au?igsh=MWQydngwYTlkeWR6Zg==", "ag": "Foxtel", "cp": "Foxtel", "exp": "6 Oct 2026", "sched": "Avg 3 per week (Thursday- Sunday usyally)", "live": "Yes - Stories are reposted during potential AFL fixtures", "odds": "If StatMate related, no odds/prices. If PointsBet related, odds/prices are included", "person": "Daniel Thorson, Ben Summerfield, Darcy Ballard (Dobe/100k), Marcus Nolan, Bernie Vince, Tom Mitchell, Daisy Thomas", "rg": "Yes — creative carries the mandated responsible gambling taglines per current rules where applicable", "log": "These stories can be viewed by minors if they follow Foxsports. The statmate infographics can be viewed by people who arent logged into FB or Instagram", "targ": "N/A", "spend": "$499k", "b27": "Nothing signed as of yet"}], "t2": [{"name": "Ash Wicks", "cat": "Social media influencer", "cf": "Current", "loc": "Australia", "rel": "Contracted ambassador", "via": "Direct/agency", "cp": "CMC Talent (Claire Savage)", "exp": "31 Dec 2025", "val": "77500", "wag": "N/A", "nonwag": "https://www.instagram.com/reel/DZLu5EIjEPn/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==", "plat": "FoxLeage Socials, PB Social channels, Personal Social Channels", "aud": "450k", "b27": "Yes", "clause": "Yes"}, {"name": "Tom Mitchell", "cat": "Former Professional Athlete", "cf": "Current", "loc": "Australia", "rel": "Contracted ambassador", "via": "Direct/agency", "cp": "TGI (Cam Roughead)", "exp": "28 Feb 2027", "val": "80500", "wag": "https://www.instagram.com/reel/DYGGkP4OiGO/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==", "plat": "FoxFooty, PB Social channels, Personal Social Channels", "b27": "Yes", "clause": "Yes", "_red": ["aud"]}, {"name": "Bernie Vince", "cat": "Former professional athlete", "cf": "Current", "loc": "Australia", "rel": "Contracted ambassador", "via": "Direct/agency", "cp": "TGI (Cam Roughead)", "exp": "31 Dec 2026", "val": "90200", "wag": "https://www.instagram.com/reel/DYYPFiEkZU9/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==", "nonwag": "https://www.instagram.com/reel/DZMYDoFAHLy/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==", "plat": "FoxFooty, PB Social channels, Personal Social Channels", "b27": "Yes", "clause": "Yes", "_red": ["aud"]}, {"name": "Shaq (Shaquille O'Neal)", "cat": "Celebrity / former professional athlete", "cf": "Former", "loc": "Overseas (US)", "rel": "Contracted ambassador", "via": "Direct/agency", "cp": "Jersey Legends", "exp": "31 Dec 2026", "val": "1692000", "plat": "Commercials on all platforms", "b27": "Yes", "clause": "Yes", "_red": ["aud"]}], "t3": [{"partner": "28 Year Old Male", "prog": "Social Content", "integ": "Branded content", "ex": "https://www.instagram.com/reel/DSmHjsWEc3a/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==", "where": "PB Socials, KIF Socials, Paid Socials", "bo": "Online", "live": "No live sport connection", "talent": "N/A", "appr": "Yes — paid & approved", "odds": "No", "cp": "28 Year Old Male", "val": "150000", "b27": "No", "_red": ["exp"]}, {"partner": "Chocs Chat", "prog": "Social Content, StatMate Content, PB wagering content", "integ": "Branded content", "ex": "https://www.instagram.com/reel/DaPcxW6xtu0/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==", "where": "PB Socials, 100k Socials, Paid Socials", "bo": "Online", "live": "No live sport connection", "talent": "Choc", "appr": "Yes — paid & approved", "odds": "No", "cp": "Chocs Chat", "val": "130000", "_red": ["exp"]}, {"partner": "Kick It Forward", "prog": "Social Content", "integ": "Branded content", "ex": "https://www.instagram.com/reel/DYgJr5ThKKj/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==", "where": "PB Socials, KIF Socials, Paid Socials", "bo": "Online", "live": "No live sport connection", "talent": "Choc", "appr": "Yes — paid & approved", "odds": "No", "cp": "Kick It Forward", "val": "315000", "_red": ["exp"]}, {"partner": "Ball Magnets (NBA)", "prog": "Social Content", "integ": "Branded content", "ex": "https://www.instagram.com/reel/DaM81orxt3g/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==", "where": "PB Socials, KIF Socials, Paid Socials", "bo": "Online", "live": "No live sport connection", "talent": "Tom Mitchell", "appr": "Yes — paid & approved", "odds": "No", "cp": "Ball Magnets (NBA)", "val": "60000", "b27": "No", "_red": ["exp"]}, {"partner": "Ausmerican Aces", "prog": "AFL Preview & Review Show, TFG, NFL, Tommy Talks, Hotline", "integ": "Branded social content, odds pieces for socials, podcast segment integrations", "ex": "https://www.instagram.com/reel/DYQo37DStcT/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==", "where": "YouTube, Ausmerican Socials, PB Socials, In-App, Tommy Sheridan Socials, Daisy Thomas Socials, Mitch Wallis Socials", "bo": "Online", "live": "Pre/post game shows", "talent": "Tommy Sheridan, Daisy Thomas, Mitch Wallis", "appr": "Yes — paid & approved", "odds": "Yes", "cp": "Ausmerican Aces", "val": "600000", "b27": "Yes", "_red": ["exp"]}]}, "gapfill": {"t1:7:ex": "https://cdn.intelligencebank.com/au/share/k7oXMR/KEzap/Gzea4/streaming/Shopping+5+for+%2425+-+Melb+Cup+30s", "t1:7:exp": "30 Jul 2027", "t1:10:ex": "https://cdn.intelligencebank.com/au/share/k7oXMR/KEzap/RYRdP/streaming/AFL_Pull-E_R18_30s_16-9", "t1:10:ag": "Kinesso", "t1:10:cp": "Kinesso", "t1:10:exp": "31 Dec 2027", "t1:10:person": "Tommy Sheridan, Chocs Chat (Jake). Kick it forward ( Harry Fitzgerald, Giorgio Savini, Josh Garlepp), Ash Wicks, Jules, Daisy Thomas, Clint Hutchison, Shaq", "t1:10:targ": "age targeting, brand-safety/contextual exclusions, blocklists, frequency caps", "t1:10:spend": "$707k", "t1:1:ex": "https://cdn.intelligencebank.com/au/share/k7oXMR/qokn3/pjyn3/mp4/IN+GAME+ANIMATION-+NBA-+POINTSBET+PULL+EM-+MAY2026 https://cdn.intelligencebank.com/au/share/k7oXMR/qokn3/KJa80/mp4/BB+POINTSBET+PULL+EM-+MAY2026-_1", "t1:1:exp": "1 Feb 2027", "t1:1:person": "Arryn Siposs, Shaq and ESPN talent", "t1:0:ex": "https://cdn.intelligencebank.com/au/share/k7oXMR/qokn3/dJz1Z/mp4/190426+BERNIE+FIRST+CRACK", "t1:0:exp": "3 Oct 2026", "t1:0:person": "Jules Vallance, Tom Mitchell, Bernie Vince, Aaron Siposs", "t1:5:ex": "https://www.racing.com/videos/6398127127112?v=1206645567964.7537", "t1:5:exp": "TBC — FY27 renewal in progress (30/06/2027)", "t1:2:ex": "https://cdn.intelligencebank.com/au/share/k7oXMR/qokn3/2gNkP/original/SEN+Odds+Update+Jules+de+Stoop", "t1:2:exp": "3 Oct 2026", "t1:2:spend": "$385k", "t1:3:ex": "https://cdn.intelligencebank.com/au/share/k7oXMR/qokn3/aoD28/original/Pointsbet+Live+Read+2MMM+104.9+%5BFM%5D+2025-05-28+07-19-16", "t1:3:exp": "3 Oct 2026", "t1:3:person": "Aaron Woods", "t1:3:spend": "$220k", "t1:4:ex": "https://cdn.intelligencebank.com/au/share/k7oXMR/qokn3/jLARV/original/Tapt+Media+Integration", "t1:4:exp": "3 Oct 2026", "t1:4:person": "Nic Ashman", "t1:4:spend": "$440k", "t1:12:ex": "https://cdn.intelligencebank.com/au/share/k7oXMR/qokn3/GPjl4/mp4/7-Eleven+Example\n\nhttps://cdn.intelligencebank.com/au/share/k7oXMR/qokn3/46gNl/original/Large+Format+Example", "t1:12:exp": "30 Sep 2026", "t1:12:person": "N/A", "t1:12:spend": "$550k", "t2:0:cp": "N/A", "t2:0:exp": "30 Jun 2027", "t2:0:val": "282000", "t2:0:clause": "Yes", "t2:4:cp": "TGI (Cam Roughead)", "t2:4:exp": "30 Jun 2027", "t2:4:val": "275400", "t2:4:clause": "Yes", "t2:1:cp": "N/A", "t2:1:exp": "30 Jun 2027", "t2:1:val": "182000", "t2:1:clause": "Yes", "t2:9:cp": "Cove Agency (Isaac Moses)", "t2:9:exp": "31 Dec 2026", "t2:9:val": "112000", "t2:9:b27": "Yes", "t2:9:clause": "Yes", "t2:3:cp": "Phoenix Management (Lachlan Cgrnoc)", "t2:3:exp": "12 Feb 2027", "t2:3:val": "77200", "t2:3:clause": "Yes", "t2:14:cp": "W Sports (Joe Tamburino)", "t2:14:exp": "N/A completed", "t2:14:val": "50000", "t2:14:plat": "PB Social channels, Personal Social Channels", "t2:14:clause": "N/A", "t2:2:via": "Via Racing.com", "t2:2:cp": "N/A", "t2:2:exp": "Ongoing", "t2:2:val": "TBC", "t2:2:plat": "Racing.com, FoxCatcher YT and Socials", "t2:2:clause": "N/A", "t2:5:cp": "Sony Music", "t2:5:exp": "22 Jul 2026", "t3:10:ex": "https://www.instagram.com/reel/DYGQEJIzney/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==", "t3:10:where": "YouTube, PB Socials, 100k Socials, Paid Socials", "t3:10:talent": "Darcy Bollard, Luke Morgam", "t3:10:val": "170000", "t3:10:b27": "Yes", "t3:7:ex": "https://www.instagram.com/reel/DV-V2ybkf06/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==", "t3:7:where": "PB Socials, Manly Socials, Paid Socials, In Marquee, Manly Digital Platforms", "t3:7:bo": "Online", "t3:7:live": "Pre-game social posts", "t3:7:talent": "Nic Ashman, Aaron Woods", "t3:7:appr": "Yes — paid & approved", "t3:7:odds": "No", "t3:7:val": "250000", "t3:7:b27": "No", "t3:8:ex": "https://www.instagram.com/reel/DaXQ_dFvvpQ/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==", "t3:8:where": "PB Socials, Cronullla Socials, Paid Socials, In Marquee, Cronullla Digital Platforms", "t3:8:bo": "Online", "t3:8:live": "Pre-game social posts", "t3:8:talent": "Nic Ashman, Aaron Woods", "t3:8:appr": "Yes — paid & approved", "t3:8:odds": "No", "t3:8:val": "200000", "t3:8:b27": "No"}};
@@ -1375,10 +1427,13 @@ function renderLegalMap(){
 
 /* ============ RENDER: workflow + shell ============ */
 function renderFlow(){
-  const steps=[["status","Asset Status",""],["channels","Channels","Triple Lock"],["scenario","Legislation Scenarios","How hard it lands"],["assets","Decisions",""],["paths","Paths","If X, then Y"],["summary","Exec Summary","The one-pager"],["actions","Actions","H2 roadmap"],["legalmap","Legal Map","due Wed 9 Jul"],["notes","Logic","Appendix"]];
-  $("#flow").innerHTML=steps.map((s,i)=>`<button class="step ${activeView===s[0]?'on':''}" data-v="${s[0]}">
-    <span class="n">${i+1}</span><span><span class="lab">${s[1]}</span><span class="hint">${s[2]}</span></span></button>`).join("");
-  $$(".step").forEach(b=>b.onclick=()=>{activeView=b.dataset.v;render();});
+  const steps=[["status","Asset Status",""],["channels","Channels","Triple Lock"],["scenario","Legislation Scenarios","How hard it lands"],["assets","Decisions",""],["paths","Paths","If X, then Y"],["summary","Exec Summary","The one-pager"],["actions","Actions","H2 roadmap"],["legalmap","Legal Map","due Wed 9 Jul"],["expiries","Expiries","Contract runway"],["notes","Logic","Appendix"]];
+  document.getElementById("sidenav").classList.toggle("collapsed",NAV_COLLAPSED);
+  const tg=$("#navToggle"); if(tg) tg.textContent=NAV_COLLAPSED?"›":"‹";
+  $("#flow").innerHTML=steps.map((s,i)=>`<button class="step ${activeView===s[0]?'on':''}" data-v="${s[0]}" title="${esc(s[1])}${s[2]?' · '+esc(s[2]):''}">
+    <span class="n">${i+1}</span><span class="step-txt"><span class="lab">${s[1]}</span>${s[2]?`<span class="hint">${s[2]}</span>`:''}</span></button>`).join("");
+  $$(".step").forEach(b=>b.onclick=()=>{activeView=b.dataset.v; if(window.innerWidth<=760){NAV_COLLAPSED=true;saveNav();} render();});
+  if(tg) tg.onclick=()=>{NAV_COLLAPSED=!NAV_COLLAPSED; saveNav(); renderFlow();};
 }
 
 /* ============ RENDER: scenario builder (hero) ============ */
@@ -1691,7 +1746,7 @@ function renderAssetStatus(){
 /* ============ RENDER: channels (Triple Lock register) ============ */
 const LOGIN_OPTS=["Compulsory","Optional","No"];
 const YESNO=["Yes","No"];
-function verdictClass(v){ return v==="Fully locked"?"vd-full":v==="Logged-in only"?"vd-part":"vd-none"; }
+function verdictClass(v){ return v==="Fully locked"?"vd-full":v==="Racing-exempt"?"vd-racing":v==="Logged-in only"?"vd-part":"vd-none"; }
 function renderChannels(){
   seedChannels();
   const rows=CHANNELS.rows.map((r,i)=>{
@@ -1699,9 +1754,11 @@ function renderChannels(){
     const loginSel=`<select class="ap-select ch-fld" data-ci="${i}" data-k="login">${LOGIN_OPTS.map(o=>`<option ${r.login===o?'selected':''}>${o}</option>`).join('')}</select>`;
     const v18Sel=`<select class="ap-select ch-fld" data-ci="${i}" data-k="v18">${YESNO.map(o=>`<option ${r.v18===o?'selected':''}>${o}</option>`).join('')}</select>`;
     const wagerSel=`<select class="ap-select ch-fld" data-ci="${i}" data-k="wager">${YESNO.map(o=>`<option ${r.wager===o?'selected':''}>${o}</option>`).join('')}</select>`;
+    const racingSel=`<select class="ap-select ch-fld" data-ci="${i}" data-k="racing">${YESNO.map(o=>`<option ${((r.racing||"No")===o)?'selected':''}>${o}</option>`).join('')}</select>`;
     return `<tr>
       <td><input class="ap-input ch-name" data-ci="${i}" value="${esc(r.ch)}"></td>
       <td>${loginSel}</td><td>${v18Sel}</td><td>${wagerSel}</td>
+      <td>${racingSel}</td>
       <td><span class="chverdict ${verdictClass(v)}">${v}</span></td>
       <td><textarea class="ap-input ch-fld" rows="2" data-ci="${i}" data-k="note">${esc(r.note||'')}</textarea></td>
       <td><button class="chdel" data-ci="${i}" title="Remove channel">✕</button></td></tr>`;
@@ -1714,11 +1771,12 @@ function renderChannels(){
     <div class="chlegend">
       <span class="chverdict vd-full">Fully locked</span> compulsory login + 18+ + wagering opt · everyone gated
       &nbsp;&nbsp;<span class="chverdict vd-part">Logged-in only</span> optional login + 18+ + opt · gated for logged-in, leaks to logged-out
+      &nbsp;&nbsp;<span class="chverdict vd-racing">Racing-exempt</span> dedicated racing service — carved out (62W(3)/62E), overrides the lock
       &nbsp;&nbsp;<span class="chverdict vd-none">Not locked</span> missing 18+ or opt
     </div>
-    <div class="chsummary">${["Fully locked","Logged-in only","Not locked"].map(v=>`<span class="chverdict ${verdictClass(v)}">${counts[v]||0}</span> ${v}`).join("&nbsp;&nbsp;")}</div>
+    <div class="chsummary">${["Fully locked","Racing-exempt","Logged-in only","Not locked"].map(v=>`<span class="chverdict ${verdictClass(v)}">${counts[v]||0}</span> ${v}`).join("&nbsp;&nbsp;")}</div>
     <div class="lmwrap"><table class="lmtab-table chtable"><thead><tr>
-      <th style="min-width:150px">Channel</th><th style="min-width:120px">Logged-in</th><th style="min-width:100px">18+ verified</th><th style="min-width:120px">Wagering opt-in/out</th><th style="min-width:120px">Verdict</th><th style="min-width:240px">Notes</th><th></th>
+      <th style="min-width:150px">Channel</th><th style="min-width:120px">Logged-in</th><th style="min-width:100px">18+ verified</th><th style="min-width:120px">Wagering opt-in/out</th><th style="min-width:110px" title="Dedicated-racing carve-out (62W(3)/62E) — Yes overrides verdict to Racing-exempt">Racing exempt</th><th style="min-width:120px">Verdict</th><th style="min-width:240px">Notes</th><th></th>
     </tr></thead><tbody>${rows}</tbody></table></div>
   </div>`;
 }
@@ -1868,6 +1926,93 @@ function renderSummary(){
 }
 
 /* ============ RENDER: actions ============ */
+/* Parse the free-text expiry values people enter into the Legal Map into real dates where possible.
+   Handles "3 Oct 2026", "30/11/2026", "31 Dec 2026", "1 Feb 2027". Returns ms or null. */
+function parseExpiry(s){
+  if(!s) return null;
+  s=String(s).trim();
+  let m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);      // dd/mm/yyyy
+  if(m) return new Date(+m[3],+m[2]-1,+m[1]).getTime();
+  m=s.match(/(\d{1,2})\s+([A-Za-z]{3,})\s+(\d{4})/);      // 3 Oct 2026
+  if(m){const mo=["jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"].indexOf(m[2].slice(0,3).toLowerCase()); if(mo>=0) return new Date(+m[3],mo,+m[1]).getTime();}
+  m=s.match(/(\d{4})-(\d{2})-(\d{2})/);                    // yyyy-mm-dd
+  if(m) return new Date(+m[1],+m[2]-1,+m[3]).getTime();
+  return null;
+}
+/* Harvest every dated contract expiry across the Legal Map registers. */
+function harvestExpiries(){
+  const label={t1:"sub",t2:"name",t3:"partner",t4:"brand"};
+  const out=[];
+  ["t1","t2","t3"].forEach(t=>{
+    lmVisible(t).forEach(({r,i})=>{
+      const raw=lmVal(t,i,r,"exp"); const ms=parseExpiry(raw);
+      if(ms) out.push({t,name:String(lmVal(t,i,r,label[t])||"—"),exp:ms,raw:String(raw),kind:t==="t2"?"Talent":"Deal"});
+    });
+  });
+  return out.sort((a,b)=>a.exp-b.exp);
+}
+function renderExpiries(){
+  const exps=harvestExpiries();
+  const commence=new Date("2027-01-01").getTime();
+  const before=exps.filter(e=>e.exp<commence), through=exps.filter(e=>e.exp>=commence);
+  const fmtD=ms=>{const d=new Date(ms);return d.getDate()+" "+["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()]+" "+String(d.getFullYear()).slice(2);};
+  const monthKey=ms=>{const d=new Date(ms);return d.getFullYear()+"-"+String(d.getMonth()).padStart(2,"0");};
+  const monthLabel=ms=>{const d=new Date(ms);return ["January","February","March","April","May","June","July","August","September","October","November","December"][d.getMonth()]+" "+d.getFullYear();};
+  const kindBadge=e=>`<span class="exp-kind exp-${e.t}">${e.kind}</span>`;
+  const monthGroups=list=>{const seen=[],map={};list.forEach(e=>{const k=monthKey(e.exp);if(!map[k]){map[k]=[];seen.push(k);}map[k].push(e);});return seen.map(k=>({label:monthLabel(map[k][0].exp),items:map[k]}));};
+  const colHTML=(list,tone)=>list.length?monthGroups(list).map(g=>`
+      <div class="exp-month">${esc(g.label)}</div>
+      ${g.items.map(e=>`<div class="exp-row"><span class="exp-dot ${tone}"></span><span class="exp-name">${esc(e.name)}</span>${kindBadge(e)}<span class="exp-date">${fmtD(e.exp)}</span></div>`).join("")}
+    `).join(""):`<div class="exp-empty">None</div>`;
+  const pctBefore=exps.length?Math.round(100*before.length/exps.length):0;
+  /* --- dot timeline: one column of stacked dots per month, no per-item labels (names on hover) --- */
+  let dotTL="";
+  if(exps.length){
+    const first=new Date(Math.min(...exps.map(e=>e.exp))), last=new Date(Math.max(...exps.map(e=>e.exp)));
+    const m0=new Date(first.getFullYear(),first.getMonth(),1);
+    const m1=new Date(last.getFullYear(),last.getMonth()+1,1);
+    const months=[]; for(let d=new Date(m0); d<m1; d.setMonth(d.getMonth()+1)) months.push(new Date(d));
+    const W=940,L=30,R=910,axisY=118,dotR=5.2,dotGap=13;
+    const mw=(R-L)/months.length;
+    const xOfMonth=i=>L+mw*(i+0.5);
+    const idxOfDate=ms=>{const d=new Date(ms);return (d.getFullYear()-m0.getFullYear())*12+(d.getMonth()-m0.getMonth());};
+    // commencement x: boundary between Dec-26 and Jan-27
+    const cIdx=idxOfDate(commence); const cx=L+mw*cIdx;
+    // today
+    const now=new Date("2026-07-17").getTime(); const tIdx=idxOfDate(now);
+    const tx=L+mw*(tIdx+ (new Date(now).getDate()/31));
+    // stack dots per month
+    const perMonth={};
+    const dots=exps.map(e=>{const mi=idxOfDate(e.exp); perMonth[mi]=(perMonth[mi]||0); const lvl=perMonth[mi]++;
+      return {x:xOfMonth(mi), y:axisY-14-lvl*dotGap, e};});
+    const maxStack=Math.max(...Object.values(perMonth));
+    const topY=axisY-14-(maxStack-1)*dotGap-16;
+    const fmtFull=ms=>{const d=new Date(ms);return d.getDate()+" "+["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()]+" "+d.getFullYear();};
+    dotTL=`<div class="exp-tlwrap"><svg viewBox="0 ${Math.min(topY,0)} ${W} ${axisY+34-Math.min(topY,0)}" width="100%" preserveAspectRatio="xMidYMid meet">
+      <line x1="${L}" y1="${axisY}" x2="${R}" y2="${axisY}" stroke="var(--pb-line2,#D9D9DC)" stroke-width="2"/>
+      ${months.map((m,i)=>{const x=xOfMonth(i);const lab=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][m.getMonth()];const yr=m.getMonth()===0||i===0?` '${String(m.getFullYear()).slice(2)}`:"";
+        return `<line x1="${x}" y1="${axisY-3}" x2="${x}" y2="${axisY+3}" stroke="var(--pb-line2)" stroke-width="1"/>
+        <text x="${x}" y="${axisY+16}" font-size="9.5" fill="var(--pb-faint)" text-anchor="middle">${lab}${yr}</text>`;}).join("")}
+      <line x1="${tx}" y1="${topY+6}" x2="${tx}" y2="${axisY}" stroke="var(--pb-faint)" stroke-width="1" stroke-dasharray="2 3"/>
+      <text x="${tx}" y="${axisY+29}" font-size="9.5" fill="var(--pb-muted)" text-anchor="middle">Today</text>
+      <line x1="${cx}" y1="${topY}" x2="${cx}" y2="${axisY}" stroke="#FF4D66" stroke-width="2" stroke-dasharray="4 3"/>
+      <text x="${cx}" y="${topY-4}" font-size="10.5" font-weight="700" fill="#B0242E" text-anchor="middle">1 Jan 2027</text>
+      ${dots.map(d=>`<circle cx="${d.x}" cy="${d.y}" r="${dotR}" fill="${d.e.exp<commence?"#3BD183":"#FF9A3D"}" stroke="#fff" stroke-width="1.5"><title>${esc(d.e.name)} · ${fmtFull(d.e.exp)}</title></circle>`).join("")}
+    </svg></div>`;
+  }
+  const body = exps.length? `<div class="panel">
+    ${dotTL}
+    <p style="font-size:13px;color:var(--pb-muted);margin:10px 0 16px"><b style="color:#1B7A46">${before.length}</b> of ${exps.length} dated contracts lapse <b>before</b> 1 Jan 2027 — natural exit / renegotiation points, no live deal to wind down. <b style="color:#B0242E">${through.length}</b> run through commencement and need active restructuring. Hover a dot for the contract.</p>
+    <div class="exp-cols">
+      <div class="exp-col"><div class="exp-colhead exp-colhead-safe">Lapses before commencement · leverage</div>${colHTML(before,"safe")}</div>
+      <div class="exp-col"><div class="exp-colhead exp-colhead-risk">Runs through 1 Jan 2027 · must restructure</div>${colHTML(through,"risk")}</div>
+    </div></div>`
+    : `<div class="panel"><p style="font-size:13px;color:var(--pb-muted)">No dated contract expiries in the Legal Map yet. Fill the <b>Contract expiry</b> columns in Step 8 · Legal Map and they'll appear here automatically, split around the 1 Jan 2027 commencement date.</p>
+      <div style="margin-top:10px"><button class="chipbtn" data-v-jump="legalmap">Open Legal Map →</button></div></div>`;
+  return `<div class="view"><div class="vh"><div><div class="eyebrow">Step 9 · Contract runway</div>
+    <h2>Contract expiries</h2><p>Every dated contract expiry from the Legal Map, split around the 1 Jan 2027 commencement line. Deals lapsing before then are renegotiation leverage; those running through need active restructuring. Updates live as you fill expiry dates in the Legal Map.</p></div></div>
+    ${body}</div>`;
+}
 function renderActions(){
   /* regulatory runway — real dates only */
   const t0=new Date("2026-07-02").getTime(), t1=new Date("2027-01-01").getTime();
@@ -1966,6 +2111,7 @@ function render(){
   else if(activeView==="summary") m.innerHTML=renderSummary();
   else if(activeView==="actions") m.innerHTML=renderActions();
   else if(activeView==="legalmap") m.innerHTML=renderLegalMap();
+  else if(activeView==="expiries") m.innerHTML=renderExpiries();
   else if(activeView==="notes") m.innerHTML=renderNotes();
   injectHelp();
   bind();
