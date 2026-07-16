@@ -724,6 +724,8 @@ input.ap-input,select.ap-select,textarea{background:var(--pb-panel);border-color
 .exp-date{color:var(--pb-muted);font-variant-numeric:tabular-nums;white-space:nowrap}
 .exp-kind{font-size:9px;font-weight:700;letter-spacing:.04em;padding:1px 6px;border-radius:999px;flex:none}
 .exp-t1{background:rgba(50,98,149,.14);color:#2B5580}.exp-t2{background:rgba(232,194,90,.22);color:#8A6D12}.exp-t3{background:rgba(59,209,131,.16);color:#1B7A46}
+.exp-soft{background:rgba(255,77,102,.12);color:#B0242E}
+.exp-why{background:rgba(30,160,180,.16);color:#0E6B7A}
 .exp-empty{font-size:12px;color:var(--pb-faint);font-style:italic;padding:6px 0}
 .lmpanel{background:var(--pb-cream,#F7F7F5);border:1px solid var(--pb-line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:7px}
 .lmpanel-empty{color:var(--pb-muted);font-size:11.5px;font-style:italic}
@@ -1935,11 +1937,11 @@ function renderSummary(){
 function parseExpiry(s){
   if(!s) return null;
   s=String(s).trim();
-  let m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);      // dd/mm/yyyy
+  let m=s.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);            // dd/mm/yyyy — anywhere in the text
   if(m) return new Date(+m[3],+m[2]-1,+m[1]).getTime();
-  m=s.match(/(\d{1,2})\s+([A-Za-z]{3,})\s+(\d{4})/);      // 3 Oct 2026
+  m=s.match(/(\d{1,2})\s+([A-Za-z]{3,})\s+(\d{4})/);          // 3 Oct 2026
   if(m){const mo=["jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"].indexOf(m[2].slice(0,3).toLowerCase()); if(mo>=0) return new Date(+m[3],mo,+m[1]).getTime();}
-  m=s.match(/(\d{4})-(\d{2})-(\d{2})/);                    // yyyy-mm-dd
+  m=s.match(/(\d{4})-(\d{2})-(\d{2})/);                        // yyyy-mm-dd
   if(m) return new Date(+m[1],+m[2]-1,+m[3]).getTime();
   return null;
 }
@@ -1954,7 +1956,10 @@ function harvestExpiries(){
         const hay=(String(lmVal(t,i,r,label[t])||"")+" "+String(lmVal(t,i,r,t==="t1"?"camp":"prog")||"")).toLowerCase();
         // deals only — whether 62W(3) exempts notable persons in racing content is an open legal question (Nathan)
         const racing=(t!=="t2")&&/racing\.com|rdc|racing channel/.test(hay);
-        out.push({t,name:String(lmVal(t,i,r,label[t])||"—"),exp:ms,raw:String(raw),kind:t==="t2"?"Talent":"Deal",racing});
+        const ch=t==="t1"?String(lmVal(t,i,r,"ch")||"").toLowerCase():"";
+        const outdoor=/out-of-home|dooh|\booh\b/.test(ch+" "+hay);
+        const soft=/tbc|renewal in progress|not signed|not contracted/i.test(String(raw));
+        out.push({t,name:String(lmVal(t,i,r,label[t])||"—"),exp:ms,raw:String(raw),kind:t==="t2"?"Talent":"Deal",racing,outdoor,soft});
       }
     });
   });
@@ -1964,9 +1969,10 @@ function renderExpiries(){
   const exps=harvestExpiries();
   const commence=new Date("2027-01-01").getTime();
   const racingHolds=S.racing!=="off";  // scenario lever: carve-out continuing?
+  const contReason=e=>e.racing&&racingHolds?"racing":(e.outdoor?"ooh":null);
   const before=exps.filter(e=>e.exp<commence);
-  const canContinue=exps.filter(e=>e.exp>=commence && e.racing && racingHolds);
-  const through=exps.filter(e=>e.exp>=commence && !(e.racing && racingHolds));
+  const canContinue=exps.filter(e=>e.exp>=commence && contReason(e));
+  const through=exps.filter(e=>e.exp>=commence && !contReason(e));
   const fmtD=ms=>{const d=new Date(ms);return d.getDate()+" "+["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()]+" "+String(d.getFullYear()).slice(2);};
   const monthKey=ms=>{const d=new Date(ms);return d.getFullYear()+"-"+String(d.getMonth()).padStart(2,"0");};
   const monthLabel=ms=>{const d=new Date(ms);return ["January","February","March","April","May","June","July","August","September","October","November","December"][d.getMonth()]+" "+d.getFullYear();};
@@ -1974,7 +1980,7 @@ function renderExpiries(){
   const monthGroups=list=>{const seen=[],map={};list.forEach(e=>{const k=monthKey(e.exp);if(!map[k]){map[k]=[];seen.push(k);}map[k].push(e);});return seen.map(k=>({label:monthLabel(map[k][0].exp),items:map[k]}));};
   const colHTML=(list,tone)=>list.length?monthGroups(list).map(g=>`
       <div class="exp-month">${esc(g.label)}</div>
-      ${g.items.map(e=>`<div class="exp-row"><span class="exp-dot ${tone}"></span><span class="exp-name">${esc(e.name)}</span>${kindBadge(e)}<span class="exp-date">${fmtD(e.exp)}</span></div>`).join("")}
+      ${g.items.map(e=>`<div class="exp-row"><span class="exp-dot ${tone}"></span><span class="exp-name" title="${esc(e.raw)}">${esc(e.name)}</span>${tone==="cont"?`<span class="exp-kind exp-why" title="${e.racing?"Racing carve-out (s10A(3)/62G) — per active scenario lever":"No general OOH/DOOH provision in the bill — assumes compliant locations (62V venue-perimeter check)"}">${e.racing?"Racing":"OOH"}</span>`:""}${e.soft?'<span class="exp-kind exp-soft" title="Date extracted from a TBC / in-progress note — confirm">TBC</span>':''}${kindBadge(e)}<span class="exp-date">${fmtD(e.exp)}</span></div>`).join("")}
     `).join(""):`<div class="exp-empty">None</div>`;
   const pctBefore=exps.length?Math.round(100*before.length/exps.length):0;
   /* --- dot timeline: one column of stacked dots per month, no per-item labels (names on hover) --- */
@@ -2009,15 +2015,15 @@ function renderExpiries(){
       <text x="${tx}" y="${axisY+29}" font-size="9.5" fill="var(--pb-muted)" text-anchor="middle">Today</text>
       <line x1="${cx}" y1="${topY}" x2="${cx}" y2="${axisY}" stroke="#FF4D66" stroke-width="2" stroke-dasharray="4 3"/>
       <text x="${cx}" y="${topY-4}" font-size="10.5" font-weight="700" fill="#B0242E" text-anchor="middle">1 Jan 2027</text>
-      ${dots.map(d=>{const col=d.e.exp<commence?"#3BD183":(d.e.racing&&racingHolds?"#1EA0B4":"#FF9A3D");return `<circle cx="${d.x}" cy="${d.y}" r="${dotR}" fill="${col}" stroke="#fff" stroke-width="1.5"><title>${esc(d.e.name)} · ${fmtFull(d.e.exp)}${d.e.racing&&racingHolds&&d.e.exp>=commence?" · racing carve-out":""}</title></circle>`}).join("")}
+      ${dots.map(d=>{const col=d.e.exp<commence?"#3BD183":(contReason(d.e)?"#1EA0B4":"#FF9A3D");return `<circle cx="${d.x}" cy="${d.y}" r="${dotR}" fill="${col}" stroke="#fff" stroke-width="1.5"><title>${esc(d.e.name)} · ${fmtFull(d.e.exp)}${contReason(d.e)&&d.e.exp>=commence?(d.e.racing?" · racing carve-out":" · OOH — locations assumed compliant"):""}</title></circle>`}).join("")}
     </svg></div>`;
   }
   const body = exps.length? `<div class="panel">
     ${dotTL}
-    <p style="font-size:13px;color:var(--pb-muted);margin:10px 0 16px"><b style="color:#1B7A46">${before.length}</b> of ${exps.length} dated contracts lapse <b>before</b> 1 Jan 2027 — natural exit / renegotiation points. ${canContinue.length?`<b style="color:#0E6B7A">${canContinue.length}</b> run through but <b>can continue</b> under the racing carve-out (per the active scenario lever). `:""}<b style="color:#B0242E">${through.length}</b> run through commencement and need active restructuring.${racingHolds?"":" Racing Exemption lever is set to <b>No</b> — racing deals are shown as must-restructure."} Hover a dot for the contract.</p>
+    <p style="font-size:13px;color:var(--pb-muted);margin:10px 0 16px"><b style="color:#1B7A46">${before.length}</b> of ${exps.length} dated contracts lapse <b>before</b> 1 Jan 2027 — natural exit / renegotiation points. ${canContinue.length?`<b style="color:#0E6B7A">${canContinue.length}</b> run through but <b>can continue</b> — racing carve-out per the active lever${canContinue.some(e=>!e.racing&&e.outdoor)?", and OOH (no general outdoor provision in the bill; assumes all panels are compliantly located away from venue perimeters — 62V)":""}. `:""}<b style="color:#B0242E">${through.length}</b> run through commencement and need active restructuring.${racingHolds?"":" Racing Exemption lever is set to <b>No</b> — racing deals are shown as must-restructure."} Hover a dot for the contract.</p>
     <div class="exp-cols ${canContinue.length?'exp-cols-3':''}">
       <div class="exp-col"><div class="exp-colhead exp-colhead-safe">Lapses before commencement · leverage</div>${colHTML(before,"safe")}</div>
-      ${canContinue.length?`<div class="exp-col"><div class="exp-colhead exp-colhead-cont">Runs through 1 Jan 2027 · can continue (racing carve-out)</div>${colHTML(canContinue,"cont")}</div>`:""}
+      ${canContinue.length?`<div class="exp-col"><div class="exp-colhead exp-colhead-cont">Runs through 1 Jan 2027 · can continue</div>${colHTML(canContinue,"cont")}</div>`:""}
       <div class="exp-col"><div class="exp-colhead exp-colhead-risk">Runs through 1 Jan 2027 · must restructure</div>${colHTML(through,"risk")}</div>
     </div></div>`
     : `<div class="panel"><p style="font-size:13px;color:var(--pb-muted)">No dated contract expiries in the Legal Map yet. Fill the <b>Contract expiry</b> columns in Step 8 · Legal Map and they'll appear here automatically, split around the 1 Jan 2027 commencement date.</p>
