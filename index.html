@@ -1190,21 +1190,59 @@ async function loadFromCloud(silent){
   }catch(e){ console.error("Supabase load failed",e); setSyncStatus("offline"); }
 }
 let saveTimer=null;
+/* Merge a colleague's cloud payload into ours before pushing, so a stale tab
+   can't overwrite their additions. Rules:
+   - channels: union by channel name — rows they added that we don't have are kept.
+     (Caveat: a row deleted on one side while the other still holds it will come back.)
+   - lm.edits / lm.removed: map union, local value wins on the same key.
+   - plans: map union, local wins per asset.
+   - scenarios: last write wins (single shared dial, by design). */
+function mergePayload(local, cloud){
+  if(!cloud) return local;
+  const out={plans:{...(cloud.plans||{}),...(local.plans||{})},
+             scenarios:local.scenarios,
+             lm:local.lm, channels:local.channels};
+  // channels union by name
+  try{
+    const lRows=(local.channels&&local.channels.rows)||[];
+    const cRows=(cloud.channels&&cloud.channels.rows)||[];
+    const seen=new Set(lRows.map(r=>String(r.ch||"").trim().toLowerCase()));
+    const merged=lRows.concat(cRows.filter(r=>!seen.has(String(r.ch||"").trim().toLowerCase())));
+    out.channels={rows:merged};
+  }catch(e){}
+  // lm maps union (local wins on conflicts)
+  try{
+    const lLM=local.lm||{}, cLM=cloud.lm||{};
+    out.lm={...cLM,...lLM,
+      edits:{...(cLM.edits||{}),...(lLM.edits||{})},
+      removed:{...(cLM.removed||{}),...(lLM.removed||{})}};
+  }catch(e){}
+  return out;
+}
+async function saveToCloud(){
+  try{
+    // pull-before-push: fetch the latest shared row and merge, so we never clobber
+    let cloud=null;
+    try{
+      const r=await fetch(`${SUPA_URL}${SUPA_TABLE}?id=eq.shared&select=data`,{headers:SUPA_HEADERS});
+      if(r.ok){ const rows=await r.json(); cloud=rows&&rows[0]&&rows[0].data; }
+    }catch(e){}
+    const merged=mergePayload({plans:PLANS,scenarios:S,lm:LM,channels:CHANNELS}, cloud);
+    // adopt the merge locally too, so our own view gains their additions immediately
+    if(cloud){ PLANS=merged.plans; LM=merged.lm; CHANNELS=merged.channels;
+      try{ localStorage.setItem(STORE,JSON.stringify(merged)); }catch(e){} }
+    const res=await fetch(`${SUPA_URL}${SUPA_TABLE}?id=eq.shared`,{method:"PATCH",
+      headers:{...SUPA_HEADERS,Prefer:"return=minimal"},
+      body:JSON.stringify({data:merged,updated_at:new Date().toISOString()})});
+    if(!res.ok) throw new Error("HTTP "+res.status);
+    setSyncStatus("synced");
+  }catch(e){ console.error("Supabase save failed",e); setSyncStatus("error"); }
+}
 function persist(){
   try{ localStorage.setItem(STORE,JSON.stringify({plans:PLANS,scenarios:S,lm:LM,channels:CHANNELS})); }catch(e){}
   lastLocalEdit=Date.now();
   setSyncStatus("saving"); clearTimeout(saveTimer); saveTimer=setTimeout(saveToCloud,600);
 }
-async function saveToCloud(){
-  try{
-    const res=await fetch(`${SUPA_URL}${SUPA_TABLE}?id=eq.shared`,{method:"PATCH",
-      headers:{...SUPA_HEADERS,Prefer:"return=minimal"},
-      body:JSON.stringify({data:{plans:PLANS,scenarios:S,lm:LM,channels:CHANNELS},updated_at:new Date().toISOString()})});
-    if(!res.ok) throw new Error("HTTP "+res.status);
-    setSyncStatus("synced");
-  }catch(e){ console.error("Supabase save failed",e); setSyncStatus("error"); }
-}
-
 const PATHS=["— choose —","Exit","Renegotiate","Restructure","Build owned","Protect","Monitor","No action"];
 const QUICK=["Exit","Renegotiate","Restructure","Build owned","Protect","Monitor"];
 const VERB_HINT={Exit:"Wind down or terminate before commencement.",Renegotiate:"Re-scope the deal — strip prohibited elements or lock compliant (gated) delivery into the terms.",Restructure:"Rework format, windows or talent roles to comply.","Build owned":"Shift value into owned, logged-in surfaces.",Protect:"Compliant — protect and grow.",Monitor:"Watch and confirm; no change needed yet."};
@@ -2233,7 +2271,7 @@ loadFromCloud(true).then(render);
 setInterval(()=>{
   const ae=document.activeElement;
   const editing=ae&&(ae.tagName==="INPUT"||ae.tagName==="TEXTAREA"||ae.tagName==="SELECT");
-  if(editing||Date.now()-lastLocalEdit<15000) return; // user mid-edit or save in flight — don't pull or re-render
+  if(editing||Date.now()-lastLocalEdit<5000) return; // user mid-edit or save in flight — don't pull or re-render
   loadFromCloud(true).then(()=>{ if(!openAsset) render(); });
 }, 20000);
 
