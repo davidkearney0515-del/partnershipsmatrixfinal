@@ -1121,6 +1121,30 @@ const CHANNELS_SEED=[
 ];
 let CHANNELS=null;
 function seedChannels(){ if(!CHANNELS||!CHANNELS.rows||!CHANNELS.rows.length){ CHANNELS={rows:CHANNELS_SEED.map(r=>({...r}))}; } }
+/* Migration: Triple Lock assessments from Darragh McCullagh & Robert Bryant (17 Jul 2026 Slack).
+   Appends by name if missing; flagged so it runs once per shared dataset. */
+const CH_MIG_DR1=[
+ {ch:"Programmatic BVOD/SVOD",login:"Compulsory",v18:"No",wager:"No",racing:"No",
+  note:"Login is inherently met — you can't stream without an account. Fails on the other two: DOB is self-declared at signup, not verified, and no opt-out exists on any platform yet. The bigger issue is proof — TTD reporting shows delivery, not lock status, so there's no per-impression record that compliance was applied. Post 1 Jan 2027 this means direct/PG deals only, with the platform warranting the lock in the IO."},
+ {ch:"Programmatic Display",login:"No",v18:"No",wager:"No",racing:"No",
+  note:"Open web has no account layer, so the lock can't apply. Age targeting via TTD is inferred from cookies, not verified. No way to make open exchange compliant. From 1 Jan 2027 wagering display is effectively dead outside logged-in environments."},
+ {ch:"FoxSports/FoxLeague",login:"No",v18:"No",wager:"No",racing:"No",
+  note:"Content browsable without an account, so most traffic is logged-out. No age gating and no opt-out. Same position as ESPN.com. Any wagering ads here would need Fox to gate the content or verify users."},
+ {ch:"Kayo/Foxtel",login:"Compulsory",v18:"No",wager:"No",racing:"No",
+  note:"Kayo needs an account to stream, so login is met but DOB is self-declared and there's no opt-out built yet."},
+ {ch:"Reddit",login:"Optional",v18:"No",wager:"No",racing:"No",
+  note:"16 threshold. Fully browsable logged out, and logged-out sessions are ad-served. Age assurance runs via a privacy-preserving model that predicts under-16s and asks them to verify — assurance is to 16, not 18. Soft 'see fewer' sensitive-category toggle (incl. gambling) is best-effort, default-off, logged-in only. Gambling advertisers require manual certification via Reddit sales. Under-18 experience rolling out globally with restrictions on personalised and sensitive ads. Confirm."},
+ {ch:"Snapchat",login:"Compulsory",v18:"No",wager:"No",racing:"No",
+  note:"16 threshold. Account required for the app, where virtually all ad inventory sits — every impression maps to an account with a declared age, stronger than open-web channels, but DOB is self-declared and age isn't verified to 18+. Soft 'see fewer' ad-topic control (incl. gambling); gambling ads off by default for under-age users. Confirm."}
+];
+function migrateChDR1(){
+  if(!CHANNELS||CHANNELS.migDR1) return false;
+  const seen=new Set((CHANNELS.rows||[]).map(r=>String(r.ch||"").trim().toLowerCase()));
+  let added=false;
+  CH_MIG_DR1.forEach(r=>{ if(!seen.has(r.ch.toLowerCase())){ CHANNELS.rows.push({...r}); added=true; } });
+  CHANNELS.migDR1=true;
+  return true; // flag set counts as a change worth persisting
+}
 function channelVerdict(r){
   if(!r) return "Not locked";
   if(r.racing==="Yes") return "Racing-exempt";  // 62W(3)/62E dedicated-racing carve-out overrides the lock
@@ -1177,7 +1201,7 @@ seedProfiles();
 function setSyncStatus(state){ const el=$("#syncStatus"); if(!el) return;
   const map={loading:"Loading…",saving:"Saving…",synced:"✓ Synced",offline:"Offline — local only",error:"⚠ Save failed, retrying"};
   el.textContent=map[state]||""; el.className="syncstat "+state; }
-function applyCloud(o){ PLANS=o.plans||{}; if(o.scenarios)SCENARIOS.forEach(s=>{if(s.id in o.scenarios)S[s.id]=o.scenarios[s.id];}); if(o.lm)LM=o.lm; if(o.channels)CHANNELS=o.channels; seedChannels(); {const a=migrateL3J(),b=migrateWbOnly(); if(a||b) persist();}
+function applyCloud(o){ PLANS=o.plans||{}; if(o.scenarios)SCENARIOS.forEach(s=>{if(s.id in o.scenarios)S[s.id]=o.scenarios[s.id];}); if(o.lm)LM=o.lm; if(o.channels)CHANNELS=o.channels; seedChannels(); {const a=migrateL3J(),b=migrateWbOnly(),c=migrateChDR1(); if(a||b||c) persist();}
   seedProfiles();
   try{ localStorage.setItem(STORE,JSON.stringify({plans:PLANS,scenarios:S,lm:LM,channels:CHANNELS})); }catch(e){} }
 async function loadFromCloud(silent){
@@ -2265,7 +2289,7 @@ const ct=$("#coreToggle"); if(ct) ct.onclick=()=>{
 };
 // clock
 (function(){const el=$("#clock");if(el){const f=()=>el.textContent=new Date().toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'})+' · '+new Date().toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});f();setInterval(f,30000);} })();
-{const a=migrateL3J(),b=migrateWbOnly(); if(a||b) persist();}
+{const a=migrateL3J(),b=migrateWbOnly(),c=migrateChDR1(); if(a||b||c) persist();}
 render();
 loadFromCloud(true).then(render);
 setInterval(()=>{
