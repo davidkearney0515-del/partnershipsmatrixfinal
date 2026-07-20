@@ -727,6 +727,48 @@ input.ap-input,select.ap-select,textarea{background:var(--pb-panel);border-color
 .exp-soft{background:rgba(255,77,102,.12);color:#B0242E}
 .exp-why{background:rgba(30,160,180,.16);color:#0E6B7A}
 .exp-empty{font-size:12px;color:var(--pb-faint);font-style:italic;padding:6px 0}
+/* ===== Overview ===== */
+.ov-hero{display:grid;grid-template-columns:1.6fr 1fr;gap:18px;background:linear-gradient(135deg,#0E0E10 0%,#161618 55%,#1D1D1F 100%);color:#fff;border-radius:var(--r,10px);padding:26px;margin-bottom:18px}
+@media(max-width:900px){.ov-hero{grid-template-columns:1fr}}
+.ov-kicker{font:11px var(--fmono);letter-spacing:.06em;text-transform:uppercase;color:var(--pb-red);margin-bottom:10px}
+.ov-hero-main h2{font-size:26px;margin:0 0 8px;color:#fff}
+.ov-hero-main p{color:#B9B9BE;font-size:13px;max-width:560px}
+.ov-cta{display:flex;gap:8px;margin-top:14px}
+.ov-hero .chipbtn{background:var(--pb-red);border-color:var(--pb-red);color:#0A0A0C;font-weight:700}
+.ov-hero-side{border-left:1px solid rgba(255,255,255,.12);padding-left:18px;display:flex;flex-direction:column;gap:6px}
+@media(max-width:900px){.ov-hero-side{border-left:0;padding-left:0;border-top:1px solid rgba(255,255,255,.12);padding-top:14px}}
+.ov-next-label{font:10px var(--fmono);letter-spacing:.08em;text-transform:uppercase;color:#8E8E93}
+.ov-next{font-size:16px;font-weight:700;color:#fff}
+.ov-hero-side p{color:#B9B9BE;font-size:12px;flex:1}
+.ov-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+@media(max-width:900px){.ov-metrics{grid-template-columns:1fr 1fr}}
+.ov-metric{background:var(--pb-panel);border:1px solid var(--pb-line);border-radius:8px;padding:14px 16px}
+.ov-metric.risk{border-left:3px solid #FF4D66}.ov-metric.warn{border-left:3px solid #FF9A3D}.ov-metric.good{border-left:3px solid #3BD183}
+.ov-mv{font:700 24px/1.1 var(--fmono);color:var(--pb-ink)}
+.ov-ml{font-size:12px;font-weight:700;margin-top:3px}
+.ov-mf{font-size:11px;color:var(--pb-muted)}
+.ov-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:16px}
+@media(max-width:900px){.ov-grid{grid-template-columns:1fr}}
+.ov-q{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:transparent;border:0;border-bottom:1px solid var(--pb-line);padding:9px 2px;cursor:pointer}
+.ov-q:hover{background:var(--chrome2)}
+.ov-qn{font:700 12px var(--fmono);color:var(--pb-faint)}
+.ov-qt{flex:1;display:flex;flex-direction:column}
+.ov-qt b{font-size:13px}
+.ov-qt span{font-size:11px;color:var(--pb-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:52ch}
+.ov-qv{font:700 12px var(--fmono);white-space:nowrap}
+.ov-reg{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:transparent;border:0;padding:8px 2px;cursor:pointer}
+.ov-reg:hover{background:var(--chrome2)}
+.ov-regt{flex:1;display:flex;flex-direction:column}
+.ov-regt b{font-size:12.5px}.ov-regt span{font-size:11px;color:var(--pb-muted)}
+.ov-bar{width:110px;height:6px;border-radius:999px;background:var(--pb-line);overflow:hidden;flex:none}
+.ov-bar i{display:block;height:100%;background:#3BD183}
+/* ===== Decision operating record ===== */
+.wl-oper{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.wl-owner{width:150px;font-size:12px;padding:4px 8px;border:1px solid var(--pb-line2);border-radius:6px;background:var(--pb-panel)}
+.wl-opstatus,.wl-due{font-size:12px;padding:4px 8px;border:1px solid var(--pb-line2);border-radius:6px;background:var(--pb-panel)}
+/* ===== Legal Map toolbar ===== */
+.lmsearch{flex:0 1 260px;font-size:12.5px;padding:6px 10px;border:1px solid var(--pb-line2);border-radius:999px;background:var(--pb-panel)}
+.chip-on{background:var(--pb-red)!important;border-color:var(--pb-red)!important;color:#0A0A0C!important}
 .lmpanel{background:var(--pb-cream,#F7F7F5);border:1px solid var(--pb-line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:7px}
 .lmpanel-empty{color:var(--pb-muted);font-size:11.5px;font-style:italic}
 .lmhit{display:flex;align-items:baseline;gap:8px;font-size:11.5px;flex-wrap:wrap}
@@ -1285,7 +1327,8 @@ const STATUSES=["Not started","In progress","Locked"];
 const $=s=>document.querySelector(s); const $$=s=>[...document.querySelectorAll(s)];
 const esc=s=>(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
-let activeView="status", activeFilter="all", openAsset=null, pathAsset=null, assetsView="needs", lastLocalEdit=0;
+let LM_Q="", LM_GAPSONLY=false;
+let activeView="overview", activeFilter="all", openAsset=null, pathAsset=null, assetsView="needs", lastLocalEdit=0;
 
 
 /* ============ LEGAL MAP: PBA Marketing Map registers (due Wed 9 Jul) ============ */
@@ -1475,7 +1518,13 @@ function renderLegalMap(){
     return `<button class="lmtab ${lmTab===t?'on':''}" data-lmtab="${t}">${LEGALMAP[t].title}${g?` <span class="lmgap">${g}</span>`:' <span class="lmdone">✓</span>'}</button>`;}).join("");
   const totalGaps=Object.keys(LEGALMAP).reduce((n,t)=>n+lmGapCount(t),0);
   const head=reg.cols.map(c=>`<th style="min-width:${c[2]}px">${c[1]}</th>`).join("")+"<th></th>";
-  const body=lmVisible(lmTab).map(({r,i})=>"<tr>"+reg.cols.map(c=>{
+  const q=LM_Q.trim().toLowerCase();
+  const rowsToShow=lmVisible(lmTab).filter(({r,i})=>{
+    if(LM_GAPSONLY && !(r._red||[]).some(k=>!lmVal(lmTab,i,r,k))) return false;
+    if(!q) return true;
+    return reg.cols.some(c=>String(lmVal(lmTab,i,r,c[0])||"").toLowerCase().includes(q));
+  });
+  const body=rowsToShow.map(({r,i})=>"<tr>"+reg.cols.map(c=>{
     const k=c[0],v=lmVal(lmTab,i,r,k),gap=lmIsGap(lmTab,i,r,k);
     if(c[3]){const opts=c[3].map(o=>`<option ${o===v?'selected':''}>${esc(o)}</option>`).join("");
       return `<td class="${gap?'lmred':''}"><select class="lm-sel" data-t="${lmTab}" data-r="${i}" data-k="${k}">${opts}</select></td>`;}
@@ -1485,7 +1534,9 @@ function renderLegalMap(){
     <h2>PBA Marketing Map</h2><p>Fill the registers here — everything saves and syncs live. <b>Red cells are the gaps</b>; the counter clears as they're filled. Facts only — Legal's cream columns stay with Legal.</p></div>
     <div style="text-align:right"><div class="bignum" id="lmTotal">${totalGaps}</div><div class="k">gaps to fill</div></div></div>
     <div class="lmtabs">${tabs}</div>
-    <div class="lmbar"><button class="chipbtn" id="lmAdd">+ Add row</button>
+    <div class="lmbar"><input class="lmsearch" id="lmSearch" value="${esc(LM_Q)}" placeholder="Search ${esc(reg.title.toLowerCase())}…">
+      <button class="chipbtn ${LM_GAPSONLY?'chip-on':''}" id="lmGapsOnly">Gaps only <b>${lmGapCount(lmTab)}</b></button>
+      <button class="chipbtn" id="lmAdd">+ Add row</button>
       <button class="chipbtn" id="lmExportTab">Export this register (CSV)</button>
       <button class="chipbtn" id="lmExportAll">Export all 4 (CSV)</button>
       <button class="chipbtn" id="lmExportXlsx">⬇ Export to Excel (Legal format)</button>
@@ -1495,7 +1546,7 @@ function renderLegalMap(){
 
 /* ============ RENDER: workflow + shell ============ */
 function renderFlow(){
-  const steps=[["status","Asset Status",""],["channels","Channels","Triple Lock"],["scenario","Legislation Scenarios","How hard it lands"],["assets","Decisions",""],["paths","Paths","If X, then Y"],["summary","Exec Summary","The one-pager"],["actions","Actions","H2 roadmap"],["legalmap","Legal Map","due Wed 9 Jul"],["expiries","Expiries","Contract runway"],["notes","Logic","Appendix"]];
+  const steps=[["overview","Overview","Where it stands"],["status","Asset Status",""],["channels","Channels","Triple Lock"],["scenario","Legislation Scenarios","How hard it lands"],["assets","Decisions",""],["paths","Paths","If X, then Y"],["summary","Exec Summary","The one-pager"],["actions","Actions","H2 roadmap"],["legalmap","Legal Map","due Wed 9 Jul"],["expiries","Expiries","Contract runway"],["notes","Logic","Appendix"]];
   document.getElementById("sidenav").classList.toggle("collapsed",NAV_COLLAPSED);
   const tg=$("#navToggle"); if(tg) tg.textContent=NAV_COLLAPSED?"›":"‹";
   $("#flow").innerHTML=steps.map((s,i)=>`<button class="step ${activeView===s[0]?'on':''}" data-v="${s[0]}" title="${esc(s[1])}${s[2]?' · '+esc(s[2]):''}">
@@ -1548,6 +1599,65 @@ const PRESETS={
 }
 
 /* ============ RENDER: asset grid ============ */
+function renderOverview(){
+  const scope=orderedAssets(); scope.forEach(a=>a._ev=evalAsset(a));
+  const actionable=scope.filter(a=>["exposed","rework"].includes(a._ev.key));
+  const exposed=scope.filter(a=>a._ev.key==="exposed");
+  const flagged=actionable.reduce((s,a)=>s+a.lines.reduce((x,l)=>x+(l.annual||0),0),0);
+  const decided=a=>{const p=PLANS[a.asset];return p&&p.path&&p.path!=="— choose —"&&p.path!=="No action";};
+  const locked=actionable.filter(a=>(PLANS[a.asset]||{}).status==="Locked").length;
+  const doneCount=actionable.filter(decided).length;
+  const gapsTotal=["t1","t2","t3","t4"].reduce((s,t)=>s+lmGapCount(t),0);
+  const days=Math.max(0,Math.ceil((new Date("2027-01-01T00:00:00+11:00")-new Date())/86400000));
+  const rank=a=>ST[a._ev.key].rank;
+  const queue=actionable.filter(a=>!decided(a)).sort((x,y)=>(rank(x)-rank(y))||(y.lines.reduce((s,l)=>s+l.annual,0)-x.lines.reduce((s,l)=>s+l.annual,0))).slice(0,6);
+  const next=queue[0];
+  const regRows=["t1","t2","t3","t4"].map(t=>{
+    const rows=lmVisible(t).length, gaps=lmGapCount(t);
+    const reds=lmVisible(t).reduce((s,{r})=>s+((r._red||[]).length),0);
+    const pct=reds?Math.round(100*(reds-gaps)/reds):100;
+    return {t,title:LEGALMAP[t].title,rows,gaps,pct};
+  });
+  const mfmt=v=>"$"+(v>=1e6?(v/1e6).toFixed(2)+"m":Math.round(v/1000)+"k");
+  return `<div class="view">
+    <div class="ov-hero">
+      <div class="ov-hero-main">
+        <div class="ov-kicker">Bill-as-introduced scenario · <b>${days} days</b> to 1 Jan 2027 commencement</div>
+        <h2>${actionable.length-doneCount} decision${actionable.length-doneCount===1?"":"s"} still need${actionable.length-doneCount===1?"s":""} a clear path.</h2>
+        <p>Everything below is computed live from the shared dataset — the Legal Map facts, the Triple Lock board, the ${"$"+(scope.reduce((s,a)=>s+a.lines.reduce((x,l)=>x+l.annual,0),0)/1e6).toFixed(1)}m FY27 portfolio and the scenario levers.</p>
+        <div class="ov-cta"><button class="chipbtn" data-v-jump="assets">Work the decision queue</button>
+        <button class="chipbtn" data-v-jump="legalmap">Complete the Legal Map</button></div>
+      </div>
+      <div class="ov-hero-side">
+        <div class="ov-next-label">Recommended next move</div>
+        <div class="ov-next">${next?`<b>${esc(recVerb(next))}:</b> ${esc(next.asset)}`:"All priority decisions have a path."}</div>
+        <p>${esc(next?(next._ev.reasons[0]||""):"Review the monitoring queue and keep the Legal Map current.")}</p>
+        ${next?`<button class="chipbtn" data-v-jump="assets">Open decisions →</button>`:""}
+      </div>
+    </div>
+    <div class="ov-metrics">
+      <div class="ov-metric risk"><div class="ov-mv">${exposed.length}</div><div class="ov-ml">Exposed groups</div><div class="ov-mf">under the active scenario</div></div>
+      <div class="ov-metric warn"><div class="ov-mv">${mfmt(flagged)}</div><div class="ov-ml">Flagged portfolio value</div><div class="ov-mf">exposed + restructure groups</div></div>
+      <div class="ov-metric ${gapsTotal?'warn':'good'}"><div class="ov-mv">${gapsTotal}</div><div class="ov-ml">Legal Map gaps</div><div class="ov-mf">across the four registers</div></div>
+      <div class="ov-metric ${locked===actionable.length&&actionable.length?'good':''}"><div class="ov-mv">${doneCount}/${actionable.length}</div><div class="ov-ml">Decisions with a path</div><div class="ov-mf">${locked} locked</div></div>
+    </div>
+    <div class="ov-grid">
+      <div class="panel"><div class="k">Priority queue · severity then value</div>
+        ${queue.length?queue.map((a,i)=>`<button class="ov-q" data-v-jump="assets">
+          <span class="ov-qn">${String(i+1).padStart(2,"0")}</span>
+          <span class="ov-qt"><b>${esc(a.asset)}</b><span>${esc(a._ev.reasons[0]||"")}</span></span>
+          <span class="ov-qv">${mfmt(a.lines.reduce((s,l)=>s+l.annual,0))}</span></button>`).join("")
+        :`<div class="exp-empty">Queue cleared — every actionable group has a path.</div>`}
+      </div>
+      <div class="panel"><div class="k">Legal Map readiness</div>
+        ${regRows.map(r=>`<button class="ov-reg" data-v-jump="legalmap">
+          <span class="ov-regt"><b>${esc(r.title)}</b><span>${r.gaps} gaps · ${r.rows} rows</span></span>
+          <span class="ov-bar"><i style="width:${r.pct}%"></i></span></button>`).join("")}
+        <div class="ov-mf" style="margin-top:8px">Progress counts required (red) cells only; archived rows excluded.</div>
+      </div>
+    </div>
+  </div>`;
+}
 function renderAssets(){
   if(typeof assetsView==="undefined") assetsView="needs";
   const scope=orderedAssets();
@@ -1583,6 +1693,11 @@ function renderAssets(){
       <div class="wl-decide">
         <span class="wl-declab">Decision</span>
         <div class="wl-verbs">${verbs}</div>
+      </div>
+      <div class="wl-oper">
+        <input class="wl-owner" data-a="${esc(a.asset)}" data-k="owner" value="${esc((plan&&plan.owner)||'')}" placeholder="Owner">
+        <select class="wl-opstatus" data-a="${esc(a.asset)}" data-k="opstatus">${["Not started","In progress","Locked"].map(s=>`<option ${((plan&&plan.opstatus)||"Not started")===s?'selected':''}>${s}</option>`).join('')}</select>
+        <input class="wl-due" type="date" data-a="${esc(a.asset)}" data-k="due" value="${esc((plan&&plan.due)||'')}" title="Target date">
         ${isDone&&plan.status?`<span class="wl-status">${esc(plan.status)}</span>`:''}
       </div>
     </div>`;
@@ -2191,6 +2306,7 @@ function render(){
   else if(activeView==="paths") m.innerHTML=renderPaths();
   else if(activeView==="summary") m.innerHTML=renderSummary();
   else if(activeView==="actions") m.innerHTML=renderActions();
+  else if(activeView==="overview") m.innerHTML=renderOverview();
   else if(activeView==="legalmap") m.innerHTML=renderLegalMap();
   else if(activeView==="expiries") m.innerHTML=renderExpiries();
   else if(activeView==="notes") m.innerHTML=renderNotes();
@@ -2234,6 +2350,8 @@ function bind(){
   $$(".lmjump-asset").forEach(b=>b.onclick=()=>{lmTab=b.dataset.lmt||"t1"; activeView="legalmap"; render(); window.scrollTo(0,0);});
   $$(".lmdel").forEach(b=>b.onclick=()=>{LM.removed=LM.removed||{}; LM.removed[b.dataset.t+":"+b.dataset.r]=1; persist(); render();});
   const lmR=$("#lmRestore"); if(lmR) lmR.onclick=()=>{Object.keys(LM.removed||{}).forEach(k=>{if(k.startsWith(lmTab+":")) delete LM.removed[k];}); persist(); render();};
+  const lmS=$("#lmSearch"); if(lmS){ let t; lmS.oninput=()=>{LM_Q=lmS.value; clearTimeout(t); t=setTimeout(()=>{render(); const el=$("#lmSearch"); if(el){el.focus(); el.setSelectionRange(el.value.length,el.value.length);}},260);}; }
+  const lmG=$("#lmGapsOnly"); if(lmG) lmG.onclick=()=>{LM_GAPSONLY=!LM_GAPSONLY; render();};
   const lmX=$("#lmExportXlsx"); if(lmX) lmX.onclick=async()=>{
     const orig=lmX.textContent; lmX.textContent="Building…"; lmX.disabled=true;
     try{
@@ -2260,6 +2378,10 @@ function bind(){
   const lea=$("#lmExportAll"); if(lea) lea.onclick=()=>Object.keys(LEGALMAP).forEach((t,i)=>setTimeout(()=>lmCSV(t),i*350));
 
   $$(".wl-more").forEach(b=>b.onclick=()=>openWorkspace(b.dataset.a));
+  $$(".wl-owner,.wl-opstatus,.wl-due").forEach(el=>el.onchange=()=>{
+    const name=el.dataset.a; if(!PLANS[name]) PLANS[name]={path:"— choose —",owner:"",target:"",status:"Not started",prio:"",notes:""};
+    PLANS[name][el.dataset.k]=el.value; persist();
+  });
   $$(".verb").forEach(b=>b.onclick=()=>{const name=b.dataset.a,v=b.dataset.verb;
     const a=PORTFOLIO.find(x=>x.asset===name); a._ev=evalAsset(a);
     const ex=PLANS[name];
