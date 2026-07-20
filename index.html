@@ -1,9 +1,8 @@
 <!doctype html>
 <html lang="en"><head>
+<!-- fonts: system Aptos / Calibri only -->
 <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <title>PointsBet · Reform Scenario Planner V2.2</title>
 <meta name="description" content="Scenario-driven planning tool for the Gambling Reform Bill 2026 across the PointsBet FY27 partner portfolio."/>
 <style>
@@ -17,10 +16,10 @@
   --st-protected:#3BD183; --st-strong:#3BD183; --st-safe:#8FA0BF;
   --shadow:none; --shadow-sm:none;
   --hair:1px solid var(--pb-line);
-  --ff: "Calibri","Carlito","Segoe UI",Helvetica,sans-serif;
-  --fdisplay: "Calibri","Carlito","Segoe UI",Helvetica,sans-serif;
-  --fui: "Calibri","Carlito","Segoe UI",Helvetica,sans-serif;
-  --fmono: "IBM Plex Mono",ui-monospace,SFMono-Regular,monospace;
+  --ff: "Aptos","Calibri",sans-serif;
+  --fdisplay: "Aptos","Calibri",sans-serif;
+  --fui: "Aptos","Calibri",sans-serif;
+  --fmono:"Aptos","Calibri",sans-serif;
   --r: 14px;
 }
 *{box-sizing:border-box}
@@ -727,6 +726,23 @@ input.ap-input,select.ap-select,textarea{background:var(--pb-panel);border-color
 .exp-soft{background:rgba(255,77,102,.12);color:#B0242E}
 .exp-why{background:rgba(30,160,180,.16);color:#0E6B7A}
 .exp-empty{font-size:12px;color:var(--pb-faint);font-style:italic;padding:6px 0}
+.cel-auto{font-size:11.5px;color:#0E6B7A;background:rgba(30,160,180,.10);border-radius:6px;padding:6px 9px;margin-top:6px}
+/* ===== Final Positions ===== */
+.pos-card{background:var(--pb-panel);border:1px solid var(--pb-line);border-radius:8px;padding:16px 18px;margin-bottom:12px}
+.pos-exposed{border-left:3px solid #FF4D66}.pos-rework{border-left:3px solid #FF9A3D}.pos-watch{border-left:3px solid #E8C25A}.pos-strong{border-left:3px solid #3BD183}.pos-safe{border-left:3px solid #8FA0BF}
+.pos-head{display:flex;align-items:center;gap:10px}
+.pos-head b{font-size:15px}
+.pos-badge{font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:999px}
+.pos-val{margin-left:auto;font:700 13px var(--fmono)}
+.pos-verdict{font-size:13px;margin:7px 0 4px}
+.pos-opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px;margin-top:8px}
+.pos-opt{background:var(--chrome2);border:1px solid var(--pb-line);border-radius:7px;padding:9px 11px;display:flex;flex-direction:column;gap:3px}
+.pos-opt b{font-size:11.5px}
+.pos-opt span{font-size:11.5px;color:var(--pb-muted)}
+.pos-opt.lane{margin-bottom:6px}
+.pos-foot{font-size:11.5px;color:var(--pb-muted);margin-top:9px;border-top:1px dashed var(--pb-line);padding-top:7px}
+.pos-none{color:#B0242E}
+
 /* ===== Overview ===== */
 .ov-hero{display:grid;grid-template-columns:1.6fr 1fr;gap:18px;background:linear-gradient(135deg,#0E0E10 0%,#161618 55%,#1D1D1F 100%);color:#fff;border-radius:var(--r,10px);padding:26px;margin-bottom:18px}
 @media(max-width:900px){.ov-hero{grid-template-columns:1fr}}
@@ -790,6 +806,246 @@ input.ap-input,select.ap-select,textarea{background:var(--pb-panel);border-color
 .lm-cell:focus,.lm-sel:focus{outline:1px solid var(--pb-red)}
 .lm-sel{width:100%;border:0;background:transparent;color:var(--pb-ink,#EDF1F9);font-size:12px;padding:6px}
 .lm-sel option{color:#111}
+
+/* ============================================================
+   HUMAN THEME — editorial re-skin (paper, serif heads, near-black ink)
+   Principles: one ink colour; hierarchy by weight not grey; 3 type
+   sizes; no italics; no gradients; no pills; red kickers; navy actions.
+   ============================================================ */
+:root{
+  --pb-red:#B0242E; --pb-red-text:#B0242E;
+  --pb-ink:#161513; --pb-muted:#3D3A35; --pb-faint:#5C5850;
+  --pb-panel:#FFFFFF; --pb-line:#DCD8CF; --pb-line2:#C9C4B9;
+  --chrome:#F5F3EE; --chrome2:#F5F3EE; --r:2px;
+  --fserif:Georgia,'Times New Roman',serif;
+}
+html,body{background:#FBFAF7!important;color:var(--pb-ink);font-size:14px}
+h1,h2,h3,.vh h2,.ov-hero-main h2,.ov-next{font-family:var(--fserif)!important;text-transform:none!important;letter-spacing:0!important}
+.vh h2{font-size:27px;font-weight:700;color:var(--pb-ink)}
+.eyebrow,.ov-kicker,.ov-next-label{font-family:inherit!important;font-size:12px!important;font-weight:700!important;letter-spacing:.04em;color:#B0242E!important;text-transform:uppercase}
+.k{font:700 15px var(--fserif)!important;text-transform:none!important;letter-spacing:0!important;color:var(--pb-ink)!important;border-bottom:2px solid var(--pb-ink);padding-bottom:6px;margin-bottom:10px;display:block}
+.step .hint,.ov-mf,.ov-qt span,.ov-regt span,.exp-month,.exp-date,.chsummary,.chlegend,.pos-foot,.asset-lock,.cel-auto{font-size:12px!important}
+.exp-kind,.pos-badge,.chverdict,.exp-soft,.exp-why{font-size:10.5px!important}
+.exp-row,.pos-opt b,.pos-opt span,.pos-verdict,.ov-ml,.step .lab,.wl-owner,.wl-opstatus,.wl-due,.lmsearch{font-size:13px!important}
+*{font-style:normal!important}
+.chipbtn,.step,.panel,.pos-card,.pos-opt,.apcard,.ov-metric,.exp-kind,.pos-badge,.chverdict,.exp-soft,.exp-why,.lmsearch,.wl-owner,.wl-opstatus,.wl-due,.ap-input,.ap-select,.sidenav-toggle,.wl-status{border-radius:2px!important}
+.chipbtn{background:#fff;border:1px solid var(--pb-ink);color:var(--pb-ink);font-weight:600}
+.chipbtn:hover{background:var(--chrome)}
+.chip-on{background:#1B2A4A!important;border-color:#1B2A4A!important;color:#fff!important}
+.ov-hero .chipbtn{background:#1B2A4A;border-color:#1B2A4A;color:#fff;font-weight:600}
+.sidenav{background:#FBFAF7;border-right:1px solid var(--pb-line)}
+.step .n{border-radius:0!important;border:1px solid var(--pb-line2);color:var(--pb-faint);font-family:var(--fserif)}
+.step.on{background:#fff;border-color:var(--pb-line)}
+.step.on .n{background:#1B2A4A!important;border-color:#1B2A4A!important;color:#fff!important}
+.step.on:before{background:#B0242E!important}
+.slate{background:#14171C!important}
+.slate{--pb-red:#E06A73;--pb-red-text:#E06A73}
+.ov-hero{background:#fff!important;border:1px solid var(--pb-line);border-top:4px solid var(--pb-ink);color:var(--pb-ink)}
+.ov-hero-main h2{color:var(--pb-ink)!important}
+.ov-hero-main p,.ov-hero-side p{color:var(--pb-ink)!important}
+.ov-hero-side{border-left:1px solid var(--pb-line)!important}
+.ov-next{color:var(--pb-ink)!important}
+.ov-metric{border:1px solid var(--pb-line);border-top:3px solid var(--pb-ink)}
+.ov-metric.risk{border-top-color:#B0242E;border-left:1px solid var(--pb-line)}
+.ov-metric.warn{border-top-color:#B26A00;border-left:1px solid var(--pb-line)}
+.ov-metric.good{border-top-color:#1E7A44;border-left:1px solid var(--pb-line)}
+.ov-mv{font-family:var(--fserif)!important;font-weight:700}
+.lmtab-table th,.chtable th{background:#fff!important;color:var(--pb-ink)!important;border-bottom:2px solid var(--pb-ink)!important;text-transform:none!important;letter-spacing:0!important;font-size:12px!important;font-weight:700}
+.vd-full{background:rgba(30,122,68,.10);color:#1E7A44}
+.vd-part{background:rgba(178,106,0,.10);color:#B26A00}
+.vd-none{background:rgba(176,36,46,.08);color:#B0242E}
+.vd-racing{background:rgba(27,42,74,.08);color:#1B2A4A}
+.exp-dot.safe{background:#1E7A44}.exp-dot.risk{background:#B26A00}.exp-dot.cont{background:#1B2A4A}
+.exp-colhead-safe{color:#1E7A44;border-color:#1E7A44}
+.exp-colhead-risk{color:#B0242E;border-color:#B0242E}
+.exp-colhead-cont{color:#1B2A4A;border-color:#1B2A4A}
+.exp-splitfill{background:#1E7A44}.exp-splitbar{background:#B26A00}
+.cel-auto{color:#1B2A4A;background:rgba(27,42,74,.06)}
+.pos-exposed{border-left-color:#B0242E}.pos-rework{border-left-color:#B26A00}.pos-strong{border-left-color:#1E7A44}
+.bar{background:#14171C!important}
+.bar .mark span{color:#B0242E!important}
+.chipbtn{font-size:13px!important}
+.ov-hero-main p b,.panel p b{font-size:inherit!important}
+.ov-next{font-size:15px!important}
+.segb.on{color:#fff!important}
+.slate .chipbtn{background:transparent;border-color:#5C5850;color:#EDEBE6}
+.slate .chipbtn:hover{border-color:#fff;background:transparent}
+
+
+/* ===== v3.1 — lime returns, boxes leave =====
+   Separation by whitespace, washes and rules; no stroked containers. */
+:root{--pb-red:#C8F169;--pb-red-text:#55701C}
+.eyebrow,.ov-kicker,.ov-next-label{color:#55701C!important}
+/* De-box the containers */
+.panel,.pos-card,.ov-metric,.pos-opt,.apcard,.ov-hero,.ov-grid .panel{border:0!important;box-shadow:none!important}
+.ov-hero{border-top:4px solid var(--pb-ink)!important;padding-top:22px}
+.ov-metric{background:transparent!important;padding:12px 4px;border-top:3px solid var(--pb-ink)!important}
+.ov-metric.risk{border-top-color:#B0242E!important}
+.ov-metric.warn{border-top-color:#B26A00!important}
+.ov-metric.good{border-top-color:#1E7A44!important}
+.pos-card{background:transparent!important;padding:20px 0;border-bottom:1px solid var(--pb-line)!important;border-radius:0!important;margin-bottom:0}
+.pos-exposed,.pos-rework,.pos-watch,.pos-strong,.pos-safe{border-left:0!important}
+.pos-opt{background:#F3F1EA!important}
+/* Buttons: filled, not outlined; lime primary */
+.chipbtn{border:0!important;background:#ECE9E0;color:var(--pb-ink)}
+.chipbtn:hover{background:#E0DCD0}
+.chip-on{background:#C8F169!important;color:#1A2409!important}
+.ov-hero .chipbtn{background:#C8F169!important;border:0!important;color:#1A2409!important;font-weight:700}
+.slate .chipbtn{background:rgba(255,255,255,.10)!important;color:#EDEBE6!important}
+/* Menu: wash + lime badge, no outline, no red bar */
+.step{border:0!important}
+.step.on{background:#EFF6DA!important;border:0!important}
+.step.on:before{display:none!important}
+.step.on .n{background:#C8F169!important;border-color:#C8F169!important;color:#1A2409!important}
+.sidenav-toggle{border:0!important;background:#ECE9E0}
+/* Inputs read as a printed form: underline only */
+.ap-input,.ap-select,.lmsearch,.wl-owner,.wl-opstatus,.wl-due{border:0!important;border-bottom:1px solid var(--pb-line2)!important;background:transparent!important;border-radius:0!important}
+.ap-input:focus,.ap-select:focus,.lmsearch:focus{outline:none;border-bottom-color:var(--pb-ink)!important}
+/* Table wrappers lose their frame; row rules stay */
+.lmwrap{border:0!important}
+/* Dark scenario panel gets its lime back (original contrast pairing) */
+.slate{--pb-red:#C8F169;--pb-red-text:#C8F169}
+.segb.on{color:#0A0A0C!important}
+/* Masthead lime */
+.bar .mark span{color:#C8F169!important}
+
+
+/* ============================================================
+   THEME v4 — PointsBet red / black / white · editorial
+   Aptos then Calibri only — matches the document suite
+   Asymmetric composition · whitespace · micro-interactions
+   (system fonts only; no webfont fetch)
+   ============================================================ */
+:root{
+  --pb-red:#E8172B; --pb-red-text:#C10E20;
+  --pb-ink:#111111; --pb-muted:#333333; --pb-faint:#555555;
+  --pb-panel:#FFFFFF; --pb-line:#E4E2DE; --pb-line2:#D2CFC9;
+  --chrome:#F6F5F2; --chrome2:#F6F5F2;
+  --fserif:'Aptos','Calibri',sans-serif;
+  --fsans:'Aptos','Calibri',sans-serif;
+}
+html,body{background:#FFFFFF!important;font-family:var(--fsans)!important}
+h1,h2,h3,.vh h2,.ov-hero-main h2,.ov-next,.k,.ov-mv{font-family:var(--fserif)!important}
+.vh h2{font-size:30px;font-weight:700}
+.ov-hero-main h2{font-size:30px;font-weight:700}
+/* Red kickers — newspaper section marks */
+.eyebrow,.ov-kicker,.ov-next-label{color:#C10E20!important}
+/* Generous, varied section rhythm */
+.view{padding-top:34px}
+.ov-hero{padding:34px 34px 30px;border-top:4px solid #111!important;margin-bottom:34px}
+.ov-metrics{margin-bottom:34px;grid-template-columns:1.35fr 1fr 1fr 1.15fr;gap:26px}
+@media(max-width:900px){.ov-metrics{grid-template-columns:1fr 1fr}}
+.ov-metric{border-top:3px solid #111!important;padding:14px 2px 8px}
+.ov-metric.risk{border-top-color:#E8172B!important}
+.ov-metric.warn{border-top-color:#B26A00!important}
+.ov-metric.good{border-top-color:#1E7A44!important}
+.ov-mv{font-size:30px}
+.ov-grid{gap:34px}
+/* Accent: lime out, PB red in */
+.chip-on{background:#E8172B!important;color:#fff!important}
+.ov-hero .chipbtn{background:#E8172B!important;color:#fff!important;font-weight:700}
+.ov-hero .chipbtn:hover{background:#C10E20!important}
+.step.on{background:#FBEAEC!important}
+.step.on .n{background:#E8172B!important;border-color:#E8172B!important;color:#fff!important}
+.bar .mark span{color:#E8172B!important}
+.slate{--pb-red:#FF5A66;--pb-red-text:#FF5A66}
+.segb.on{background:#E8172B!important;color:#fff!important}
+.cel-auto{color:#8A1420;background:#FBEAEC}
+.exp-dot.cont{background:#111}
+.exp-colhead-cont{color:#111;border-color:#111}
+.vd-racing{background:#F1F0ED;color:#111}
+/* Micro-interactions: quiet shifts and elegant underlines */
+.chipbtn{transition:background .16s ease,color .16s ease}
+.step .lab{text-underline-offset:3px}
+.step:hover .lab{text-decoration:underline}
+.ov-q,.ov-reg{transition:background .16s ease}
+.ov-q:hover .ov-qt b,.ov-reg:hover .ov-regt b{text-decoration:underline;text-underline-offset:3px}
+.pos-opt{transition:background .16s ease}
+.pos-opt:hover{background:#EFEDE8!important}
+a,a:visited{color:#C10E20;text-decoration:underline;text-underline-offset:2px}
+
+/* Mobile integrity: closed drawer must not scroll the page; wide tables scroll inside the view */
+html,body{overflow-x:hidden}
+.drawer{visibility:hidden;transition:transform .22s cubic-bezier(.4,0,.2,1),visibility 0s .22s}
+.drawer.on{visibility:visible;transition:transform .22s cubic-bezier(.4,0,.2,1),visibility 0s 0s}
+@media(max-width:760px){.view{overflow-x:auto}}
+
+
+/* ===== v4.1 fixes ===== */
+/* 1) Channels: verdict badges align with the row's controls */
+.chtable td{vertical-align:middle!important}
+.chtable td .chverdict{display:inline-block;margin-top:0}
+.lmtab-table td{vertical-align:middle!important}
+/* 2) Scenario builder joins the light pages */
+.slate{background:#F6F5F2!important;border-top:4px solid #111!important;color:var(--pb-ink)!important;
+  --pb-red:#C10E20;--pb-red-text:#C10E20}
+.slate .shead .t h3{color:var(--pb-ink)!important;font-family:var(--fserif)!important;text-transform:none!important;letter-spacing:0!important}
+.slate .shead .t p{color:var(--pb-muted)!important}
+.slate .shead .t .e{color:#C10E20!important;letter-spacing:.05em}
+.legcount{color:var(--pb-faint)!important}
+.legcount b{color:var(--pb-ink)!important;font-family:var(--fserif)!important}
+.leg{background:#FFFFFF!important;border:0!important;border-top:2px solid var(--pb-ink)!important;border-radius:0!important}
+.leg .meta .lt{color:var(--pb-ink)!important}
+.leg .meta .ld{color:var(--pb-muted)!important}
+.leg .tag{color:var(--pb-faint)!important}
+.seg{background:#EDEBE5!important;border:0!important;border-radius:2px!important}
+.segb{color:var(--pb-muted)!important;border-radius:2px!important}
+.segb.on{background:#E8172B!important;color:#fff!important}
+.segb.on.off,.segb.on[class*="off"]{background:#111!important;color:#fff!important}
+.slate .foot{border-top:1px solid var(--pb-line)!important}
+.slate .chipbtn{background:#fff!important;color:var(--pb-ink)!important;border:0!important}
+.slate .chipbtn:hover{background:#E0DCD0!important}
+
+
+/* ===== v4.1 — executive brief overview ===== */
+.xb-head{max-width:880px;margin:6px 0 26px}
+.xb-head h2{font-size:31px;line-height:1.18;margin:10px 0 14px}
+.xb-lede{font-size:15px;line-height:1.55;color:var(--pb-ink)}
+.xb-bar{margin:0 0 34px}
+.xb-barrow{display:flex;height:12px;background:#EFEDE8}
+.xb-legend{display:flex;gap:22px;flex-wrap:wrap;margin-top:9px;font-size:12px}
+.xb-legend i{display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px}
+.xb-cols{display:grid;grid-template-columns:1.55fr 1fr;gap:44px}
+@media(max-width:980px){.xb-cols{grid-template-columns:1fr}}
+.xb-row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:transparent;border:0;border-bottom:1px solid var(--pb-line);padding:10px 2px;cursor:pointer}
+.xb-row:hover .xb-name{text-decoration:underline;text-underline-offset:3px}
+.xb-dot{width:9px;height:9px;border-radius:50%;flex:none}
+.xb-name{font-weight:700;font-size:13.5px;flex:0 0 148px}
+.xb-verdict{flex:1;font-size:12.5px;color:var(--pb-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.xb-dec{flex:0 0 106px;font-size:12.5px;font-weight:600}
+.xb-money{flex:0 0 62px;text-align:right;font:700 12.5px var(--fmono)}
+.xb-note{font-size:11.5px;color:var(--pb-faint);margin-top:10px}
+.xb-next{display:flex;flex-direction:column;gap:14px;margin-bottom:20px}
+.xb-nexti{font-size:13.5px;line-height:1.5}
+.xb-ctas{display:flex;gap:8px;flex-wrap:wrap}
+
+
+/* numerals: system fonts with tabular figures so money/count columns stay aligned */
+[class]{font-feature-settings:inherit}
+.xb-money,.legcount,.legcount b,.num,.ro .num,.exp-date{font-variant-numeric:tabular-nums!important;font-feature-settings:"tnum" 1!important}
+
+
+/* ===== v4.2 — lime accent restored (fonts + layout unchanged) =====
+   Brand/UI accent → lime. Risk semantics (exposed, restructure) stay warm. */
+:root{--pb-red:#C8F169;--pb-red-text:#55701C}
+.eyebrow,.ov-kicker,.ov-next-label,.xb-head .eyebrow{color:#55701C!important}
+.chip-on{background:#C8F169!important;color:#1A2409!important}
+.ov-hero .chipbtn,.xb-ctas .chip-on{background:#C8F169!important;color:#1A2409!important;font-weight:700}
+.ov-hero .chipbtn:hover,.xb-ctas .chip-on:hover{background:#B6E24F!important}
+.step.on{background:#EFF6DA!important}
+.step.on .n{background:#C8F169!important;border-color:#C8F169!important;color:#1A2409!important}
+.bar .mark span{color:#C8F169!important}
+.cel-auto{color:#55701C!important;background:#EFF6DA!important}
+a,a:visited{color:#55701C!important}
+/* Scenario builder: lime pills (its own scope) */
+.slate{--pb-red:#55701C;--pb-red-text:#55701C}
+.slate .shead .t .e{color:#55701C!important}
+.segb.on{background:#C8F169!important;color:#1A2409!important}
+.segb.on.off,.segb.on[class*="off"]{background:#111!important;color:#fff!important}
+.slate .legcount b{color:var(--pb-ink)!important}
+/* "moves $" figures inside scenario read as ink, not lime (lime text too pale there) */
+.slate .num, .slate b{color:var(--pb-ink)!important}
+
 </style></head><body>
 <div class="bar"><div class="brand"><span class="mark">Points<span>Bet</span></span>
 <span class="sub">Reform Scenario Planner · <b style="color:#ED1B42">V2.2</b> · 6 Jul 2026</span></div><div class="right">
@@ -874,6 +1130,44 @@ const CEL_TIERS=[
   {v:"200kplus",label:"Talent 200K+ followers — caught at Low, Med or High",catches:["high","med","low"]}
 ];
 const CEL_CATCHES={}; CEL_TIERS.forEach(t=>CEL_CATCHES[t.v]=t.catches);
+/* ---- Auto-derive the Celebrities tier from Legal Map Tab 2 follower counts ----
+   Manual selection on the asset card always wins; this only fills the gap when unset.
+   Matching: a Tab 2 person belongs to an asset if their name matches one of its portfolio
+   lines, or their row keyword-matches the asset (same matcher as the Legal Map facts panel).
+   Worst-case rule: the asset takes the tier of its biggest matched profile. */
+function parseFollowers(s){
+  if(!s) return null; s=String(s).trim().toLowerCase();
+  if(/tbc|n\/a|unknown/.test(s)) return null;
+  const m=s.replace(/,/g,"").match(/([\d.]+)\s*(m|k)?/);
+  if(!m) return null;
+  let n=parseFloat(m[1]); if(isNaN(n)) return null;
+  if(m[2]==="m") n*=1e6; else if(m[2]==="k") n*=1e3;
+  return n>=100?Math.round(n):null; // ignore stray small numbers that aren't follower counts
+}
+function derivedCel(assetName){
+  const g=PORTFOLIO.find(x=>x.asset===assetName); if(!g) return null;
+  const nrm=s=>String(s||"").toLowerCase().replace(/[^a-z0-9]/g,"");
+  const lineNames=g.lines.map(l=>nrm(l.name));
+  const hitIdx=new Set();
+  try{ (lmHitsForAsset(assetName)||[]).forEach(h=>{ if(h.t==="t2") hitIdx.add(h.i); }); }catch(e){}
+  let best=null;
+  lmVisible("t2").forEach(({r,i})=>{
+    const nm=nrm(lmVal("t2",i,r,"name"));
+    const byLine=nm&&lineNames.some(ln=>ln.includes(nm)||nm.includes(ln));
+    if(!byLine&&!hitIdx.has(i)) return;
+    const f=parseFollowers(lmVal("t2",i,r,"aud"));
+    if(f!==null&&(!best||f>best.n)) best={n:f,who:String(lmVal("t2",i,r,"name")||"")};
+  });
+  if(!best) return null;
+  const tier=best.n>=200000?"200kplus":best.n>=50000?"50to200k":"under50k";
+  return {tier,who:best.who,n:best.n};
+}
+function celFor(assetName){
+  const manual=PLANS[assetName]&&PLANS[assetName].cel;
+  if(manual) return manual;
+  const d=derivedCel(assetName);
+  return d?d.tier:"";
+}
 let S={}; SCENARIOS.forEach(s=>S[s.id]=s.def);
 const strn=id=>SCMAP[id].levels[S[id]].s;
 
@@ -967,7 +1261,7 @@ function dollarsByStatus(){
   const inScope=new Set(orderedAssets().map(a=>a.asset));
   PORTFOLIO.forEach(a=>{
     if(coreOnly&&!inScope.has(a.asset)) return; // in Content/Owned scope, dollars match the visible asset set; full mode keeps the whole book incl. services
-    const celTier=PLANS[a.asset]&&PLANS[a.asset].cel;
+    const celTier=celFor(a.asset);
     const ageGating=PLANS[a.asset]&&PLANS[a.asset].ageGating;
     a.lines.forEach(l=>{ const e=evalLine(l,celTier,ageGating); out[e.key]=(out[e.key]||0)+(l.annual||0); });
   });
@@ -991,7 +1285,7 @@ function leverSwing(id){
 /* top assets by exposed/rework dollars under current scenario */
 function topExposures(n){
   return orderedAssets().map(a=>{
-    const celTier=PLANS[a.asset]&&PLANS[a.asset].cel, ageGating=PLANS[a.asset]&&PLANS[a.asset].ageGating;
+    const celTier=celFor(a.asset), ageGating=PLANS[a.asset]&&PLANS[a.asset].ageGating;
     let d=0, drv=null, rank=99;
     a.lines.forEach(l=>{const e=evalLine(l,celTier,ageGating);
       if(e.key==='exposed'||e.key==='rework'){d+=(l.annual||0); if(ST[e.key].rank<rank){rank=ST[e.key].rank;drv=e.driver;}}});
@@ -1002,7 +1296,7 @@ function fmtM(n){ return n>=1000000?"$"+(n/1000000).toFixed(2)+"m":n>=1000?"$"+M
 
 function evalAsset(a){
   let worst=null,driver=null,upside=false,reasons=[];
-  const celTier=PLANS[a.asset]&&PLANS[a.asset].cel;
+  const celTier=celFor(a.asset);
   const ageGating=PLANS[a.asset]&&PLANS[a.asset].ageGating;
   const perLine=a.lines.map(l=>{const e=evalLine(l,celTier,ageGating);
     if(ST[e.key].rank<(worst?ST[worst].rank:99)){worst=e.key;driver=e.driver;}
@@ -1546,7 +1840,7 @@ function renderLegalMap(){
 
 /* ============ RENDER: workflow + shell ============ */
 function renderFlow(){
-  const steps=[["overview","Overview","Where it stands"],["status","Asset Status",""],["channels","Channels","Triple Lock"],["scenario","Legislation Scenarios","How hard it lands"],["assets","Decisions",""],["paths","Paths","If X, then Y"],["summary","Exec Summary","The one-pager"],["actions","Actions","H2 roadmap"],["legalmap","Legal Map","due Wed 9 Jul"],["expiries","Expiries","Contract runway"],["notes","Logic","Appendix"]];
+  const steps=[["overview","Overview","Start here — the goal"],["status","Asset Status","1 · Capture the facts"],["channels","Channels","2 · Triple Lock the surfaces"],["legalmap","Legal Map","3 · Contract register"],["expiries","Expiries","4 · Contract runway"],["scenario","Scenarios","5 · Set the intensity"],["assets","Decisions","6 · Choose per asset"],["positions","Final Positions","7 · The end state"],["paths","Paths","If X, then Y"],["summary","Exec Summary","The one-pager"],["actions","Actions","H2 roadmap"],["notes","Logic","Appendix"]];
   document.getElementById("sidenav").classList.toggle("collapsed",NAV_COLLAPSED);
   const tg=$("#navToggle"); if(tg) tg.textContent=NAV_COLLAPSED?"›":"‹";
   $("#flow").innerHTML=steps.map((s,i)=>`<button class="step ${activeView===s[0]?'on':''}" data-v="${s[0]}" title="${esc(s[1])}${s[2]?' · '+esc(s[2]):''}">
@@ -1600,60 +1894,68 @@ const PRESETS={
 
 /* ============ RENDER: asset grid ============ */
 function renderOverview(){
+  /* Executive brief — readable cold by leadership. Composed live from the shared data. */
   const scope=orderedAssets(); scope.forEach(a=>a._ev=evalAsset(a));
-  const actionable=scope.filter(a=>["exposed","rework"].includes(a._ev.key));
-  const exposed=scope.filter(a=>a._ev.key==="exposed");
-  const flagged=actionable.reduce((s,a)=>s+a.lines.reduce((x,l)=>x+(l.annual||0),0),0);
+  const money=v=>"$"+(v>=1e6?(v/1e6).toFixed(2)+"m":Math.round(v/1e3)+"k");
+  const sumOf=list=>list.reduce((s,a)=>s+a.lines.reduce((x,l)=>x+(l.annual||0),0),0);
+  const byKey=k=>scope.filter(a=>a._ev.key===k);
+  const exposed=byKey("exposed"), rework=byKey("rework"), watch=byKey("watch");
+  const safe=scope.filter(a=>["strong","protected","safe"].includes(a._ev.key));
+  const $exp=sumOf(exposed), $rw=sumOf(rework), $watch=sumOf(watch), $safe=sumOf(safe), $tot=sumOf(scope);
+  const actionable=[...exposed,...rework];
   const decided=a=>{const p=PLANS[a.asset];return p&&p.path&&p.path!=="— choose —"&&p.path!=="No action";};
-  const locked=actionable.filter(a=>(PLANS[a.asset]||{}).status==="Locked").length;
-  const doneCount=actionable.filter(decided).length;
-  const gapsTotal=["t1","t2","t3","t4"].reduce((s,t)=>s+lmGapCount(t),0);
+  const done=actionable.filter(decided).length;
+  const gaps=["t1","t2","t3","t4"].reduce((s,t)=>s+lmGapCount(t),0);
   const days=Math.max(0,Math.ceil((new Date("2027-01-01T00:00:00+11:00")-new Date())/86400000));
-  const rank=a=>ST[a._ev.key].rank;
-  const queue=actionable.filter(a=>!decided(a)).sort((x,y)=>(rank(x)-rank(y))||(y.lines.reduce((s,l)=>s+l.annual,0)-x.lines.reduce((s,l)=>s+l.annual,0))).slice(0,6);
-  const next=queue[0];
-  const regRows=["t1","t2","t3","t4"].map(t=>{
-    const rows=lmVisible(t).length, gaps=lmGapCount(t);
-    const reds=lmVisible(t).reduce((s,{r})=>s+((r._red||[]).length),0);
-    const pct=reds?Math.round(100*(reds-gaps)/reds):100;
-    return {t,title:LEGALMAP[t].title,rows,gaps,pct};
-  });
-  const mfmt=v=>"$"+(v>=1e6?(v/1e6).toFixed(2)+"m":Math.round(v/1000)+"k");
+  const lvl=S.notable==="high"?"anyone with a public profile":S.notable==="med"?"talent with a significant profile (~50K+)":S.notable==="low"?"major profiles (200K+)":"no one — ban off";
+  // expiry leverage
+  let expBefore=0, expTotal=0;
+  try{const ex=harvestExpiries();const c=new Date("2027-01-01").getTime();expTotal=ex.length;expBefore=ex.filter(x=>x.exp<c).length;}catch(e){}
+  // narrative
+  const decidedTxt=done===actionable.length&&actionable.length?`All ${actionable.length} priority decisions have a path.`:`${done} of ${actionable.length} priority decisions have a path; ${actionable.length-done} still open.`;
+  const share=$tot?Math.round(100*($exp+$rw)/$tot):0;
+  const seg=(v,c)=>$tot?`<span style="display:inline-block;height:12px;background:${c};width:${(100*v/$tot).toFixed(1)}%"></span>`:"";
   return `<div class="view">
-    <div class="ov-hero">
-      <div class="ov-hero-main">
-        <div class="ov-kicker">Bill-as-introduced scenario · <b>${days} days</b> to 1 Jan 2027 commencement</div>
-        <h2>${actionable.length-doneCount} decision${actionable.length-doneCount===1?"":"s"} still need${actionable.length-doneCount===1?"s":""} a clear path.</h2>
-        <p>Everything below is computed live from the shared dataset — the Legal Map facts, the Triple Lock board, the ${"$"+(scope.reduce((s,a)=>s+a.lines.reduce((x,l)=>x+l.annual,0),0)/1e6).toFixed(1)}m FY27 portfolio and the scenario levers.</p>
-        <div class="ov-cta"><button class="chipbtn" data-v-jump="assets">Work the decision queue</button>
-        <button class="chipbtn" data-v-jump="legalmap">Complete the Legal Map</button></div>
-      </div>
-      <div class="ov-hero-side">
-        <div class="ov-next-label">Recommended next move</div>
-        <div class="ov-next">${next?`<b>${esc(recVerb(next))}:</b> ${esc(next.asset)}`:"All priority decisions have a path."}</div>
-        <p>${esc(next?(next._ev.reasons[0]||""):"Review the monitoring queue and keep the Legal Map current.")}</p>
-        ${next?`<button class="chipbtn" data-v-jump="assets">Open decisions →</button>`:""}
+    <div class="xb-head">
+      <div class="eyebrow">Reform readiness · board brief · ${new Date().getDate()} ${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][new Date().getMonth()]} ${new Date().getFullYear()}</div>
+      <h2>${money($exp+$rw)} of the ${money($tot)} portfolio under review needs restructuring or exit before 1 January 2027.</h2>
+      <p class="xb-lede">Under the scenario currently modelled — the Interactive Gambling Amendment Bill with the notable-person ban catching ${lvl} — <b>${exposed.length}</b> asset group${exposed.length===1?" is":"s are"} exposed (${money($exp)}) and <b>${rework.length}</b> need${rework.length===1?"s":""} restructuring (${money($rw)}). ${money($safe)} is protected or out of scope, led by racing and owned channels. ${decidedTxt} Commencement is <b>${days} days</b> away; ${expBefore} of ${expTotal} dated contracts lapse before it, giving natural renegotiation points rather than wind-downs.</p>
+    </div>
+    <div class="xb-bar">
+      <div class="xb-barrow">${seg($exp,"#E8172B")}${seg($rw,"#B26A00")}${seg($watch,"#D8C36B")}${seg($safe,"#1E7A44")}</div>
+      <div class="xb-legend">
+        <span><i style="background:#E8172B"></i>Exposed ${money($exp)}</span>
+        <span><i style="background:#B26A00"></i>Restructure ${money($rw)}</span>
+        <span><i style="background:#D8C36B"></i>Conditional ${money($watch)}</span>
+        <span><i style="background:#1E7A44"></i>Protected / out of scope ${money($safe)}</span>
       </div>
     </div>
-    <div class="ov-metrics">
-      <div class="ov-metric risk"><div class="ov-mv">${exposed.length}</div><div class="ov-ml">Exposed groups</div><div class="ov-mf">under the active scenario</div></div>
-      <div class="ov-metric warn"><div class="ov-mv">${mfmt(flagged)}</div><div class="ov-ml">Flagged portfolio value</div><div class="ov-mf">exposed + restructure groups</div></div>
-      <div class="ov-metric ${gapsTotal?'warn':'good'}"><div class="ov-mv">${gapsTotal}</div><div class="ov-ml">Legal Map gaps</div><div class="ov-mf">across the four registers</div></div>
-      <div class="ov-metric ${locked===actionable.length&&actionable.length?'good':''}"><div class="ov-mv">${doneCount}/${actionable.length}</div><div class="ov-ml">Decisions with a path</div><div class="ov-mf">${locked} locked</div></div>
-    </div>
-    <div class="ov-grid">
-      <div class="panel"><div class="k">Priority queue · severity then value</div>
-        ${queue.length?queue.map((a,i)=>`<button class="ov-q" data-v-jump="assets">
-          <span class="ov-qn">${String(i+1).padStart(2,"0")}</span>
-          <span class="ov-qt"><b>${esc(a.asset)}</b><span>${esc(a._ev.reasons[0]||"")}</span></span>
-          <span class="ov-qv">${mfmt(a.lines.reduce((s,l)=>s+l.annual,0))}</span></button>`).join("")
-        :`<div class="exp-empty">Queue cleared — every actionable group has a path.</div>`}
+    <div class="xb-cols">
+      <div>
+        <div class="k">Positions at a glance</div>
+        ${scope.sort((x,y)=>(ST[x._ev.key].rank-ST[y._ev.key].rank)||(sumOf([y])-sumOf([x]))).map(a=>{
+          const p=PLANS[a.asset]||{}; const chosen=p.path&&p.path!=="— choose —"?p.path:null; const st=ST[a._ev.key]||{};
+          return `<button class="xb-row" data-v-jump="positions">
+            <span class="xb-dot" style="background:${st.dot||'#999'}"></span>
+            <span class="xb-name">${esc(a.asset)}</span>
+            <span class="xb-verdict">${esc((a._ev.reasons[0]||st.lab||"").slice(0,72))}</span>
+            <span class="xb-dec">${chosen?esc(chosen):"—"}</span>
+            <span class="xb-money">${money(sumOf([a]))}</span></button>`;}).join("")}
+        <div class="xb-note">Colour = status under the active scenario. Decision column shows the recorded path. Click any row for the full position and options.</div>
       </div>
-      <div class="panel"><div class="k">Legal Map readiness</div>
-        ${regRows.map(r=>`<button class="ov-reg" data-v-jump="legalmap">
-          <span class="ov-regt"><b>${esc(r.title)}</b><span>${r.gaps} gaps · ${r.rows} rows</span></span>
-          <span class="ov-bar"><i style="width:${r.pct}%"></i></span></button>`).join("")}
-        <div class="ov-mf" style="margin-top:8px">Progress counts required (red) cells only; archived rows excluded.</div>
+      <div>
+        <div class="k">What happens next</div>
+        <div class="xb-next">
+          <div class="xb-nexti"><b>${actionable.length-done||"No"} decision${actionable.length-done===1?"":"s"} to land.</b> ${actionable.length-done?`Highest value first: ${esc(actionable.filter(a=>!decided(a)).sort((x,y)=>sumOf([y])-sumOf([x])).slice(0,2).map(a=>a.asset).join(", "))}.`:"Queue is clear."}</div>
+          <div class="xb-nexti"><b>${gaps?gaps+" Legal Map gaps":"Legal Map complete"}.</b> ${gaps?"Facts still owed to Legal across the four registers.":"All required cells filled."}</div>
+          <div class="xb-nexti"><b>Senate inquiry reports mid-August.</b> Levers here re-model the plan the day the report lands.</div>
+          <div class="xb-nexti"><b>October is the leverage window.</b> The major media deals lapse early October — renegotiate before commitment, not after commencement.</div>
+        </div>
+        <div class="xb-ctas">
+          <button class="chipbtn chip-on" data-v-jump="positions">Final positions</button>
+          <button class="chipbtn" data-v-jump="assets">Decision queue</button>
+          <button class="chipbtn" data-v-jump="scenario">Change the scenario</button>
+        </div>
       </div>
     </div>
   </div>`;
@@ -1729,7 +2031,7 @@ function openWorkspace(name){
   const plan=PLANS[name]||{path:"— choose —",owner:"",target:"",status:"Not started",prio:autoPrio(a),notes:""};
   const prof=PROFILE_FIELDS.some(f=>plan[f])?plan:null;
   const tierColor={HIGH:"rgba(237,27,66,.16)|#FF6E89","MED-HIGH":"rgba(232,130,30,.18)|#FFB266",MEDIUM:"rgba(201,162,39,.20)|#E9C84E",LOW:"rgba(255,255,255,.08)|#B9BABE",SAFE:"rgba(31,157,87,.18)|#3FDD8C","N/A":"rgba(255,255,255,.08)|#9B9CA2",TBC:"rgba(232,130,30,.18)|#FFB266"};
-  const lineRows=a.lines.map(l=>{ const e=evalLine(l,plan.cel,plan.ageGating); const tc=(tierColor[l.tier]||"rgba(255,255,255,.08)|#9B9CA2").split("|");
+  const lineRows=a.lines.map(l=>{ const e=evalLine(l,celFor(a.asset),plan.ageGating); const tc=(tierColor[l.tier]||"rgba(255,255,255,.08)|#9B9CA2").split("|");
     return `<tr><td><b>${esc(l.name)}</b></td>
       <td><span class="tierpill" style="background:${tc[0]};color:${tc[1]}">${esc(l.tier)}</span></td>
       <td><span class="statustag" style="background:${ST[e.key].dot}22;color:${ST[e.key].dot}">${ST[e.key].lab}</span></td>
@@ -1911,7 +2213,7 @@ function renderAssetStatus(){
           <div class="fld full"><label>Channels <span style="color:var(--pb-faint);font-weight:400">(where it lives — drives Triple Lock, managed in Step 2)</span></label>${multichip(name,'channels',p.channels,channelNames())}${assetLockLine(p.channels)}</div>
           ${lmAssetPanel(name)}
           <div class="fld"><label>Employees</label>${dd(name,'team',p.team,ASSET_FIELD_OPTS.team)}</div>
-          <div class="fld full"><label>Celebrities <span style="color:var(--pb-faint);font-weight:400">(matches the Notable-person ban tiers)</span></label>${celSelect(name,p.cel)}</div>
+          <div class="fld full"><label>Celebrities <span style="color:var(--pb-faint);font-weight:400">(matches the Notable-person ban tiers)</span></label>${celSelect(name,p.cel)}${(()=>{if(p.cel)return"";const d=derivedCel(name);return d?`<div class="cel-auto">Auto-applied from the Legal Map: <b>${esc((CEL_TIERS.find(t=>t.v===d.tier)||{}).label||d.tier)}</b> — biggest matched profile ${esc(d.who)} (${d.n>=1e6?(d.n/1e6).toFixed(1)+"m":Math.round(d.n/1e3)+"k"} followers). Pick a value above to override.</div>`:"";})()}</div>
           <div class="fld full"><label>Notes</label>${tx(name,'mnotes',p.mnotes,'Anything else worth flagging')}</div>
         </div>`}</div>`;
     }).join('');
@@ -2142,6 +2444,84 @@ function harvestExpiries(){
   });
   return out.sort((a,b)=>a.exp-b.exp);
 }
+/* ===== Final Positions — the pipeline's end state =====
+   One plain-English position per asset + tailored options, and a redeployment
+   view of freed dollars mapped to the lanes the bill leaves open. */
+function positionOptions(a){
+  const ev=a._ev, d=ev.driver||"", key=ev.key;
+  const tot=a.lines.reduce((s,l)=>s+(l.annual||0),0);
+  const money=v=>"$"+(v>=1e6?(v/1e6).toFixed(2)+"m":Math.round(v/1e3)+"k");
+  if(key==="strong"||key==="safe") return {verdict:key==="strong"?"Protected — a destination lane, not a risk.":"Out of scope — the bill doesn't touch it.",opts:[]};
+  const opts=[];
+  if(/notable|commentator/.test(d)){
+    opts.push(["A · Restructure","Rebuild the format around compliant presenters — talent under the ban's follower threshold at the scenario's intensity, or non-notable hosts. Follower tiers auto-derive from the Legal Map."]);
+    opts.push(["B · Repurpose","Shift the property to StatMate or another non-wagering brand — StatMate isn't a wagering product, so Part 7C (incl. 62W) doesn't apply. Same audience, compliant message."]);
+    opts.push(["C · Exit & redeploy",`Wind down by contract expiry (see Expiries for the leverage window) and redeploy ${money(tot)} into the open lanes below.`]);
+  } else if(/online|gated/.test(d)){
+    opts.push(["A · Gate it","Deliver behind the Triple Lock — age assurance, registered-account access, opt-out (62P/Q). Check the channel's verdict on the Channels board."]);
+    opts.push(["B · Go direct/PG","Move from open exchange to direct or PG deals where the platform warrants the lock in the IO — per the programmatic assessment on the Channels board."]);
+    opts.push(["C · Exit & redeploy",`If the platform can't gate, redeploy ${money(tot)} into the open lanes below.`]);
+  } else if(/odds|radio|espn|broadcast/.test(d)){
+    opts.push(["A · Re-plan","Move spots to compliant windows (overnight / non-live-sport), strip odds from creative, live within the 3-per-hour cap."]);
+    opts.push(["B · Re-shape the deal","Renegotiate the package toward compliant inventory — racing programming, gated digital, or non-broadcast assets with the same partner."]);
+    opts.push(["C · Exit & redeploy",`If compliant delivery guts the value, redeploy ${money(tot)} into the open lanes below.`]);
+  } else if(/sem/.test(d)){
+    opts.push(["A · Resolve the legal read","SEM's status under 62P/Q is the open question — get Nathan's read before restructuring anything. Largest unresolved line in the plan."]);
+    opts.push(["B · Prepare both plans","Draft a caught plan (logged-in inventory only) and a clear plan (business as usual) so budget can move the day the answer lands."]);
+  } else if(/venue|premises|dooh/.test(d)){
+    opts.push(["A · Confirm locations","One-off check that panels/activations aren't at or around a live sporting venue perimeter (62V). If clear, this lane is open — and a redeployment destination."]);
+  } else {
+    opts.push(["A · Review","Work the asset on the Decisions step — driver: "+(d||"mixed")+"."]);
+  }
+  const verdict=key==="exposed"?"Challenging to continue as-is — "+(ev.reasons[0]||"").replace(/\.$/,"")+".":
+    key==="rework"?"Continues with restructuring — "+(ev.reasons[0]||"").replace(/\.$/,"")+".":
+    "Conditional — "+(ev.reasons[0]||"").replace(/\.$/,"")+".";
+  return {verdict,opts};
+}
+function redeployLanes(){
+  const lanes=[];
+  if(S.racing!=="off") lanes.push(["Racing (Racing.com / RDC)","Carve-out holds under the active lever — excluded from sporting-event and odds rules. Strongest compliant lane; scales with existing partnership."]);
+  lanes.push(["OOH / DOOH","No general outdoor provision in the bill — only venue-perimeter signage is caught (62V). Assumes compliant locations (stated assumption on the Expiries tab)."]);
+  lanes.push(["StatMate (non-wagering brand)","Not a wagering product — Part 7C doesn't apply. Talent, social and content restrictions don't bite; can absorb repurposed formats."]);
+  lanes.push(["Owned & gated digital","PB App is the one natively Fully-locked surface; gated partner inventory (per the Channels board) qualifies once the Triple Lock is delivered."]);
+  if(S.sem==="off") lanes.push(["Search / SEM","Not caught under the active lever setting — scalable performance lane."]);
+  else lanes.push(["Search / SEM (conditional)","Currently modelled as caught (62P/Q) — pending the legal read. If cleared, the most scalable redeployment lane."]);
+  lanes.push(["Return to the business","Hand budget back rather than force-spend it — a legitimate option if compliant lanes can't absorb the volume at acceptable efficiency."]);
+  return lanes;
+}
+function renderPositions(){
+  const scope=orderedAssets(); scope.forEach(a=>a._ev=evalAsset(a));
+  const money=v=>"$"+(v>=1e6?(v/1e6).toFixed(2)+"m":Math.round(v/1e3)+"k");
+  const order={exposed:0,rework:1,watch:2,strong:3,safe:4};
+  const sorted=[...scope].sort((x,y)=>(order[x._ev.key]??5)-(order[y._ev.key]??5)||y.lines.reduce((s,l)=>s+l.annual,0)-x.lines.reduce((s,l)=>s+l.annual,0));
+  const exiting=scope.filter(a=>{const p=PLANS[a.asset];return p&&/exit|wind/i.test(p.path||"");});
+  const freed=exiting.reduce((s,a)=>s+a.lines.reduce((x,l)=>x+l.annual,0),0);
+  const allExposed=scope.filter(a=>a._ev.key==="exposed").reduce((s,a)=>s+a.lines.reduce((x,l)=>x+l.annual,0),0);
+  const cards=sorted.map(a=>{
+    const po=positionOptions(a); const p=PLANS[a.asset]||{};
+    const chosen=p.path&&p.path!=="— choose —"?p.path:null;
+    const st=ST[a._ev.key]||{};
+    return `<div class="pos-card pos-${a._ev.key}">
+      <div class="pos-head"><b>${esc(a.asset)}</b>
+        <span class="pos-badge" style="background:${st.dot||'#999'}22;color:${st.dot||'#555'}">${esc(st.lab||a._ev.key)}</span>
+        <span class="pos-val">${money(a.lines.reduce((s,l)=>s+l.annual,0))}</span></div>
+      <div class="pos-verdict">${esc(po.verdict)}</div>
+      ${po.opts.length?`<div class="pos-opts">${po.opts.map(([t,d])=>`<div class="pos-opt"><b>${esc(t)}</b><span>${esc(d)}</span></div>`).join("")}</div>`:""}
+      <div class="pos-foot">${chosen?`Current decision: <b>${esc(chosen)}</b>${p.owner?` · ${esc(p.owner)}`:""}${p.opstatus?` · ${esc(p.opstatus)}`:""}`:`<span class="pos-none">No decision recorded yet — set one on the Decisions step.</span>`}</div>
+    </div>`;}).join("");
+  return `<div class="view"><div class="vh"><div><div class="eyebrow">Final step · The end state</div>
+    <h2>Final positions</h2>
+    <p>One position per asset under the <b>active scenario</b> — what happens to it, the realistic options, and where freed budget can legally go. Flip the levers on the Scenario step and this page re-writes itself.</p></div></div>
+    ${cards}
+    <div class="panel" style="margin-top:18px"><div class="k">Redeployment · where freed budget can go</div>
+      <p style="font-size:13px;color:var(--pb-muted);margin:6px 0 12px">
+      ${exiting.length?`Decisions currently marked Exit/Wind down free up <b>${money(freed)}</b> (${exiting.map(a=>esc(a.asset)).join(", ")}).`:`No asset is currently marked Exit — nothing is freed yet.`}
+      For sizing: exiting <i>every</i> currently-exposed asset would free <b>${money(allExposed)}</b>.
+      Destination lanes under the active levers:</p>
+      ${redeployLanes().map(([t,d])=>`<div class="pos-opt lane"><b>${esc(t)}</b><span>${esc(d)}</span></div>`).join("")}
+    </div>
+  </div>`;
+}
 function renderExpiries(){
   const exps=harvestExpiries();
   const commence=new Date("2027-01-01").getTime();
@@ -2307,6 +2687,7 @@ function render(){
   else if(activeView==="summary") m.innerHTML=renderSummary();
   else if(activeView==="actions") m.innerHTML=renderActions();
   else if(activeView==="overview") m.innerHTML=renderOverview();
+  else if(activeView==="positions") m.innerHTML=renderPositions();
   else if(activeView==="legalmap") m.innerHTML=renderLegalMap();
   else if(activeView==="expiries") m.innerHTML=renderExpiries();
   else if(activeView==="notes") m.innerHTML=renderNotes();
