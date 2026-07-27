@@ -241,12 +241,18 @@
   .wkform{background:#fafbfc;border:1px solid var(--line);border-radius:var(--radius-sm);padding:16px}
   .wkform h5{font-family:'Space Grotesk';font-size:13px;margin:0 0 12px;font-weight:600}
   .wk-sub{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-faint);font-weight:700;margin:14px 0 8px}
+  .wk-hint{font-size:11.5px;color:var(--ink-faint);margin:-4px 0 10px;line-height:1.4}
   .wk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
-  .wk-fld label{display:block;font-size:11.5px;color:var(--ink-soft);font-weight:500;margin-bottom:4px}
+  .wk-fld{display:flex;flex-direction:column}
+  .wk-fld label{display:block;font-size:11.5px;color:var(--ink-soft);font-weight:500;margin-bottom:4px;min-height:2.7em;line-height:1.35}
   .wk-fld label b{color:var(--ink);font-weight:600}
   .wk-fld .tgt{color:var(--ink-faint);font-size:11px;font-weight:500}
-  .wk-fld input{width:100%;border:1px solid var(--line);border-radius:7px;padding:7px 9px;font-size:13px}
+  .wk-fld input[type=number]{width:100%;border:1px solid var(--line);border-radius:7px;padding:7px 9px;font-size:13px}
   .wk-fld input:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:var(--accent)}
+  .wk-clip{margin-top:7px}
+  .wk-clip a{display:block;font-size:11px;color:var(--accent);margin-bottom:5px;text-decoration:none}
+  .wk-clip a:hover{text-decoration:underline}
+  .wk-clip input[type=file]{width:100%;font-size:10.5px;color:var(--ink-faint);border:1px dashed var(--line);border-radius:7px;padding:6px 7px;background:transparent}
   .asset-fulfil{font-size:11px;color:var(--ink-soft);margin-top:3px}
   .asset-fulfil.ok{color:var(--good)} .asset-fulfil.under{color:var(--warn)}
 
@@ -258,6 +264,11 @@
   .wklog th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-faint);font-weight:600;padding:4px 6px}
   .wklog td{padding:5px 6px;border-top:1px solid var(--line-soft)}
   .wklog td.num{font-family:'JetBrains Mono';text-align:right}
+  .clip-toggle summary{cursor:pointer;color:var(--accent);font-size:11px;font-weight:600;list-style:none}
+  .clip-toggle summary::-webkit-details-marker{display:none}
+  .clip-toggle .clip-list{margin-top:5px}
+  .clip-toggle .clip-list a{display:block;font-size:11px;color:var(--accent);text-decoration:none;margin-bottom:3px;white-space:nowrap}
+  .clip-toggle .clip-list a:hover{text-decoration:underline}
   .verifybtn{font-size:11px;font-weight:600;color:var(--good);padding:3px 8px;border-radius:5px;border:1px solid var(--good)}
   .verifybtn:hover{background:var(--good-bg)}
   .assetfulfil-strip{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
@@ -333,6 +344,7 @@ let STATE=null;
 let view={screen:'board',pid:null,sid:null,filter:'all',mode:'internal',partnerPid:null,role:null,email:null,module:'overview',benchmarkBasis:'portfolio'};
 const CATEGORIES=['Racing','AFL','NRL','US Sports','Soccer','Other'];
 const CALLS=['renew','evolve','renegotiate','exit'];
+const MONTH_OPTIONS=['Mar 2026','Apr 2026','May 2026','Jun 2026','Jul 2026','Aug 2026','Sep 2026','Oct 2026'];
 const LEVERS=[['growth','Growth'],['audience','Audience'],['channels','Channels & coverage'],['compliance','Compliance']];
 const uid=()=>Math.random().toString(36).slice(2,9);
 
@@ -948,10 +960,11 @@ function componentBlock(comp){
   let log='';
   if(wl){
     log=`<details class="wklog"><summary>Weekly log — ${wl} week${wl>1?'s':''}${weeksOf(comp).some(w=>w.status!=='verified')?' · <span style="color:var(--warn)">'+weeksOf(comp).filter(w=>w.status!=='verified').length+' pending</span>':''}</summary>
-      <table><thead><tr><th>Week</th><th class="num">Audience</th><th>Status</th><th></th></tr></thead><tbody>
-      ${weeksOf(comp).map(w=>`<tr><td>${esc(w.label)}${w.note?` <span style="color:var(--ink-faint);font-size:10px">· ${esc(w.note)}</span>`:''}</td><td class="num">${aud(weekAudTotal(w))}</td>
+      <table><thead><tr><th>Week</th><th class="num">Audience</th><th>Clips</th><th>Status</th><th></th></tr></thead><tbody>
+      ${weeksOf(comp).map(w=>{ const clips=weekClips(comp,w); return `<tr><td>${esc(w.label)}${w.note?` <span style="color:var(--ink-faint);font-size:10px">· ${esc(w.note)}</span>`:''}</td><td class="num">${aud(weekAudTotal(w))}</td>
+        <td>${clips.length?`<details class="clip-toggle"><summary>${clips.length} clip${clips.length>1?'s':''}</summary><div class="clip-list">${clips.map(cl=>`<a href="${esc(cl.url)}" target="_blank" rel="noopener">▸ ${esc(cl.name)}</a>`).join('')}</div></details>`:'<span style="color:var(--ink-faint)">—</span>'}</td>
         <td><span class="wk-status wk-${w.status||'pending'}">${w.status||'pending'}</span></td>
-        <td style="text-align:right">${w.status!=='verified'?`<button class="verifybtn" onclick="verifyWeek('${comp.id}','${w.id}')">Verify</button>`:''}</td></tr>`).join('')}
+        <td style="text-align:right">${w.status!=='verified'?`<button class="verifybtn" onclick="verifyWeek('${comp.id}','${w.id}')">Verify</button>`:''}</td></tr>`; }).join('')}
       </tbody></table></details>`;
   }
   return `<div class="comp">
@@ -959,6 +972,10 @@ function componentBlock(comp){
       <div style="display:flex;align-items:flex-start;gap:4px"><span class="comp-inv">${money(comp.investment)}<small>investment</small></span><button class="comp-editbtn" onclick="editComponent('${comp.id}')">✎</button></div></div>
     ${body}${assetStrip}${log}
   </div>`;
+}
+function weekClips(comp,w){
+  if(!w||!w.assets) return [];
+  return (comp.assets||[]).filter(as=>w.assets[as.id+'__clip']).map(as=>({name:as.name,url:w.assets[as.id+'__clip']}));
 }
 async function verifyWeek(cid,wid){ 
   if(SB){ try{ await sbSetVerified(wid); await ownerRefreshWeeks(); render(); toast('Week verified'); }catch(e){ toast('Error: '+e.message); } return; }
@@ -1015,18 +1032,25 @@ function openWeekForm(cid,wid){
   const assets=(c.assets||[]);
   let audFields='';
   if(c.mode==='audience'&&plats.length){
-    audFields=`<div class="wk-sub">Audience by platform</div><div class="wk-grid">`+plats.map(pl=>`<div class="wk-fld"><label><b>${esc(pl)}</b></label><input type="number" id="wa_${slug(pl)}" value="${w&&w.audience?(w.audience[pl]??''):''}" placeholder="0"></div>`).join('')+`</div>`;
+    audFields=`<div class="wk-sub">Audience by platform</div><div class="wk-hint">Total reach for the whole month, as a plain whole number — e.g. type 420000 for 420,000. No commas, decimals or text.</div><div class="wk-grid">`+plats.map(pl=>`<div class="wk-fld"><label><b>${esc(pl)}</b></label><input type="number" min="0" step="1" id="wa_${slug(pl)}" value="${w&&w.audience?(w.audience[pl]??''):''}" placeholder="0"></div>`).join('')+`</div>`;
   }
   let assetFields='';
   if(assets.length){
-    assetFields=`<div class="wk-sub">Entitlements delivered this month</div><div class="wk-grid">`+assets.map(as=>`<div class="wk-fld"><label>${esc(as.name)} <span class="tgt">· ${as.perWeek}/round</span></label><input type="number" id="wk_${as.id}" value="${w&&w.assets?(w.assets[as.id]??''):''}" placeholder="0"></div>`).join('')+`</div>`;
+    assetFields=`<div class="wk-sub">Entitlements delivered this month</div><div class="wk-hint">Enter the number of times each entitlement ran this month — a plain whole number (e.g. 4), not a percentage. Attach a short clip or screenshot as proof for any entitlement where you have one.</div><div class="wk-grid">`+assets.map(as=>{
+      const clipUrl=w&&w.assets?w.assets[as.id+'__clip']:null;
+      return `<div class="wk-fld"><label>${esc(as.name)} <span class="tgt">· ${as.perWeek}/round</span></label>
+        <input type="number" min="0" step="1" id="wk_${as.id}" value="${w&&w.assets?(w.assets[as.id]??''):''}" placeholder="0">
+        <div class="wk-clip">${clipUrl?`<a href="${esc(clipUrl)}" target="_blank" rel="noopener">▸ Current clip attached</a>`:''}<input type="file" id="wkclip_${as.id}" accept="image/*,video/*"></div>
+      </div>`;
+    }).join('')+`</div>`;
   } else if(c.mode==='fulfilment'){
-    assetFields=`<div class="wk-sub">Delivered this month</div><div class="wk-grid"><div class="wk-fld"><label>${esc(c.unit||'units')} delivered</label><input type="number" id="wk_qty" value="${w&&w.assets?(w.assets.qty??''):''}"></div></div>`;
+    assetFields=`<div class="wk-sub">Delivered this month</div><div class="wk-hint">Whole number of ${esc(c.unit||'units')} delivered this month.</div><div class="wk-grid"><div class="wk-fld"><label>${esc(c.unit||'units')} delivered</label><input type="number" min="0" step="1" id="wk_qty" value="${w&&w.assets?(w.assets.qty??''):''}"></div></div>`;
   }
+  const monthOpts=(w&&w.label&&!MONTH_OPTIONS.includes(w.label))?[w.label,...MONTH_OPTIONS]:MONTH_OPTIONS;
+  const monthSelect=`<select class="inp" id="w_label">${!w?'<option value="" disabled selected>Select month</option>':''}${monthOpts.map(m=>`<option value="${esc(m)}" ${w&&w.label===m?'selected':''}>${esc(m)}</option>`).join('')}</select>`;
   mount(scrim(`<div class="modal-head"><h3>${wid?'Edit month':'Log a month'} — ${esc(c.name)}</h3><button class="x" onclick="closeModal()">×</button></div>
     <div class="modal-body">
-      <div class="frow"><div class="field"><label>Month</label><input class="inp" id="w_label" value="${w?esc(w.label):''}" placeholder="e.g. Jul 2026"></div>
-        <div class="field"><label>Source note (optional)</label><input class="inp" id="w_note" value="${w?esc(w.note||''):''}" placeholder="e.g. YouTube Analytics"></div></div>
+      <div class="field" style="max-width:260px"><label>Month</label>${monthSelect}</div>
       ${audFields}${assetFields}
     </div>
     <div class="modal-foot"><div>${wid?`<button class="btn btn-danger" onclick="deleteWeek('${cid}','${wid}')">Delete month</button>`:''}</div>
@@ -1036,12 +1060,38 @@ function slug(s){ return s.replace(/[^a-zA-Z0-9]/g,'_'); }
 async function saveWeek(cid,wid){
   const s=latestSnap(STATE.partnerships.find(x=>x.id===view.partnerPid));
   const c=s.media.components.find(x=>x.id===cid);
-  const label=document.getElementById('w_label').value.trim(); if(!label){toast('Give the month a label, e.g. Jul 2026');return;}
-  const note=document.getElementById('w_note').value.trim();
+  const w=wid?(c.weeks||[]).find(x=>x.id===wid):null;
+  const label=document.getElementById('w_label').value.trim(); if(!label){toast('Select a month');return;}
+  const note=w?(w.note||''):'';
   const audience={}; (c.platforms||[]).forEach(pl=>{ const v=document.getElementById('wa_'+slug(pl)); if(v&&v.value!=='')audience[pl]=+v.value; });
   const assetsObj={};
-  if((c.assets||[]).length) c.assets.forEach(as=>{ const v=document.getElementById('wk_'+as.id); if(v&&v.value!=='')assetsObj[as.id]=+v.value; });
-  else if(c.mode==='fulfilment'){ const v=document.getElementById('wk_qty'); if(v&&v.value!=='')assetsObj.qty=+v.value; }
+  const clipUploads=[];
+  if((c.assets||[]).length){
+    c.assets.forEach(as=>{
+      const v=document.getElementById('wk_'+as.id); if(v&&v.value!=='')assetsObj[as.id]=+v.value;
+      const existingClip=w&&w.assets?w.assets[as.id+'__clip']:null;
+      const fileInput=document.getElementById('wkclip_'+as.id);
+      if(fileInput&&fileInput.files&&fileInput.files[0]) clipUploads.push({assetId:as.id,file:fileInput.files[0]});
+      else if(existingClip) assetsObj[as.id+'__clip']=existingClip;
+    });
+  } else if(c.mode==='fulfilment'){ const v=document.getElementById('wk_qty'); if(v&&v.value!=='')assetsObj.qty=+v.value; }
+
+  if(clipUploads.length){
+    if(!SB){ toast("Saved the numbers, but clips can't upload without a live connection"); clipUploads.length=0; }
+    else{
+      const btn=document.querySelector('.modal-foot .btn-primary'); if(btn){btn.disabled=true; btn.textContent='Uploading…';}
+      try{
+        for(const {assetId,file} of clipUploads){
+          const path=`${c.partnership_id||view.partnerPid}/${cid}/${slug(label)}/${assetId}-${Date.now()}-${slug(file.name)}`;
+          const {error:upErr}=await SB.storage.from('pr-clips').upload(path,file,{upsert:true});
+          if(upErr) throw upErr;
+          const {data:pub}=SB.storage.from('pr-clips').getPublicUrl(path);
+          assetsObj[assetId+'__clip']=pub.publicUrl;
+        }
+      }catch(e){ toast('Clip upload failed: '+e.message); if(btn){btn.disabled=false; btn.textContent='Submit';} return; }
+    }
+  }
+
   if(SB){
     try{
       if(wid) await sbUpdateWeek(wid,{label,audience,assets:assetsObj,note});
